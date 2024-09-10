@@ -1,0 +1,151 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vector-agent-logs
+  namespace: {{ include "logging.namespaceOverride" . }}
+  labels:
+    logging.whizard.io/vector-role: Agent
+    logging.whizard.io/enable: "true"
+stringData:
+  logs.yaml: >-
+    sources:
+      kube_logs:
+        {{- if .Values.filter }}
+        {{- if .Values.filter.extraLabelSelector }}
+        extra_label_selector: "{{ .Values.filter.extraLabelSelector }}"
+        {{- end }}
+        {{- if .Values.filter.extraNamespaceLabelSelector }}
+        extra_namespace_label_selector: "{{ .Values.filter.extraNamespaceLabelSelector }}"
+        {{- end }}
+        {{- end }}
+        namespace_annotation_fields:
+          namespace_labels: .kubernetes.namespace_labels
+        node_annotation_fields:
+          node_labels: ""
+        pod_annotation_fields:
+          container_id: .kubernetes.docker_id
+          container_image: ""
+          container_image_id: ""
+          container_name: .kubernetes.container_name
+          pod_annotations: ""
+          pod_ip: ""
+          pod_ips: ""
+          pod_labels: ""
+          pod_name: .kubernetes.pod_name
+          pod_namespace: .kubernetes.namespace_name
+          pod_node_name: .kubernetes.node_name
+          pod_owner: ""
+          pod_uid: ""
+        type: kubernetes_logs
+      systemd_logs:
+        include_units:
+        - docker
+        - kubelet
+        journal_directory: /var/log/journal
+        type: journald
+      {{- if .Values.calico.enabled }}
+      calico_logs:
+        include:
+        {{- toYaml .Values.calico.logPath | nindent 8 }}
+        max_line_bytes: 1048576
+        type: file
+      {{- end }}
+    transforms:
+      {{- if or .Values.filter.includeNamespaces .Values.filter.excludeNamespaces }}
+      kube_logs_filter:
+        inputs:
+        - kube_logs
+        type: filter
+        condition:
+          type: vrl
+          source: |-
+            {{- if .Values.filter.excludeNamespaces }}
+            !includes(["{{- join "\", \"" .Values.filter.excludeNamespaces }}"], .kubernetes.namespace_name)
+            {{- else }}
+            includes(["{{- join "\", \"" .Values.filter.includeNamespaces }}"], .kubernetes.namespace_name)
+            {{- end }}
+      {{- end }}
+      kube_logs_remapped:
+        drop_on_error: true
+        inputs:
+        {{- if or .Values.filter.includeNamespaces .Values.filter.excludeNamespaces }}
+        - kube_logs_filter
+        {{- else }}
+        - kube_logs
+        {{- end }}
+        source: |-
+          .log = del(.message)
+          if exists(.kubernetes.namespace_labels."kubesphere.io/workspace") {
+            .kubernetes.workspace = get!(.kubernetes.namespace_labels, ["kubesphere.io/workspace"])
+          } else {
+            .kubernetes.workspace = ""
+          }
+          del(.kubernetes.namespace_labels)
+          del(.file)
+          del(.timestamp_end)
+          del(.stream)
+          del(.source_type)
+          .time = .timestamp
+          .timestamp = parse_timestamp!(.timestamp, format: "%+")
+          .cluster = "{{ .Values.global.clusterInfo.name }}"
+        type: remap
+      systemd_logs_remapped:
+        drop_on_error: true
+        inputs:
+        - systemd_logs
+        source: |-
+          del(.PRIORITY)
+          del(._BOOT_ID)
+          del(._CAP_EFFECTIVE)
+          del(._CMDLINE)
+          del(._COMM)
+          del(._EXE)
+          del(._GID)
+          del(._MACHINE_ID)
+          del(._PID)
+          del(._STREAM_ID)
+          del(._SYSTEMD_CGROUP)
+          del(._SYSTEMD_SLICE)
+          del(.SYSLOG_FACILITY)
+          del(._TRANSPORT)
+          del(._UID)
+          del(.__MONOTONIC_TIMESTAMP)
+          del(.__REALTIME_TIMESTAMP)
+          del(._SYSTEMD_UNIT)
+          del(._SELINUX_CONTEXT)
+          del(._SYSTEMD_INVOCATION_ID)
+          del(.source_type)
+          .kubernetes.node_name = get_env_var!("VECTOR_SELF_NODE_NAME")
+          .kubernetes.pod_name = del(.host)
+          .kubernetes.container_name = del(.SYSLOG_IDENTIFIER)
+          .kubernetes.docker_id = .kubernetes.container_name
+          .kubernetes.namespace_name = "kube-system"
+          .log = del(.message)
+          .kubernetes.workspace = "system-workspace"
+          .time = .timestamp
+          .timestamp = parse_timestamp!(.timestamp, format: "%+")
+          .cluster = "{{ .Values.global.clusterInfo.name }}"
+        type: remap
+      {{- if .Values.calico.enabled }}
+      calico_logs_remapped:
+        drop_on_error: true
+        inputs:
+        - calico_logs
+        source: |-
+          .kubernetes.node_name = get_env_var!("VECTOR_SELF_NODE_NAME")
+          del(.host)
+          .kubernetes.pod_name = get_env_var!("VECTOR_SELF_NODE_NAME")
+          .kubernetes.container_name = "calico-cni"
+          .kubernetes.docker_id = .kubernetes.container_name
+          .kubernetes.namespace_name = "kube-system"
+          .log = del(.message)
+          .kubernetes.workspace = "system-workspace"
+          .time = slice!(.log, 0, 23)
+          .time, err = parse_timestamp(.time, format: "%F %T.%3f")
+          if err != null {
+            .time = .timestamp
+          }
+          .timestamp = parse_timestamp!(.timestamp, format: "%+")
+          .cluster = "{{ .Values.global.clusterInfo.name }}"
+        type: remap
+      {{- end }}

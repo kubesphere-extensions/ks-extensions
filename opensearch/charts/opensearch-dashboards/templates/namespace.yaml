@@ -1,0 +1,13 @@
+{{- $name := include "opensearch-dashboards.namespaceOverride" . }}
+{{- $namespace := (lookup "v1" "Namespace" "" $name) -}}
+{{- if not $namespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    "helm.sh/resource-policy": keep
+  labels:
+    kubesphere.io/managed: "true"
+    kubesphere.io/workspace: system-workspace
+  name: {{ $name }}
+{{- end }}

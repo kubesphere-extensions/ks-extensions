@@ -1,0 +1,63 @@
+global:
+  imageRegistry: ""
+  nodeSelector: {}
+  imagePullSecrets: []
+  clusterInfo: {}
+
+kube-events-exporter:
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  sinks:
+    loki:
+      # Create loki sink or not
+      enabled: false
+        # Configurations for the loki sink, more info for https://vector.dev/docs/reference/configuration/sinks/loki/
+      # Usually users needn't change the following loki sink config, and the default sinks in secret "kubesphere-logging-system/vector-sinks" created by the WhizardTelemetry Data Pipeline extension will be used.
+      metadata:
+#        endpoint: http://<loki-gateway-ip>:<loki-gateway-port>
+#        path: /loki/api/v1/push
+#        encoding:
+#          codec: json
+        tenant_id: whizard-events-ks
+#        out_of_order_action: accept
+#        remove_timestamp: false
+#        batch:
+#          max_bytes: 10000000
+#          timeout_secs: 5
+#        buffer:
+#          max_events: 10000
+#        request:
+#          retry_attempts: 10
+      labels:
+        - cluster="{{ .cluster }}"
+        - type="{{ .type }}"
+        - kind="{{ .involvedObject.kind }}"
+        - namespace="{{ .involvedObject.namespace }}"
+
+    opensearch:
+      # Create opensearch sink or not
+      enabled: true
+      # The index to store the logs, will be {{ prefix }}-{{ timestring }}
+      index:
+        # The prefix of index, supports template syntax.
+        prefix: "{{ .cluster }}-events"
+        # Timestring is parsed from strftime patterns, like %Y.%m.%d. Used to distribute logs into different indexes according to time.
+        timestring: "%Y.%m.%d"
+      # Configurations for the opensearch sink, more info for https://vector.dev/docs/reference/configuration/sinks/elasticsearch/
+      # Usually users needn't change the following OpenSearch sink config, and the default sinks in secret "kubesphere-logging-system/vector-sinks" created by the WhizardTelemetry Data Pipeline extension will be used.
+  #    metadata:
+  #      api_version: v8
+  #      auth:
+  #        strategy: basic
+  #        user: admin
+  #        password: admin
+  #      batch:
+  #        timeout_secs: 5
+  #      buffer:
+  #        max_events: 10000
+  #      endpoints:
+  #        - https://opensearch-cluster-data.kubesphere-logging-system.svc:9200
+  #      tls:
+  #        verify_certificate: false
+

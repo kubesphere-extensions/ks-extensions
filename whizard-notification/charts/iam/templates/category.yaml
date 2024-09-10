@@ -1,0 +1,12 @@
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  name: namespace-receive-notification
+  namespace: {{ include "iam.namespaceOverride" . }}
+  labels:
+    iam.kubesphere.io/scope: namespace
+    kubesphere.io/managed: 'true'
+spec:
+  displayName:
+    en: Notification
+    zh: 通知

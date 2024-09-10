@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{  include "kube-events-exporter.fullname" . }}
+  namespace: {{  include "kube-events-exporter.namespaceOverride" . }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{  include "kube-events-exporter.fullname" . }}
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - events
+      - namespaces
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{  include "kube-events-exporter.fullname" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{  include "kube-events-exporter.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{  include "kube-events-exporter.fullname" . }}
+    namespace: {{  include "kube-events-exporter.namespaceOverride" . }}

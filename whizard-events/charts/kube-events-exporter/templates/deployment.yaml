@@ -1,0 +1,70 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{ include "kube-events-exporter.fullname" . }}
+  namespace: {{ include "kube-events-exporter.namespaceOverride" . }}
+  labels:
+    {{- include "kube-events-exporter.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "kube-events-exporter.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "kube-events-exporter.selectorLabels" . | nindent 8 }}
+    spec:
+      volumes:
+        - name: config
+          configMap:
+            name: {{  include "kube-events-exporter.fullname" . }}
+            defaultMode: 420
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+      containers:
+        - name: events-exporter
+          image: {{ include "global.imageRegistry" . }}{{ .Values.eventsExporter.image.repository }}:{{ .Values.eventsExporter.image.tag }}
+          args:
+            - '--config.file=/etc/events-exporter/config/events-exporter.yaml'
+      {{- with .Values.eventsExporter.resources }}
+          resources:
+      {{- toYaml . | nindent 12 }}
+      {{- end }}
+          volumeMounts:
+            - name: config
+              readOnly: true
+              mountPath: /etc/events-exporter/config
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+        - name: config-reloader
+          image: {{ include "global.imageRegistry" . }}{{ .Values.configReloader.image.repository }}:{{ .Values.configReloader.image.tag }}
+          args:
+            - '--volume-dir=/etc/events-exporter/config'
+            - '--webhook-url=http://127.0.0.1:8443/-/reload'
+      {{- with .Values.eventsExporter.resources }}
+          resources:
+      {{- toYaml . | nindent 12 }}
+      {{- end }}
+          volumeMounts:
+            - name: config
+              readOnly: true
+              mountPath: /etc/events-exporter/config
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      serviceAccountName: {{  include "kube-events-exporter.fullname" . }}
+      {{- include "common.nodeSelectors" .}}
+      {{- include "common.tolerations" .}}
+      {{- include "common.affinity" .}}
+      serviceAccount: {{  include "kube-events-exporter.fullname" . }}
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
