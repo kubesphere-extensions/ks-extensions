@@ -1,0 +1,43 @@
+apiVersion: v1
+name: openpitrix
+version: 2.0.1
+displayName:
+  zh: KubeSphere 应用商店管理
+  en: KubeSphere app store management
+description:
+  zh: |-
+    KubeSphere 基于 OpenPitrix 自研的多云应用管理平台，用于上传、审核并管理多云环境中不同类型的应用。
+  en: |-
+    KubeSphere is based on OpenPitrix's self-developed multi-cloud application management platform, which is used to upload, review and manage different types of applications in multi-cloud environments.
+keywords:
+  - kubesphere
+  - openpitrix
+  - multi-cloud apps
+  - app store
+  - application management
+  - helm chart
+home: https://kubesphere.com.cn/
+sources: [ ]
+kubeVersion: '>=1.21.0-0'
+ksVersion: '>=4.1.0-0'
+dependencies:
+  - name: apps
+    condition: apps.enabled
+icon: ./static/favicon.svg
+installationMode: HostOnly
+category: dev-tools
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+images:
+  - docker.io/kubesphere/apps-manage:v2.0.1
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+docs: https://docs.kubesphere.com.cn/
