@@ -1,0 +1,46 @@
+{{- $namespace := include "kube-events-exporter.namespaceOverride" . }}
+{{- $sinks := (lookup "v1" "Secret" $namespace  "vector-sinks") -}}
+{{- $dst := .Values.sinks.loki.metadata }}
+
+{{- if .Values.sinks.loki.enabled }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vector-agent-events-sink-loki
+  namespace: {{ include "kube-events-exporter.namespaceOverride" . }}
+  labels:
+    {{- include "kube-events-exporter.labels" . | nindent 4 }}
+    logging.whizard.io/component: "events"
+    logging.whizard.io/vector-role: Agent
+    logging.whizard.io/enable: "true"
+stringData:
+  pipeline.yaml: |
+    transforms:
+      loki_events_remapped:
+        type: remap
+        drop_on_error: true
+        inputs:
+        - kube_events_remapped
+        source: |-
+          if !exists(.involvedObject.namespace) { .involvedObject.namespace = "" }
+          if !exists(.involvedObject.reportingComponent) { .involvedObject.reportingComponent = "" }
+    sinks:
+      loki_events:
+        {{- if $sinks -}}
+        {{- if $sinks.data.loki -}}
+        {{- $src := ($sinks.data.loki | b64dec | fromYaml) -}}
+        {{- $new := deepCopy $src | mustMerge $dst -}}
+        {{- toYaml $new | nindent 8 }}
+        {{- end}}
+        {{- else if $dst }}
+        {{- toYaml $dst | nindent 8 }}
+        {{- end}}
+        type: loki
+        inputs:
+        - loki_events_remapped
+        labels:
+        {{- range $value := .Values.sinks.loki.labels }}
+        {{- $pair := regexSplit "\\s*=\\s*" $value -1 }}
+          {{ index $pair 0 }}: {{ index $pair 1 }}
+        {{- end }}
+{{- end}}

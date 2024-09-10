@@ -1,0 +1,2 @@
+logsidecar-injector has been installed. Check its status by running:
+  kubectl --namespace {{ template "logsidecar-injector.namespace" . }} get pods -l "app.kubernetes.io/instance={{ $.Release.Name }}"

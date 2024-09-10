@@ -1,0 +1,64 @@
+apiVersion: v1
+name: whizard-logging
+namespace: kubesphere-logging-system
+version: 1.2.2
+displayName:
+  zh: WhizardTelemetry 日志
+  en: WhizardTelemetry Logging
+description:
+  zh: |-
+    WhizardTelemetry 日志是 KubeSphere 团队开发的 WhizardTelemetry 可观测平台中用于日志采集、处理、存储和查询的扩展组件。
+  en: |-
+    As a part of KubeSphere's WhizardTelemetry Observability Platform, WhizardTelemetry Logging provides log collection, processing, storage and query.
+category: observability
+keywords:
+  - Logging
+  - Observability
+home: https://kubesphere.com.cn/
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+staticFileDirectory: static
+sources: []
+kubeVersion: '>=1.19.0-0'
+ksVersion: '>=4.0.0-0'
+icon: ./static/favicon.svg
+dependencies:
+  - name: logsidecar-injector
+    version: '>= 0.2.0'
+    tags:
+      - agent
+  - name: vector-logging
+    tags:
+      - agent
+installationMode: Multicluster
+externalDependencies:
+  - name: vector
+    type: extension
+    version: '>= 1.0.0'
+    required: true
+  - name: whizard-telemetry
+    type: extension
+    version: '>= 1.0.0-0'
+    required: true
+  - name: opensearch
+    type: extension
+    version: '>=2.11.1'
+    required: false
+images:
+  - docker.io/kubesphere/kubectl:v1.27.12
+  - docker.io/kubesphere/log-sidecar-injector:v1.3.0
+  - docker.io/jimmidyson/configmap-reload:v0.9.0
+  - docker.io/elastic/filebeat:6.7.0
+  - docker.io/timberio/vector:0.39.0-debian
+  - docker.io/library/alpine:3.14
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+docs: https://docs.kubesphere.com.cn/

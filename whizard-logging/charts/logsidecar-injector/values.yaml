@@ -1,0 +1,79 @@
+# Default values for logsidecar-injector.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+enabled: false
+
+global:
+  clusterInfo:
+    name: ""
+    role: ""
+  nodeSelector: {}
+  imageRegistry: ""
+  imagePullSecrets: []
+
+affinity: {}
+
+tolerations: []
+
+nodeSelector: {}
+
+
+hook:
+  postInstall:
+    image:
+      repo: kubesphere/kubectl
+      tag: v1.27.12
+      pullPolicy: IfNotPresent
+    backoffLimit: 1
+
+image:
+  repository: kubesphere/log-sidecar-injector
+  tag: "" # If unset use v+ .Chart.appVersion
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+imageRegistryOverride: ""
+resources: {}
+#  limits:
+#    cpu: 100m
+#    memory: 100Mi
+#  requests:
+#    cpu: 10m
+#    memory: 10Mi
+
+configReloader:
+  image:
+    repository: jimmidyson/configmap-reload
+    tag: v0.9.0
+    pullPolicy: IfNotPresent
+  resources: {}
+#    limits:
+#      cpu: 100m
+#      memory: 100Mi
+#    requests:
+#      cpu: 10m
+#      memory: 10Mi
+
+sidecar:
+  sidecarType: vector
+  filebeatContainer:
+    image:
+      repository: elastic/filebeat
+      tag: 6.7.0
+      pullPolicy: IfNotPresent
+    resources: {}
+  vectorContainer:
+    image:
+      repository: timberio/vector
+      tag: 0.39.0-debian
+      pullPolicy: IfNotPresent
+    resources: {}
+  initContainer:
+    image:
+      repository: library/alpine
+      tag: 3.14
+      pullPolicy: IfNotPresent
+    resources: {}

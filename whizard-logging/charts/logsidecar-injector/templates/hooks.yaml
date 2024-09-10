@@ -1,0 +1,149 @@
+{{- if eq .Values.global.clusterInfo.role "host" }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Release.Name }}-hooks
+  namespace: {{ template "logsidecar-injector.namespace" . }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}-hooks
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
+rules:
+  - verbs:
+      - 'create'
+      - 'patch'
+      - 'update'
+      - 'get'
+    apiGroups:
+      - 'extensions.kubesphere.io'
+      - 'kubesphere.io'
+    resources:
+      - '*'
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ .Release.Name }}-hooks
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "3"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Release.Name }}-hooks
+    namespace: {{ template "logsidecar-injector.namespace" . }}
+roleRef:
+  kind: ClusterRole
+  name: {{ .Release.Name }}-hooks
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-hooks
+  namespace: {{ template "logsidecar-injector.namespace" . }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "4"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  backoffLimit: {{ .Values.hook.postInstall.backoffLimit }}
+  template:
+    metadata:
+      name: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}-hooks
+      restartPolicy: Never
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: annotate-job
+          image: {{  include "global.imageRegistry" . }}{{ .Values.hook.postInstall.image.repo }}:{{ .Values.hook.postInstall.image.tag }}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              string_in_array() {
+                local search_string="$1"
+                shift
+                local my_array=("$@")
+                for element in "${my_array[@]}"; do
+                  if [[ "$element" == "$search_string" ]]; then
+                    return 0
+                  fi
+                done
+                return 1
+              }
+
+              # 读取 JSON 数据
+              json_file=$(kubectl get installplan whizard-logging -o json)
+
+              # 提取 cluster 列表
+              install_array=$(echo "$json_file" | jq -r '.spec.clusterScheduling.placement.clusters')
+              placement_clusters=($(echo "$install_array" | jq -r '.[]'))
+              echo "placement_clusters: ${placement_clusters[@]}"
+
+              # 提取默认配置中的 enabled 状态
+              default_config_enabled=$(echo "$json_file" | jq -r '.spec.config' | awk '/logsidecar-injector:/,/enabled:/{if(/enabled:/) print $2}')
+              echo "default_config_enabled: $default_config_enabled"
+
+              # 提取 overrides 配置
+              overrides=$(echo "$json_file" | jq '.spec.clusterScheduling.overrides')
+              echo "overrides: $overrides"
+
+              # 如果 overrides 为空且默认配置为 false，移除 annotation
+              if [[ "$overrides" == "null" && "$default_config_enabled" == "false" ]]; then
+                kubectl annotate --overwrite extension whizard-logging logging.kubesphere.io/enable-loggingsidecar=""
+                exit 0
+              fi
+
+              # 如果 overrides 为空且默认配置为 true，添加所有 placement_clusters
+              if [[ "$overrides" == "null" && "$default_config_enabled" == "true" ]]; then
+                result=$(IFS=,; echo "${placement_clusters[*]}")
+                echo "result: $result"
+                kubectl annotate --overwrite extension whizard-logging logging.kubesphere.io/enable-loggingsidecar=$result
+                exit 0
+              fi
+
+              # 提取 overrides 中的所有 cluster 键
+              overrides_clusters=$(echo "$json_file" | jq -r 'keys[]' <<< "$(jq '.spec.clusterScheduling.overrides' <<< "$json_file")")
+              overrides_clusters_array=($(echo "$overrides_clusters"))
+              echo "overrides_clusters_array: ${overrides_clusters_array[@]}"
+              result=""
+              delimiter=","
+
+              # # 遍历所有 placement_clusters
+              for cluster in "${placement_clusters[@]}"; do
+                enabled=$default_config_enabled
+                # 如果 cluster 在 overrides 中，提取其 enabled 状态
+                if string_in_array "$cluster" "${overrides_clusters_array[@]}"; then
+                  logsidecar_enabled=$(echo "$json_file" | jq -r ".spec.clusterScheduling.overrides" | jq -r .[\"$cluster\"] | awk '/enabled:/{print $2}')
+                  enabled=${logsidecar_enabled:-$default_config_enabled}
+                fi
+                # 如果 enabled 为 true，添加到结果中
+                if [ "$enabled" == "true" ]; then
+                  result+="$cluster$delimiter"
+                fi
+              done
+
+              # 移除最后一个分隔符并输出结果
+              result="${result%$delimiter}"
+              echo "result: $result"
+              kubectl annotate --overwrite extension whizard-logging logging.kubesphere.io/enable-loggingsidecar=$result
+
+
+
+{{ end }}

@@ -1,0 +1,11 @@
+nameOverride: ""
+namespaceOverride: ""
+global:
+  clusterInfo:
+    name: ""
+
+filter:
+  extraLabelSelector: "app.kubernetes.io/name!=kube-events-exporter"
+  extraNamespaceLabelSelector: ""
+  includeNamespaces: []
+  excludeNamespaces: []

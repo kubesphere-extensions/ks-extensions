@@ -1,0 +1,46 @@
+{{- $namespace := include "kube-events-exporter.namespaceOverride" . }}
+{{- $sinks := (lookup "v1" "Secret" $namespace  "vector-sinks") -}}
+{{- $bulk := include "opensearch.bulk" . | fromYaml }}
+{{- $dst := .Values.sinks.opensearch.metadata | mustMerge $bulk }}
+
+{{- if .Values.sinks.opensearch.enabled }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vector-agent-events-sink-opensearch
+  namespace: {{ include "kube-events-exporter.namespaceOverride" . }}
+  labels:
+    {{- include "kube-events-exporter.labels" . | nindent 4 }}
+    logging.whizard.io/component: "events"
+    logging.whizard.io/vector-role: Agent
+    logging.whizard.io/enable: "true"
+stringData:
+  sink.yaml: |
+    transforms:
+      opensearch_events_remapped:
+        drop_on_error: true
+        inputs:
+        - kube_events_remapped
+        source: |-
+          {{- if and .Values.sinks.opensearch.index .Values.sinks.opensearch.index.timestring }}
+          .timestring = format_timestamp!(.timestamp, format: "{{ .Values.sinks.opensearch.index.timestring }}", timezone: "local")
+          {{- else }}
+          .timestring = format_timestamp!(.timestamp, format: "%Y.%m.%d", timezone: "local")
+          {{- end }}
+          .unixtime = to_unix_timestamp!(.timestamp, "nanoseconds")
+        type: remap
+    sinks:
+      opensearch_events:
+        {{- if $sinks -}}
+        {{- if $sinks.data.opensearch -}}
+        {{- $src := ($sinks.data.opensearch | b64dec | fromYaml) -}}
+        {{- $new := deepCopy $src | mustMerge $dst -}}
+        {{- toYaml $new | nindent 8 }}
+        {{- end}}
+        {{- else if $dst }}
+        {{- toYaml $dst | nindent 8 }}
+        {{- end}}
+        type: elasticsearch
+        inputs:
+        - opensearch_events_remapped
+{{- end}}

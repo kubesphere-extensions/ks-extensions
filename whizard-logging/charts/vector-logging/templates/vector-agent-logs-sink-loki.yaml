@@ -1,0 +1,40 @@
+{{- $namespace := include "logging.namespaceOverride" . }}
+{{- $sinks := (lookup "v1" "Secret" $namespace  "vector-sinks") -}}
+{{- $dst := .Values.sinks.loki.metadata }}
+
+{{- if .Values.sinks.loki.enabled }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vector-agent-logs-sink-loki
+  namespace: {{ include "logging.namespaceOverride" . }}
+  labels:
+    logging.whizard.io/component: "logs"
+    logging.whizard.io/vector-role: Agent
+    logging.whizard.io/enable: "true"
+stringData:
+  pipeline.yaml: |
+    sinks:
+      loki_logs:
+        {{- if $sinks -}}
+        {{- if $sinks.data.loki -}}
+        {{- $src := ($sinks.data.loki | b64dec | fromYaml) -}}
+        {{- $new := deepCopy $src | mustMerge $dst -}}
+        {{- toYaml $new | nindent 8 }}
+        {{- end}}
+        {{- else if $dst }}
+        {{- toYaml $dst | nindent 8 }}
+        {{- end}}
+        type: loki
+        inputs:
+        - kube_logs_remapped
+        - systemd_logs_remapped
+        {{- if .Values.calico.enabled }}
+        - calico_logs_remapped
+        {{- end }}
+        labels:
+        {{- range $value := .Values.sinks.loki.labels }}
+        {{- $pair := regexSplit "\\s*=\\s*" $value -1 }}
+          {{ index $pair 0 }}: {{ index $pair 1 }}
+        {{- end }}
+{{- end}}

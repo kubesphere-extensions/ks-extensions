@@ -1,0 +1,74 @@
+apiVersion: v1
+name: whizard-notification
+namespace: kubesphere-monitoring-system
+version: 2.5.9
+displayName:
+  zh: WhizardTelemetry 通知
+  en: WhizardTelemetry Notification
+description:
+  zh: |-
+    WhizardTelemetry 通知 KubeSphere 团队开发的 WhizardTelemetry 可观测平台中提供通知功能的扩展组件，可提供电子邮件、Slack、企业微信、钉钉、飞书、Webhook 等多渠道通知功能。
+  en: |-
+    As a part of KubeSphere's WhizardTelemetry Observability Platform, WhizardTelemetry Notification provides multi-channel notification capabilities such as email, Slack, WeChat, DingTalk, Feishu, and Webhook, etc.
+category: observability
+keywords:
+  - Observability
+  - Notification
+home: https://kubesphere.com.cn/
+sources: []
+kubeVersion: '>=1.19.0-0'
+ksVersion: '>=4.0.0-0'
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+staticFileDirectory: static
+dependencies:
+  - name: iam
+    tags:
+      - extension
+  - name: frontend
+    tags:
+      - extension
+  - name: notification-manager
+    tags:
+      - extension
+  - name: alertmanager
+    tags:
+      - extension
+  - name: alertmanager-proxy
+    tags:
+      - extension
+installationMode: HostOnly
+externalDependencies:
+  - name: vector
+    type: extension
+    version: '>=1.0.0'
+    required: true
+  - name: whizard-telemetry
+    type: extension
+    version: '>= 1.0.0-0'
+    required: true
+  - name: opensearch
+    type: extension
+    version: '>=2.11.1'
+    required: false
+icon: ./static/favicon.svg
+images:
+  - docker.io/kubesphere/kubectl:v1.27.12
+  - docker.io/kubesphere/kube-rbac-proxy:v0.11.0
+  - docker.io/kubesphere/alertmanager-proxy:v0.2.0
+  - docker.io/kubesphere/notification-manager-operator:v2.5.2
+  - docker.io/kubesphere/notification-manager:v2.5.2
+  - docker.io/kubesphere/notification-tenant-sidecar:v4.0.2
+  - quay.io/prometheus/alertmanager:v0.27.0
+  - quay.io/prometheus-operator/prometheus-config-reloader:v0.75.1
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+docs: https://docs.kubesphere.com.cn/

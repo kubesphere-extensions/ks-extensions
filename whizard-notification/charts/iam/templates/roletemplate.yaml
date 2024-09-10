@@ -1,0 +1,28 @@
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"notification": "receive"}'
+  labels:
+    iam.kubesphere.io/aggregate-to-operator: ""
+    iam.kubesphere.io/aggregate-to-viewer: ""
+    iam.kubesphere.io/category: namespace-receive-notification
+    iam.kubesphere.io/scope: namespace
+    kubesphere.io/managed: "true"
+  name: namespace-receive-notification
+spec:
+  description:
+    en: Receive notification.
+    zh: 接收 namespace 相关通知
+  displayName:
+    en: Notification Receive
+    zh: 接收通知
+  rules:
+    - apiGroups:
+        - 'notification.kubesphere.io'
+      resources:
+        - receivenotification
+      verbs:
+        - get
+        - list
+        - watch

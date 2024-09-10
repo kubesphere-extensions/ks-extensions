@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alertmanager-proxy
+  namespace: {{ include "proxy.namespaceOverride" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: alertmanager-proxy
+  template:
+    metadata:
+      labels:
+        name: alertmanager-proxy
+    spec:
+      {{- include "common.nodeSelectors" .}}
+      {{- include "common.tolerations" .}}
+      {{- include "common.affinity" .}}
+      containers:
+        - args:
+          {{- toYaml .Values.args | nindent 10 }}
+          image: {{ include "global.imageRegistry" . }}{{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: alertmanager-proxy
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: host-time
+              readOnly: true
+          resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - hostPath:
+            path: /etc/localtime
+            type: ""
+          name: host-time
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alertmanager-proxy
+  namespace: {{ include "proxy.namespaceOverride" . }}
+spec:
+  {{- if gt (int .Values.service.nodePort) 0 }}
+  type: NodePort
+  {{- end }}
+  ports:
+    - port: 8080
+      targetPort: 8080
+      {{- if gt (int .Values.service.nodePort) 0 }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
+  selector:
+    name: alertmanager-proxy

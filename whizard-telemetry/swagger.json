@@ -1,0 +1,2806 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "WhizardTelemetry OpenAPI",
+    "title": "WhizardTelemetry",
+    "contact": {
+      "name": "KubeSphere",
+      "url": "https://kubesphere.io/",
+      "email": "kubesphere@yunify.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "v0.0.0",
+    "x-taggroups": [
+      {
+        "name": "Monitoring",
+        "tags": [
+          "Cluster Metrics",
+          "Node Metrics",
+          "Namespace Metrics",
+          "Workload Metrics",
+          "Pod Metrics",
+          "Container Metrics",
+          "Workspace Metrics",
+          "Component Metrics"
+        ]
+      },
+      {
+        "name": "Logging",
+        "tags": [
+          "Log Query"
+        ]
+      },
+      {
+        "name": "Events",
+        "tags": [
+          "Events Query"
+        ]
+      }
+    ]
+  },
+  "paths": {
+    "/kapis/logging.kubesphere.io/v1alpha2/auditing": {
+      "get": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "text/plain"
+        ],
+        "tags": [
+          "Auditing Query"
+        ],
+        "summary": "Query auditing events against the cluster",
+        "operationId": "queryAuditing",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "query",
+            "description": "Operation type. This can be one of four types: query (for querying logs), statistics (for retrieving statistical data), histogram (for displaying log count by time interval) and export (for exporting logs). Defaults to query.",
+            "name": "operation",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of workspaces. This field restricts the query to specified workspaces. For example, the following filter matches the workspace my-ws and demo-ws: `my-ws,demo-ws`.",
+            "name": "workspace_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. Differing from **workspace_filter**, this field performs fuzzy matching on workspaces. For example, the following value limits the query to workspaces whose name contains the word my(My,MY,...) *OR* demo(Demo,DemO,...): `my,demo`.",
+            "name": "workspace_search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of namespaces. This field restricts the query to specified `ObjectRef.Namespace`.",
+            "name": "objectref_namespace_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. Differing from **objectref_namespace_filter**, this field performs fuzzy matching on `ObjectRef.Namespace`.",
+            "name": "objectref_namespace_search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of names. This field restricts the query to specified `ObjectRef.Name`.",
+            "name": "objectref_name_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. Differing from **objectref_name_filter**, this field performs fuzzy matching on `ObjectRef.Name`.",
+            "name": "objectref_name_search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of levels. This know values are Metadata, Request, RequestResponse.",
+            "name": "level_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of verbs. This field restricts the query to specified verb. This field restricts the query to specified `Verb`.",
+            "name": "verb_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of user. This field restricts the query to specified user. For example, the following filter matches the user user1 and user2: `user1,user2`.",
+            "name": "user_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. Differing from **user_filter**, this field performs fuzzy matching on 'User.username'. For example, the following value limits the query to user whose name contains the word my(My,MY,...) *OR* demo(Demo,DemO,...): `my,demo`.",
+            "name": "user_search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. This field performs fuzzy matching on 'User.Groups'. For example, the following value limits the query to group which contains the word my(My,MY,...) *OR* demo(Demo,DemO,...): `my,demo`.",
+            "name": "group_search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. This field performs fuzzy matching on 'SourceIPs'. For example, the following value limits the query to SourceIPs which contains 127.0 *OR* 192.168.: `127.0,192.168.`.",
+            "name": "source_ip_search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of resource. This field restricts the query to specified ip. This field restricts the query to specified `ObjectRef.Resource`.",
+            "name": "objectref_resource_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of subresource. This field restricts the query to specified subresource. This field restricts the query to specified `ObjectRef.Subresource`.",
+            "name": "objectref_subresource_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of response status code. This field restricts the query to specified response status code. This field restricts the query to specified `ResponseStatus.code`.",
+            "name": "response_code_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of response status. This field restricts the query to specified response status. This field restricts the query to specified `ResponseStatus.status`.",
+            "name": "response_status_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Start time of query (limits `RequestReceivedTimestamp`). The format is a string representing seconds since the epoch, eg. 1136214245.",
+            "name": "start_time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query (limits `RequestReceivedTimestamp`). The format is a string representing seconds since the epoch, eg. 1136214245.",
+            "name": "end_time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "15m",
+            "description": "Time interval. It requires **operation** is set to `histogram`. The format is [0-9]+[smhdwMqy]. Defaults to 15m (i.e. 15 min).",
+            "name": "interval",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "desc",
+            "description": "Sort order. One of asc, desc. This field sorts events by `RequestReceivedTimestamp`.",
+            "name": "sort",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "The offset from the result set. This field returns query results from the specified offset. It requires **operation** is set to `query`. Defaults to 0 (i.e. from the beginning of the result set).",
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 10,
+            "description": "Size of result set to return. It requires **operation** is set to `query`. Defaults to 10 (i.e. 10 event records).",
+            "name": "size",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "host",
+            "description": ".",
+            "name": "cluster",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/auditing.APIResponse"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/logging.kubesphere.io/v1alpha2/events": {
+      "get": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "text/plain"
+        ],
+        "tags": [
+          "Events Query"
+        ],
+        "summary": "Query events against the cluster",
+        "operationId": "queryEvents",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "query",
+            "description": "Operation type. This can be one of four types: query (for querying logs), statistics (for retrieving statistical data), histogram (for displaying log count by time interval) and export (for exporting logs). Defaults to query.",
+            "name": "operation",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of workspaces. This field restricts the query to specified workspaces. For example, the following filter matches the workspace my-ws and demo-ws: `my-ws,demo-ws`.",
+            "name": "workspace_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. Differing from **workspace_filter**, this field performs fuzzy matching on workspaces. For example, the following value limits the query to workspaces whose name contains the word my(My,MY,...) *OR* demo(Demo,DemO,...): `my,demo`.",
+            "name": "workspace_search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of namespaces. This field restricts the query to specified `involvedObject.namespace`.",
+            "name": "involved_object_namespace_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. Differing from **involved_object_namespace_filter**, this field performs fuzzy matching on `involvedObject.namespace`",
+            "name": "involved_object_namespace_search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of names. This field restricts the query to specified `involvedObject.name`.",
+            "name": "involved_object_name_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. Differing from **involved_object_name_filter**, this field performs fuzzy matching on `involvedObject.name`.",
+            "name": "involved_object_name_search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of kinds. This field restricts the query to specified `involvedObject.kind`.",
+            "name": "involved_object_kind_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of reasons. This field restricts the query to specified `reason`.",
+            "name": "reason_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. Differing from **reason_filter**, this field performs fuzzy matching on `reason`.",
+            "name": "reason_search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. This field performs fuzzy matching on `message`.",
+            "name": "message_search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Type of event matching on `type`. This can be one of two types: `Warning`, `Normal`",
+            "name": "type_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Start time of query (limits `lastTimestamp`). The format is a string representing seconds since the epoch, eg. 1136214245.",
+            "name": "start_time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query (limits `lastTimestamp`). The format is a string representing seconds since the epoch, eg. 1136214245.",
+            "name": "end_time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "15m",
+            "description": "Time interval. It requires **operation** is set to `histogram`. The format is [0-9]+[smhdwMqy]. Defaults to 15m (i.e. 15 min).",
+            "name": "interval",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "desc",
+            "description": "Sort order. One of asc, desc. This field sorts events by `lastTimestamp`.",
+            "name": "sort",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "The offset from the result set. This field returns query results from the specified offset. It requires **operation** is set to `query`. Defaults to 0 (i.e. from the beginning of the result set).",
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 10,
+            "description": "Size of result set to return. It requires **operation** is set to `query`. Defaults to 10 (i.e. 10 event records).",
+            "name": "size",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "host",
+            "description": "cluster name.",
+            "name": "cluster",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/events.APIResponse"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/logging.kubesphere.io/v1alpha2/logs": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Log Query"
+        ],
+        "summary": "Query logs against the cluster.",
+        "operationId": "queryLogs",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "query",
+            "description": "Operation type. This can be one of four types: query (for querying logs), statistics (for retrieving statistical data), histogram (for displaying log count by time interval) and export (for exporting logs). Defaults to query.",
+            "name": "operation",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of namespaces. This field restricts the query to specified namespaces. For example, the following filter matches the namespace my-ns and demo-ns: `my-ns,demo-ns`",
+            "name": "namespaces",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. Differing from **namespaces**, this field performs fuzzy matching on namespaces. For example, the following value limits the query to namespaces whose name contains the word my(My,MY,...) *OR* demo(Demo,DemO,...): `my,demo`.",
+            "name": "namespace_query",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of workloads. This field restricts the query to specified workloads. For example, the following filter matches the workload my-wl and demo-wl: `my-wl,demo-wl`",
+            "name": "workloads",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. Differing from **workloads**, this field performs fuzzy matching on workloads. For example, the following value limits the query to workloads whose name contains the word my(My,MY,...) *OR* demo(Demo,DemO,...): `my,demo`.",
+            "name": "workload_query",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of pods. This field restricts the query to specified pods. For example, the following filter matches the pod my-po and demo-po: `my-po,demo-po`",
+            "name": "pods",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. Differing from **pods**, this field performs fuzzy matching on pods. For example, the following value limits the query to pods whose name contains the word my(My,MY,...) *OR* demo(Demo,DemO,...): `my,demo`.",
+            "name": "pod_query",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of containers. This field restricts the query to specified containers. For example, the following filter matches the container my-cont and demo-cont: `my-cont,demo-cont`",
+            "name": "containers",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. Differing from **containers**, this field performs fuzzy matching on containers. For example, the following value limits the query to containers whose name contains the word my(My,MY,...) *OR* demo(Demo,DemO,...): `my,demo`.",
+            "name": "container_query",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A comma-separated list of keywords. The query returns logs which contain at least one keyword. Case-insensitive matching. For example, if the field is set to `err,INFO`, the query returns any log containing err(ERR,Err,...) *OR* INFO(info,InFo,...).",
+            "name": "log_query",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "15m",
+            "description": "Time interval. It requires **operation** is set to histogram. The format is [0-9]+[smhdwMqy]. Defaults to 15m (i.e. 15 min).",
+            "name": "interval",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Start time of query. Default to 0. The format is a string representing seconds since the epoch, eg. 1559664000.",
+            "name": "start_time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query. Default to now. The format is a string representing seconds since the epoch, eg. 1559664000.",
+            "name": "end_time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "desc",
+            "description": "Sort order. One of asc, desc. This field sorts logs by timestamp.",
+            "name": "sort",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 0,
+            "description": "The offset from the result set. This field returns query results from the specified offset. It requires **operation** is set to query. Defaults to 0 (i.e. from the beginning of the result set).",
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 10,
+            "description": "Size of result to return. It requires **operation** is set to query. Defaults to 10 (i.e. 10 log records).",
+            "name": "size",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "host",
+            "description": "cluster name.",
+            "name": "cluster",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/logging.APIResponse"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/monitoring.kubesphere.io/v1beta1/cluster_metrics": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Cluster Metrics"
+        ],
+        "summary": "Get clusters-level metric data.",
+        "operationId": "handleClusterMetricsQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Cluster name.",
+            "name": "cluster",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The cluster filter consists of a regexp pattern. It specifies which cluster data to return.",
+            "name": "resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The metric name filter consists of a regexp pattern. It specifies which metric data to return. View available metrics at [kubesphere-api](https://dev-guide.kubesphere.io/extension-dev-guide/zh/references/kubesphere-api/).",
+            "name": "metrics_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Start time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1559347200. ",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1561939200. ",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "10m",
+            "description": "Time interval. Retrieve metric data at a fixed interval within the time range of start and end. It requires both **start** and **end** are provided. The format is [0-9]+[smhdwy]. Defaults to 10m (i.e. 10 min).",
+            "name": "step",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A timestamp in Unix time format. Retrieve metric data at a single point in time. Defaults to now. Time and the combination of start, end, step are mutually exclusive.",
+            "name": "time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Sort resource by the specified metric. Not applicable if **start** and **end** are provided.",
+            "name": "sort_metric",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "desc.",
+            "description": "Sort order. One of asc, desc.",
+            "name": "sort_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "The page number. This field paginates result data of each metric, then returns a specific page. For example, setting **page** to 2 returns the second page. It only applies to sorted metric data.",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 5,
+            "description": "Page size, the maximum number of results in a single page. Defaults to 5.",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/monitoring.Metrics"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/monitoring.kubesphere.io/v1beta1/component_metrics": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Component Metrics"
+        ],
+        "summary": "Get component-level metric data.",
+        "operationId": "handleComponentMetricsQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Cluster name.",
+            "name": "cluster",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "system component to monitor. One of etcd, apiserver, scheduler.",
+            "name": "component",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "The metric name filter consists of a regexp pattern. It specifies which metric data to return. For example, the following filter matches both etcd server list and total size of the underlying database: `etcd_server_list|etcd_mvcc_db_size`. View available metrics at [kubesphere.io](https://docs.kubesphere.io/advanced-v2.0/zh-CN/api-reference/monitoring-metrics/).",
+            "name": "metrics_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Start time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1559347200. ",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1561939200. ",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "10m",
+            "description": "Time interval. Retrieve metric data at a fixed interval within the time range of start and end. It requires both **start** and **end** are provided. The format is [0-9]+[smhdwy]. Defaults to 10m (i.e. 10 min).",
+            "name": "step",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A timestamp in Unix time format. Retrieve metric data at a single point in time. Defaults to now. Time and the combination of start, end, step are mutually exclusive.",
+            "name": "time",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/monitoring.Metrics"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/monitoring.kubesphere.io/v1beta1/container_metrics": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Container Metrics"
+        ],
+        "summary": "Get container-level metric.",
+        "operationId": "handleContainerMetricsQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Cluster name.",
+            "name": "cluster",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The cluster filter consists of a regexp pattern. It specifies which cluster data to return.",
+            "name": "cluster_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Namespace name.",
+            "name": "namespace",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The namespace filter consists of a regexp pattern. It specifies which namespace data to return.",
+            "name": "namespace_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Pod name.",
+            "name": "pod",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The pod filter consists of a regexp pattern. It specifies which pod data to return.",
+            "name": "pod_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Container name.",
+            "name": "container",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The container filter consists of a regexp pattern. It specifies which container data to return.",
+            "name": "resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The metric name filter consists of a regexp pattern. It specifies which metric data to return. For example, the following filter matches both container CPU usage and memory usage: `container_cpu_usage|container_memory_usage`. View available metrics at [kubesphere.io](https://docs.kubesphere.io/advanced-v2.0/zh-CN/api-reference/monitoring-metrics/).",
+            "name": "metrics_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Start time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1559347200. ",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1561939200. ",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "10m",
+            "description": "Time interval. Retrieve metric data at a fixed interval within the time range of start and end. It requires both **start** and **end** are provided. The format is [0-9]+[smhdwy]. Defaults to 10m (i.e. 10 min).",
+            "name": "step",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A timestamp in Unix time format. Retrieve metric data at a single point in time. Defaults to now. Time and the combination of start, end, step are mutually exclusive.",
+            "name": "time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Sort containers by the specified metric. Not applicable if **start** and **end** are provided.",
+            "name": "sort_metric",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "desc.",
+            "description": "Sort order. One of asc, desc.",
+            "name": "sort_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "The page number. This field paginates result data of each metric, then returns a specific page. For example, setting **page** to 2 returns the second page. It only applies to sorted metric data.",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 5,
+            "description": "Page size, the maximum number of results in a single page. Defaults to 5.",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/monitoring.Metrics"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/monitoring.kubesphere.io/v1beta1/namespace_metrics": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Namespace Metrics"
+        ],
+        "summary": "Get namespace-level metric data.",
+        "operationId": "handleNamespaceMetricsQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Cluster name.",
+            "name": "cluster",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The cluster filter consists of a regexp pattern. It specifies which cluster data to return.",
+            "name": "cluster_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Workspace name.",
+            "name": "workspace",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The workspace filter consists of a regexp pattern. It specifies which workspace data to return.`.",
+            "name": "workspace_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Namespace name.",
+            "name": "namespace",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The namespace filter consists of a regexp pattern. It specifies which namespace data to return.",
+            "name": "resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The metric name filter consists of a regexp pattern. It specifies which metric data to return. For example, the following filter matches both namespace CPU usage and memory usage: `namespace_cpu_usage|namespace_memory_usage`. View available metrics at [kubesphere.io](https://docs.kubesphere.io/advanced-v2.0/zh-CN/api-reference/monitoring-metrics/).",
+            "name": "metrics_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Start time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1559347200. ",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1561939200. ",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "10m",
+            "description": "Time interval. Retrieve metric data at a fixed interval within the time range of start and end. It requires both **start** and **end** are provided. The format is [0-9]+[smhdwy]. Defaults to 10m (i.e. 10 min).",
+            "name": "step",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A timestamp in Unix time format. Retrieve metric data at a single point in time. Defaults to now. Time and the combination of start, end, step are mutually exclusive.",
+            "name": "time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Sort namespaces by the specified metric. Not applicable if **start** and **end** are provided.",
+            "name": "sort_metric",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "desc.",
+            "description": "Sort order. One of asc, desc.",
+            "name": "sort_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "The page number. This field paginates result data of each metric, then returns a specific page. For example, setting **page** to 2 returns the second page. It only applies to sorted metric data.",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 5,
+            "description": "Page size, the maximum number of results in a single page. Defaults to 5.",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/monitoring.Metrics"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/monitoring.kubesphere.io/v1beta1/node_metrics": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Node Metrics"
+        ],
+        "summary": "Get node-level metric data.",
+        "operationId": "handleNodeMetricsQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Cluster name.",
+            "name": "cluster",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The cluster filter consists of a regexp pattern. It specifies which cluster data to return.",
+            "name": "cluster_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Node name.",
+            "name": "node",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The node filter consists of a regexp pattern. It specifies which node data to return.",
+            "name": "resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The metric name filter consists of a regexp pattern. It specifies which metric data to return. View available metrics at [kubesphere-api](https://dev-guide.kubesphere.io/extension-dev-guide/zh/references/kubesphere-api/).",
+            "name": "metrics_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Start time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1559347200. ",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1561939200. ",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "10m",
+            "description": "Time interval. Retrieve metric data at a fixed interval within the time range of start and end. It requires both **start** and **end** are provided. The format is [0-9]+[smhdwy]. Defaults to 10m (i.e. 10 min).",
+            "name": "step",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A timestamp in Unix time format. Retrieve metric data at a single point in time. Defaults to now. Time and the combination of start, end, step are mutually exclusive.",
+            "name": "time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Sort resource by the specified metric. Not applicable if **start** and **end** are provided.",
+            "name": "sort_metric",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "desc.",
+            "description": "Sort order. One of asc, desc.",
+            "name": "sort_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "The page number. This field paginates result data of each metric, then returns a specific page. For example, setting **page** to 2 returns the second page. It only applies to sorted metric data.",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 5,
+            "description": "Page size, the maximum number of results in a single page. Defaults to 5.",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/monitoring.Metrics"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/monitoring.kubesphere.io/v1beta1/persistentvolumeclaim_metrics": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "PVC Metrics"
+        ],
+        "summary": "Get PVC-level metric data.",
+        "operationId": "handlePVCMetricsQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Cluster name.",
+            "name": "cluster",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The cluster filter consists of a regexp pattern. It specifies which cluster data to return.",
+            "name": "cluster_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Namespace name.",
+            "name": "namespace",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The namespace filter consists of a regexp pattern. It specifies which namespace data to return.",
+            "name": "namespace_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Storageclass name.",
+            "name": "storageclass",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The StorageClass filter consists of a regexp pattern. It specifies which StorageClass data to return.",
+            "name": "storageclass_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "PersistentVolumeClaim name.",
+            "name": "pvc",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The PersistentVolumeClaim filter consists of a regexp pattern. It specifies which PersistentVolumeClaim data to return.",
+            "name": "resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The metric name filter consists of a regexp pattern. It specifies which metric data to return. For example, the following filter matches both PVC available and used inodes: `pvc_inodes_available|pvc_inodes_used`. View available metrics at [kubesphere.io](https://docs.kubesphere.io/advanced-v2.0/zh-CN/api-reference/monitoring-metrics/).",
+            "name": "metrics_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Start time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1559347200. ",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1561939200. ",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "10m",
+            "description": "Time interval. Retrieve metric data at a fixed interval within the time range of start and end. It requires both **start** and **end** are provided. The format is [0-9]+[smhdwy]. Defaults to 10m (i.e. 10 min).",
+            "name": "step",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A timestamp in Unix time format. Retrieve metric data at a single point in time. Defaults to now. Time and the combination of start, end, step are mutually exclusive.",
+            "name": "time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Sort PVCs by the specified metric. Not applicable if **start** and **end** are provided.",
+            "name": "sort_metric",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "desc.",
+            "description": "Sort order. One of asc, desc.",
+            "name": "sort_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "The page number. This field paginates result data of each metric, then returns a specific page. For example, setting **page** to 2 returns the second page. It only applies to sorted metric data.",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 5,
+            "description": "Page size, the maximum number of results in a single page. Defaults to 5.",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/monitoring.Metrics"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/monitoring.kubesphere.io/v1beta1/pod_metrics": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Pod Metrics"
+        ],
+        "summary": "Get pod-level metric data.",
+        "operationId": "handlePodMetricsQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Cluster name.",
+            "name": "cluster",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The cluster filter consists of a regexp pattern. It specifies which cluster data to return.",
+            "name": "cluster_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Node name.",
+            "name": "node",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The node filter consists of a regexp pattern. It specifies which node data to return.",
+            "name": "node_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Workspace name.",
+            "name": "worksapce",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The workspace filter consists of a regexp pattern. It specifies which workspace data to return.`.",
+            "name": "workspace_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Namespace name.",
+            "name": "namespace",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The namespace filter consists of a regexp pattern. It specifies which namespace data to return.",
+            "name": "namespace_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Workload name.",
+            "name": "workload_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The workload name filter consists of a regexp pattern. It specifies which workload name data to return.",
+            "name": "workload_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Pod name.",
+            "name": "pod",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The pod filter consists of a regexp pattern. It specifies which pod data to return.",
+            "name": "resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Start time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1559347200. ",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1561939200. ",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "10m",
+            "description": "Time interval. Retrieve metric data at a fixed interval within the time range of start and end. It requires both **start** and **end** are provided. The format is [0-9]+[smhdwy]. Defaults to 10m (i.e. 10 min).",
+            "name": "step",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A timestamp in Unix time format. Retrieve metric data at a single point in time. Defaults to now. Time and the combination of start, end, step are mutually exclusive.",
+            "name": "time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Sort pods by the specified metric. Not applicable if **start** and **end** are provided.",
+            "name": "sort_metric",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "desc.",
+            "description": "Sort order. One of asc, desc.",
+            "name": "sort_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "The page number. This field paginates result data of each metric, then returns a specific page. For example, setting **page** to 2 returns the second page. It only applies to sorted metric data.",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 5,
+            "description": "Page size, the maximum number of results in a single page. Defaults to 5.",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/monitoring.Metrics"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/monitoring.kubesphere.io/v1beta1/targets/labelsets": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Custom Metrics"
+        ],
+        "summary": "List all available labels and values of a metric within a specific time span.",
+        "operationId": "handleMetricLabelSetQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Cluster name.",
+            "name": "cluster",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Namespace name.",
+            "name": "namespace",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The name of the metric",
+            "name": "metric",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Start time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1559347200. ",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1561939200. ",
+            "name": "end",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/monitoring.MetricLabelSet"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/monitoring.kubesphere.io/v1beta1/targets/labelvalues": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Custom Metrics"
+        ],
+        "summary": "List all available values of a label within a specific time span.",
+        "operationId": "handleLabelValuesQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Cluster name.",
+            "name": "cluster",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Namespace name.",
+            "name": "namespace",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The name of the metric",
+            "name": "label",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "name": "matches",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Start time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1559347200. ",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1561939200. ",
+            "name": "end",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/monitoring.MetricLabelValue"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/monitoring.kubesphere.io/v1beta1/targets/metadata": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Custom Metrics"
+        ],
+        "summary": "Get metadata of metrics within a specific time span.",
+        "operationId": "handleMetadataQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Cluster name.",
+            "name": "cluster",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Namespace name.",
+            "name": "namespace",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The name of the metric",
+            "name": "metric",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/monitoring.Metadata"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/monitoring.kubesphere.io/v1beta1/targets/query": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Custom Metrics"
+        ],
+        "summary": "Make an ad-hoc query.",
+        "operationId": "handleAdhocQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Cluster name.",
+            "name": "cluster",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Namespace name.",
+            "name": "namespace",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The expression to be evaluated.",
+            "name": "expr",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Start time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1559347200. ",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1561939200. ",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "10m",
+            "description": "Time interval. Retrieve metric data at a fixed interval within the time range of start and end. It requires both **start** and **end** are provided. The format is [0-9]+[smhdwy]. Defaults to 10m (i.e. 10 min).",
+            "name": "step",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A timestamp in Unix time format. Retrieve metric data at a single point in time. Defaults to now. Time and the combination of start, end, step are mutually exclusive.",
+            "name": "time",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/monitoring.Metric"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/monitoring.kubesphere.io/v1beta1/workload_metrics": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Workload Metrics"
+        ],
+        "summary": "Get workload-level metric data.",
+        "operationId": "handleWorkloadMetricsQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Cluster name.",
+            "name": "cluster",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The cluster filter consists of a regexp pattern. It specifies which cluster data to return.",
+            "name": "cluster_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Namespace name.",
+            "name": "namespace",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The namespace filter consists of a regexp pattern. It specifies which namespace data to return.",
+            "name": "namespace_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Workload kind. One of deployment, daemonset, statefulset.",
+            "name": "workload_kind",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Workload name.",
+            "name": "workload_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The workload name filter consists of a regexp pattern. It specifies which workload name data to return.",
+            "name": "resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The metric name filter consists of a regexp pattern. It specifies which metric data to return. For example, the following filter matches both workload CPU usage and memory usage: `workload_cpu_usage|workload_memory_usage`. View available metrics at [kubesphere.io](https://docs.kubesphere.io/advanced-v2.0/zh-CN/api-reference/monitoring-metrics/).",
+            "name": "metrics_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Start time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1559347200. ",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1561939200. ",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "10m",
+            "description": "Time interval. Retrieve metric data at a fixed interval within the time range of start and end. It requires both **start** and **end** are provided. The format is [0-9]+[smhdwy]. Defaults to 10m (i.e. 10 min).",
+            "name": "step",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A timestamp in Unix time format. Retrieve metric data at a single point in time. Defaults to now. Time and the combination of start, end, step are mutually exclusive.",
+            "name": "time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Sort workloads by the specified metric. Not applicable if **start** and **end** are provided.",
+            "name": "sort_metric",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "desc.",
+            "description": "Sort order. One of asc, desc.",
+            "name": "sort_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "The page number. This field paginates result data of each metric, then returns a specific page. For example, setting **page** to 2 returns the second page. It only applies to sorted metric data.",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 5,
+            "description": "Page size, the maximum number of results in a single page. Defaults to 5.",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/monitoring.Metrics"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/monitoring.kubesphere.io/v1beta1/workspace_metrics": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Workspace Metrics"
+        ],
+        "summary": "Get workspace-level metric data.",
+        "operationId": "handleWorkspaceMetricsQuery",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Cluster name.",
+            "name": "cluster",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The cluster filter consists of a regexp pattern. It specifies which cluster data to return.",
+            "name": "cluster_resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Workspace name.",
+            "name": "workspace",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The workspace filter consists of a regexp pattern. It specifies which workspace data to return.`.",
+            "name": "resources_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The metric name filter consists of a regexp pattern. It specifies which metric data to return. For example, the following filter matches both workspace CPU usage and memory usage: `workspace_cpu_usage|workspace_memory_usage`. View available metrics at [kubesphere.io](https://docs.kubesphere.io/advanced-v2.0/zh-CN/api-reference/monitoring-metrics/).",
+            "name": "metrics_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Start time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1559347200. ",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "End time of query. Use **start** and **end** to retrieve metric data over a time span. It is a string with Unix time format, eg. 1561939200. ",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "10m",
+            "description": "Time interval. Retrieve metric data at a fixed interval within the time range of start and end. It requires both **start** and **end** are provided. The format is [0-9]+[smhdwy]. Defaults to 10m (i.e. 10 min).",
+            "name": "step",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "A timestamp in Unix time format. Retrieve metric data at a single point in time. Defaults to now. Time and the combination of start, end, step are mutually exclusive.",
+            "name": "time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Sort workspaces by the specified metric. Not applicable if **start** and **end** are provided.",
+            "name": "sort_metric",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "desc.",
+            "description": "Sort order. One of asc, desc.",
+            "name": "sort_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "The page number. This field paginates result data of each metric, then returns a specific page. For example, setting **page** to 2 returns the second page. It only applies to sorted metric data.",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 5,
+            "description": "Page size, the maximum number of results in a single page. Defaults to 5.",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/monitoring.Metrics"
+            }
+          }
+        }
+      }
+    },
+    "/kapis/notification.kubesphere.io/v2beta2/users/{user}/verification": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "Verify",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "user name",
+            "name": "user",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/kapis/notification.kubesphere.io/v2beta2/users/{user}/{resources}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notification"
+        ],
+        "summary": "list the notification resources",
+        "operationId": "ListResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "user name",
+            "name": "user",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "known values include configs, receivers, secrets, silences, configmaps",
+            "name": "resources",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "name used for filtering",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "label selector used for filtering",
+            "name": "labelSelector",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "config or receiver type, known values include dingtalk, email, feishu, slack, webhook, wechat",
+            "name": "type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "format": "page=%d",
+            "default": "page=1",
+            "description": "page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "limit",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "ascending=false",
+            "description": "sort parameters, e.g. ascending=false",
+            "name": "ascending",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "sort parameters, e.g. orderBy=createTime",
+            "name": "sortBy",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/api.ListResult"
+            }
+          }
+        }
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notification"
+        ],
+        "summary": "create the specified notification resources",
+        "operationId": "CreateResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "user name",
+            "name": "user",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "known values include configs, receivers, secrets, silences, configmaps",
+            "name": "resources",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/kapis/notification.kubesphere.io/v2beta2/users/{user}/{resources}/{name}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notification"
+        ],
+        "summary": "get the specified notification resources",
+        "operationId": "GetResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "user name",
+            "name": "user",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "known values include configs, receivers, secrets, silences, configmaps",
+            "name": "resources",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "the name of the resource",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "config or receiver type, known values include dingtalk, email, feishu, slack, webhook, wechat",
+            "name": "type",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      },
+      "put": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notification"
+        ],
+        "summary": "update the specified notification resources",
+        "operationId": "UpdateResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "user name",
+            "name": "user",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "known values include configs, receivers, secrets, silences, configmaps",
+            "name": "resources",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "the name of the resource",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      },
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notification"
+        ],
+        "summary": "delete the specified notification resources",
+        "operationId": "DeleteResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "user name",
+            "name": "user",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "known values include configs, receivers, secrets, silences, configmaps",
+            "name": "resources",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "the name of the resource",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "config or receiver type, known values include dingtalk, email, feishu, slack, webhook, wechat",
+            "name": "type",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/errors.Error"
+            }
+          }
+        }
+      },
+      "patch": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notification"
+        ],
+        "summary": "Patch the specified notification resources",
+        "operationId": "PatchResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "user name",
+            "name": "user",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "known values include configs, receivers, secrets, silences, configmaps",
+            "name": "resources",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "the name of the resource",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/kapis/notification.kubesphere.io/v2beta2/verification": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "Verify",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/kapis/notification.kubesphere.io/v2beta2/{resources}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notification"
+        ],
+        "summary": "list the notification resources",
+        "operationId": "ListResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "known values include notificationmanagers, configs, receivers, secrets, routers, silences, configmaps",
+            "name": "resources",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "name used for filtering",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "label selector used for filtering",
+            "name": "labelSelector",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "config or receiver type, known values include dingtalk, email, feishu, slack, webhook, wechat",
+            "name": "type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "format": "page=%d",
+            "default": "page=1",
+            "description": "page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "limit",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "ascending=false",
+            "description": "sort parameters, e.g. ascending=false",
+            "name": "ascending",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "sort parameters, e.g. orderBy=createTime",
+            "name": "sortBy",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/api.ListResult"
+            }
+          }
+        }
+      },
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notification"
+        ],
+        "summary": "create a notification resources",
+        "operationId": "CreateResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "known values include notificationmanagers, configs, receivers, secrets, routers, silences, configmaps",
+            "name": "resources",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/kapis/notification.kubesphere.io/v2beta2/{resources}/{name}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notification"
+        ],
+        "summary": "get the specified notification resources",
+        "operationId": "GetResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "known values include notificationmanagers, configs, receivers, secrets, routers, silences, configmaps",
+            "name": "resources",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "the name of the resource",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "config or receiver type, known values include dingtalk, feishu, email, slack, webhook, wechat",
+            "name": "type",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      },
+      "put": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notification"
+        ],
+        "summary": "update the specified notification resources",
+        "operationId": "UpdateResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "known values include notificationmanagers, configs, receivers, secrets, routers, silences, configmaps",
+            "name": "resources",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "the name of the resource",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      },
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notification"
+        ],
+        "summary": "delete the specified notification resources",
+        "operationId": "DeleteResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "known values include configs, receivers, secrets, routers, silences, configmaps",
+            "name": "resources",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "the name of the resource",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "config or receiver type, known values include dingtalk, email, feishu, slack, webhook, wechat",
+            "name": "type",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/errors.Error"
+            }
+          }
+        }
+      },
+      "patch": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notification"
+        ],
+        "summary": "patch the specified notification resources",
+        "operationId": "PatchResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "known values include notificationmanagers, configs, receivers, secrets, routers, silences, configmaps",
+            "name": "resources",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "the name of the resource",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "api.ListResult": {
+      "required": [
+        "items",
+        "totalItems"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.ListResult.items"
+          }
+        },
+        "totalItems": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "api.ListResult.items": {},
+    "auditing.APIResponse": {
+      "properties": {
+        "histogram": {
+          "description": "histogram results",
+          "$ref": "#/definitions/auditing.Histogram"
+        },
+        "query": {
+          "description": "query results",
+          "$ref": "#/definitions/auditing.Events"
+        },
+        "statistics": {
+          "description": "statistics results",
+          "$ref": "#/definitions/auditing.Statistics"
+        }
+      }
+    },
+    "auditing.Bucket": {
+      "required": [
+        "time",
+        "count"
+      ],
+      "properties": {
+        "count": {
+          "description": "total number of events at intervals",
+          "type": "integer",
+          "format": "int64"
+        },
+        "time": {
+          "description": "timestamp",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "auditing.Events": {
+      "required": [
+        "total",
+        "records"
+      ],
+      "properties": {
+        "records": {
+          "description": "actual array of results",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/auditing.Events.records"
+          }
+        },
+        "total": {
+          "description": "total number of matched results",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "auditing.Events.records": {},
+    "auditing.Histogram": {
+      "required": [
+        "total",
+        "buckets"
+      ],
+      "properties": {
+        "buckets": {
+          "description": "actual array of histogram results",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/auditing.Bucket"
+          }
+        },
+        "total": {
+          "description": "total number of events",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "auditing.Statistics": {
+      "required": [
+        "resources",
+        "events"
+      ],
+      "properties": {
+        "events": {
+          "description": "total number of events",
+          "type": "integer",
+          "format": "int64"
+        },
+        "resources": {
+          "description": "total number of resources",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "errors.Error": {
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
+          "description": "error message",
+          "type": "string"
+        }
+      }
+    },
+    "events.APIResponse": {
+      "properties": {
+        "histogram": {
+          "description": "histogram results",
+          "$ref": "#/definitions/events.Histogram"
+        },
+        "query": {
+          "description": "query results",
+          "$ref": "#/definitions/events.Events"
+        },
+        "statistics": {
+          "description": "statistics results",
+          "$ref": "#/definitions/events.Statistics"
+        }
+      }
+    },
+    "events.Bucket": {
+      "required": [
+        "time",
+        "count"
+      ],
+      "properties": {
+        "count": {
+          "description": "total number of events at intervals",
+          "type": "integer",
+          "format": "int64"
+        },
+        "time": {
+          "description": "timestamp",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "events.Events": {
+      "required": [
+        "total",
+        "records"
+      ],
+      "properties": {
+        "records": {
+          "description": "actual array of results",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/events.Events.records"
+          }
+        },
+        "total": {
+          "description": "total number of matched results",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "events.Events.records": {},
+    "events.Histogram": {
+      "required": [
+        "total",
+        "buckets"
+      ],
+      "properties": {
+        "buckets": {
+          "description": "actual array of histogram results",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/events.Bucket"
+          }
+        },
+        "total": {
+          "description": "total number of events",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "events.Statistics": {
+      "required": [
+        "resources",
+        "events"
+      ],
+      "properties": {
+        "events": {
+          "description": "total number of events",
+          "type": "integer",
+          "format": "int64"
+        },
+        "resources": {
+          "description": "total number of resources",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "logging.APIResponse": {
+      "properties": {
+        "histogram": {
+          "description": "histogram results",
+          "$ref": "#/definitions/logging.Histogram"
+        },
+        "query": {
+          "description": "query results",
+          "$ref": "#/definitions/logging.Logs"
+        },
+        "statistics": {
+          "description": "statistics results",
+          "$ref": "#/definitions/logging.Statistics"
+        }
+      }
+    },
+    "logging.Bucket": {
+      "required": [
+        "time",
+        "count"
+      ],
+      "properties": {
+        "count": {
+          "description": "total number of logs at intervals",
+          "type": "integer",
+          "format": "int64"
+        },
+        "time": {
+          "description": "timestamp",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "logging.Histogram": {
+      "required": [
+        "total",
+        "histograms"
+      ],
+      "properties": {
+        "histograms": {
+          "description": "actual array of histogram results",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/logging.Bucket"
+          }
+        },
+        "total": {
+          "description": "total number of logs",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "logging.Logs": {
+      "required": [
+        "total"
+      ],
+      "properties": {
+        "records": {
+          "description": "actual array of results",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/logging.Record"
+          }
+        },
+        "total": {
+          "description": "total number of matched results",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "logging.Record": {
+      "properties": {
+        "container": {
+          "description": "container name",
+          "type": "string"
+        },
+        "log": {
+          "description": "log message",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "namespace",
+          "type": "string"
+        },
+        "pod": {
+          "description": "pod name",
+          "type": "string"
+        },
+        "time": {
+          "description": "log timestamp",
+          "type": "string"
+        }
+      }
+    },
+    "logging.Statistics": {
+      "required": [
+        "containers",
+        "logs"
+      ],
+      "properties": {
+        "containers": {
+          "description": "total number of containers",
+          "type": "integer",
+          "format": "int64"
+        },
+        "logs": {
+          "description": "total number of logs",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "monitoring.ExportPoint": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "monitoring.Metadata": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "description": "actual array of results",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/monitoring.Metadata"
+          }
+        }
+      }
+    },
+    "monitoring.Metric": {
+      "properties": {
+        "data": {
+          "description": "actual metric result",
+          "$ref": "#/definitions/monitoring.MetricData"
+        },
+        "error": {
+          "type": "string"
+        },
+        "metric_name": {
+          "description": "metric name, eg. scheduler_up_sum",
+          "type": "string"
+        }
+      }
+    },
+    "monitoring.MetricData": {
+      "properties": {
+        "result": {
+          "description": "metric data including labels, time series and values",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/monitoring.MetricValue"
+          }
+        },
+        "resultType": {
+          "description": "result type, one of matrix, vector",
+          "type": "string"
+        }
+      }
+    },
+    "monitoring.MetricLabelSet": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "description": "actual array of results",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/monitoring.MetricLabelSet.data"
+          }
+        }
+      }
+    },
+    "monitoring.MetricLabelSet.data": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "monitoring.MetricLabelValue": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "monitoring.MetricValue": {
+      "required": [
+        "min_value",
+        "max_value",
+        "avg_value",
+        "sum_value",
+        "fee",
+        "resource_unit",
+        "currency_unit"
+      ],
+      "properties": {
+        "avg_value": {
+          "description": "average value from monitor points",
+          "type": "string"
+        },
+        "currency_unit": {
+          "type": "string"
+        },
+        "exported_value": {
+          "description": "exported time series, values of vector type",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "exported_values": {
+          "description": "exported time series, values of matrix type",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/monitoring.ExportPoint"
+          }
+        },
+        "fee": {
+          "description": "resource fee",
+          "type": "string"
+        },
+        "max_value": {
+          "description": "maximum value from monitor points",
+          "type": "string"
+        },
+        "metric": {
+          "description": "time series labels",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "min_value": {
+          "description": "minimum value from monitor points",
+          "type": "string"
+        },
+        "resource_unit": {
+          "type": "string"
+        },
+        "sum_value": {
+          "description": "sum value from monitor points",
+          "type": "string"
+        },
+        "value": {
+          "description": "time series, values of vector type",
+          "type": "string"
+        },
+        "values": {
+          "description": "time series, values of matrix type",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/monitoring.Point"
+          }
+        }
+      }
+    },
+    "monitoring.Metrics": {
+      "required": [
+        "results"
+      ],
+      "properties": {
+        "page": {
+          "description": "current page returned",
+          "type": "integer",
+          "format": "int32"
+        },
+        "results": {
+          "description": "actual array of results",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/monitoring.Metric"
+          }
+        },
+        "total_item": {
+          "description": "page size",
+          "type": "integer",
+          "format": "int32"
+        },
+        "total_page": {
+          "description": "total number of pages",
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "monitoring.Point": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    }
+  }
+}

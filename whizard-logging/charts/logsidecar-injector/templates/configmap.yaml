@@ -1,0 +1,62 @@
+{{- if eq .Values.enabled true }}
+{{- $doubleLeftBrace := "{{" -}}
+{{- $doubleRightBrace := "}}" -}}
+apiVersion: v1
+kind: ConfigMap
+data:
+  vector.yaml: |-
+    data_dir: /etc/logsidecar
+    sources:
+      logs:
+        include:
+        {{ $doubleLeftBrace }}range .Paths{{ $doubleRightBrace }}
+        - {{ $doubleLeftBrace }}.{{ $doubleRightBrace }}
+        {{ $doubleLeftBrace }}end{{ $doubleRightBrace }}
+        max_line_bytes: 1048576
+        type: file
+    sinks:
+      console:
+        encoding:
+          codec: csv
+          csv:
+            delimiter: ' '
+            fields:
+            - message
+            quote_style: never
+        inputs:
+        - logs
+        type: console
+  filebeat.yaml: |-
+    filebeat.inputs:
+    - type: log
+      enabled: true
+      paths:
+      {{ $doubleLeftBrace }}range .Paths{{ $doubleRightBrace }}
+      - {{ $doubleLeftBrace }}.{{ $doubleRightBrace }}
+      {{ $doubleLeftBrace }}end{{ $doubleRightBrace }}
+    output.console:
+      codec.format:
+        string: '%{[log.file.path]} %{[message]}'
+    logging.level: warning
+  sidecar.yaml: |-
+    filebeatContainer:
+      image: {{ include "global.imageRegistry" . }}{{ .Values.sidecar.filebeatContainer.image.repository }}:{{ .Values.sidecar.filebeatContainer.image.tag }}
+      imagePullPolicy: {{ .Values.sidecar.filebeatContainer.image.pullPolicy }}
+      resources:
+{{ toYaml .Values.sidecar.filebeatContainer.resources | indent 8 }}
+    vectorContainer:
+      image: {{ include "global.imageRegistry" . }}{{ .Values.sidecar.vectorContainer.image.repository }}:{{ .Values.sidecar.vectorContainer.image.tag }}
+      imagePullPolicy: {{ .Values.sidecar.vectorContainer.image.pullPolicy }}
+      resources:
+{{ toYaml .Values.sidecar.vectorContainer.resources | indent 8 }}
+    initContainer:
+      image: {{ include "global.imageRegistry" . }}{{ .Values.sidecar.initContainer.image.repository }}:{{ .Values.sidecar.initContainer.image.tag }}
+      imagePullPolicy: {{ .Values.sidecar.initContainer.image.pullPolicy }}
+      resources:
+{{ toYaml .Values.sidecar.initContainer.resources | indent 8 }}
+metadata:
+  name: {{ template "logsidecar-injector.fullname" . }}-configmap
+  namespace: {{ template "logsidecar-injector.namespace" . }}
+  labels:
+{{ include "logsidecar-injector.labels" . | indent 4 }}
+{{- end }}

@@ -1,0 +1,94 @@
+global:
+  imageRegistry: ""
+  nodeSelector: {}
+  imagePullSecrets: []
+  clusterInfo: {}
+logsidecar-injector:
+  enabled: false
+  sidecar:
+    sidecarType: vector
+  resources:
+    limits:
+      cpu: 100m
+      memory: 100Mi
+    requests:
+      cpu: 10m
+      memory: 10Mi
+  configReloader:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 100Mi
+      requests:
+        cpu: 10m
+        memory: 10Mi
+  affinity: {}
+  tolerations: []
+  nodeSelector: {}
+
+vector-logging:
+  calico:
+    enabled: true
+    logPath:
+    - "/var/log/calico/cni/cni*.log"
+
+  filter:
+    extraLabelSelector: "app.kubernetes.io/name!=kube-events-exporter"
+    extraNamespaceLabelSelector: ""
+    # When includeNamespaces and excludeNamespaces are set at the same time, only excludeNamespaces will take effect.
+    includeNamespaces: []
+    excludeNamespaces: []
+
+  sinks:
+    loki:
+      # Create loki sink or not
+      enabled: false
+        # Configurations for the loki sink, more info for https://vector.dev/docs/reference/configuration/sinks/loki/
+      # Usually users needn't change the following loki sink config, and the default sinks in secret "kubesphere-logging-system/vector-sinks" created by the WhizardTelemetry Data Pipeline extension will be used.
+      metadata:
+#        endpoint: http://<loki-gateway-ip>:<loki-gateway-port>
+#        path: /loki/api/v1/push
+#        encoding:
+#          codec: json
+        tenant_id: whizard-logs-ks
+#        out_of_order_action: accept
+#        remove_timestamp: false
+#        batch:
+#          max_bytes: 10000000
+#          timeout_secs: 5
+#        buffer:
+#          max_events: 10000
+#        request:
+#          retry_attempts: 10
+      labels:
+        - cluster="{{ .cluster }}"
+        - node="{{ .kubernetes.node_name }}"
+        - workspace="{{ .kubernetes.workspace }}"
+        - namespace="{{ .kubernetes.namespace_name }}"
+        - pod="{{ .kubernetes.pod_name }}"
+        - container="{{ .kubernetes.container_name }}"
+    opensearch:
+      # Create opensearch sink or not
+      enabled: true
+      # The index to store the logs, will be {{ prefix }}-{{ timestring }}
+      index:
+        # The prefix of index, supports template syntax.
+        prefix: "{{ .cluster }}-logs"
+        # Timestring is parsed from strftime patterns, like %Y.%m.%d. Used to distribute logs into different indexes according to time.
+        timestring: "%Y.%m.%d"
+      # Configurations for the opensearch sink, more info for https://vector.dev/docs/reference/configuration/sinks/elasticsearch/
+      # Usually users needn't change the following OpenSearch sink config, and the default sinks in secret "kubesphere-logging-system/vector-sinks" created by the WhizardTelemetry Data Pipeline extension will be used.
+  #    metadata:
+  #      api_version: v8
+  #      auth:
+  #        strategy: basic
+  #        user: admin
+  #        password: admin
+  #      batch:
+  #        timeout_secs: 5
+  #      buffer:
+  #        max_events: 10000
+  #      endpoints:
+  #        - https://opensearch-cluster-data.kubesphere-logging-system.svc:9200
+  #      tls:
+  #        verify_certificate: false

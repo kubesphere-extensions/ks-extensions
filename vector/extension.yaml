@@ -1,0 +1,58 @@
+apiVersion: kubesphere.io/v1alpha1
+name: vector
+namespace: kubesphere-logging-system
+version: 1.0.4
+displayName:
+  zh: WhizardTelemetry 数据流水线
+  en: WhizardTelemetry Data Pipeline
+description:
+  zh: |-
+    WhizardTelemetry 数据流水线是 KubeSphere 团队开发的 WhizardTelemetry 可观测平台中提供可观测性数据收集、转换和路由能力的扩展组件。该扩展组件基于 vector (https://vector.dev/) 做了定制，定制内容详见 https://github.com/WhizardTelemetry/vector-helm-charts/tree/ks-vector-extension
+  en: |-
+    As a part of KubeSphere's WhizardTelemetry Observability Platform, WhizardTelemetry data pipeline provides the ability to collect, transform and route observability data. This extension is based on vector (https://vector.dev/) and customized for WhizardTelemetry. For more details, please refer to https://github.com/WhizardTelemetry/vector-helm-charts/tree/ks-vector-extension.
+category: observability
+keywords:
+  - monitoring-logging
+home: https://kubesphere.com.cn/
+sources: []
+kubeVersion: '>=1.19.0-0'
+ksVersion: '>=4.0.0-0'
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+icon: ./static/favicon.svg
+dependencies:
+  - name: aggregator
+    tags:
+      - extension
+  - name: agent
+    tags:
+      - agent
+# installationMode describes how to install subcharts, it can be HostOnly or Multicluster.
+# In Multicluster mode, the subchart with tag `extension` will only be deployed to the host cluster,
+# and the subchart with tag `agent` will be deployed to all selected clusters.
+installationMode: Multicluster
+# external dependencies example
+#externalDependencies:
+#  - name: a
+#    type: extension
+#    version: ">= 2.6.0"
+#    required: true
+#  - name: b
+#    type: extension
+#    version: ">= 2.2.0"
+#    required: true
+images:
+  - docker.io/timberio/vector:0.39.0-debian
+  - docker.io/kubesphere/kubectl:v1.27.12
+  - docker.io/kubesphere/vector-config:v0.2.1
+docs: https://docs.kubesphere.com.cn/
