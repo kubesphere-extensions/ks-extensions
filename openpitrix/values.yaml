@@ -1,0 +1,18 @@
+global:
+  imageRegistry: docker.io
+  imagePullSecrets: [ ]
+
+apps:
+  enabled: true
+  image:
+    repository: kubesphere/apps-manage
+    pullPolicy: IfNotPresent
+    tag: "v2.0.1"
+  resources:
+    requests:
+      memory: "100Mi"
+      cpu: "100m"
+    limits:
+      memory: "100Mi"
+      cpu: "100m"
+
