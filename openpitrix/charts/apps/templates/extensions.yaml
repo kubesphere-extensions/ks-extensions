@@ -1,0 +1,7 @@
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: JSBundle
+metadata:
+  name: {{ include "frontend.fullname" . }}-js-bundle
+spec:
+  rawFrom:
+    url: http://{{ include "frontend.fullname" . }}.{{ .Release.Namespace }}.svc/dist/apps-manage-frontend/index.js
