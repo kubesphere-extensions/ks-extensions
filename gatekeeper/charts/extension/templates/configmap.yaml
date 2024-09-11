@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gatekeeper-jsbundle
-data:
-{{ (.Files.Glob "dist/index.js").AsConfig | indent 2 }}
