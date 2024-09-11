@@ -1,0 +1,10 @@
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: APIService
+metadata:
+  name: v1beta1.constraints.gatekeeper.sh
+spec:
+  group: constraints.gatekeeper.sh
+  url: http://gatekeeper-extension-apiserver.{{ .Release.Namespace }}.svc
+  version: v1beta1
+status:
+  state: Available

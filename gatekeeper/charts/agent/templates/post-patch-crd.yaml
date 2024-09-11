@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-post-patch-crd"
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: helm-executor.gatekeeper
+      containers:
+        - name: post-patch-crds
+          image:  {{ template "kubectl.image" . }}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              kubectl label crd constrainttemplates.templates.gatekeeper.sh kubesphere.io/resource-served=true --overwrite
+          resources: {{- toYaml .Values.resources | nindent 12 }}

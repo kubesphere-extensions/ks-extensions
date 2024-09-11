@@ -1,0 +1,13 @@
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: JSBundle
+metadata:
+  name: gatekeeper
+spec:
+  rawFrom:
+    configMapKeyRef:
+      key: index.js
+      name: gatekeeper-jsbundle
+      namespace: {{ .Release.Namespace }}
+status:
+  link: /dist/gatekeeper/index.js
+  state: Available
