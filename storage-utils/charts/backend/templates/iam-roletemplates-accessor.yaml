@@ -1,0 +1,55 @@
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/dependencies: '["cluster-view-storageclass-accessors", "cluster-manage-storageclasses"]'
+    iam.kubesphere.io/role-template-rules: '{"storageclass-accessors": "manage"}'
+  labels:
+    iam.kubesphere.io/category: cluster-storage-management
+    iam.kubesphere.io/scope: cluster
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/aggregate-to-cluster-admin: ""
+  name: cluster-manage-storageclass-accessors
+spec:
+  displayName:
+    en: Storage Class Accessors Management
+    zh: 存储类访问规则管理
+  description:
+    en: Create, edit and delete storageclass accessors in the cluster
+    zh: 创建、编辑和删除集群中的存储类访问规则
+  rules: 
+    - apiGroups:
+        - storage.kubesphere.io
+      resources:
+        - accessors
+      verbs:
+        - '*'
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"storageclass-accessors": "view"}'
+  labels:
+    iam.kubesphere.io/category: cluster-storage-management
+    iam.kubesphere.io/scope: cluster
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/aggregate-to-cluster-viewer: ""
+  name: cluster-view-storageclass-accessors
+spec:
+  displayName:
+    en: Storage Class Accessors Viewing
+    zh: 存储类访问规则查看
+  description:
+    en: View storageclass accessors in the cluster
+    zh: 查看集群中的存储类访问规则
+  rules: 
+    - apiGroups:
+        - storage.kubesphere.io
+      resources:
+        - accessors
+      verbs:
+        - get
+        - list
+        - watch

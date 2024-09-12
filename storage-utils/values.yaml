@@ -1,0 +1,20 @@
+global:
+  imageRegistry: docker.io
+  imagePullSecrets: []
+  tag:
+
+frontend:
+  enabled: true
+
+backend:
+  enabled: true
+  replicaCount: 1
+  storageclassAccessor:
+    enabled: true
+  pvcAutoResizer:
+    enabled: true
+    prometheusUrl: "http://prometheus-k8s.kubesphere-monitoring-system.svc:9090"
+  snapshotController:
+    enabled: true
+  snapshotClassController:
+    enabled: true

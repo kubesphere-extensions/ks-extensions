@@ -1,0 +1,48 @@
+{{- if .Values.storageclassAccessor.enabled }}
+{{- $ca := genCA "storage-utils-ca" 3650 }}
+{{- $cn := printf "%s-admission-webhook" .Release.Name }}
+{{- $altName1 := printf "storage-utils-webhook.%s" .Release.Namespace }}
+{{- $altName2 := printf "storage-utils-webhook.%s.svc" .Release.Namespace }}
+{{- $cert := genSignedCert $cn nil (list $altName1 $altName2) 3650 $ca }}
+
+apiVersion: v1
+data:
+  ca.crt: {{ b64enc $ca.Cert | quote }}
+  tls.crt: {{ b64enc  $cert.Cert | quote }}
+  tls.key: {{ b64enc  $cert.Key | quote }}
+kind: Secret
+metadata:
+  name: storage-utils-webhook-cert
+type: Opaque
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: storageclass-accessor.storage.kubesphere.io
+webhooks:
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
+      caBundle: {{ b64enc $ca.Cert | quote }}
+      service:
+        name: storage-utils-webhook
+        namespace: {{ .Release.Namespace }}
+        path: /persistentvolumeclaims
+        port: {{ .Values.service.port }}
+    failurePolicy: Ignore
+    matchPolicy: Exact
+    name: storageclass-accessor.storage.kubesphere.io
+    namespaceSelector: {}
+    objectSelector: {}
+    rules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+        resources:
+          - persistentvolumeclaims
+        scope: '*'
+    sideEffects: None
+{{- end }}

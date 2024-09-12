@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "backend.fullname" . }}
+  labels:
+    {{- include "backend.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "backend.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "backend.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- include "backend.imagePullSecrets" . | nindent 6 }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+       {{- if .Values.storageclassAccessor.enabled }}
+        - name: {{ .Values.storageclassAccessor.name }}
+          securityContext:
+            {{- toYaml .Values.storageclassAccessor.securityContext | nindent 12 }}
+          image: {{ template "storageclassAccessor.image" . }}
+          imagePullPolicy: {{ .Values.storageclassAccessor.image.pullPolicy }}
+          args: 
+          - --tls-cert-file
+          - /etc/run/certs/tls.crt
+          - --tls-private-key-file
+          - /etc/run/certs/tls.key
+          - --port
+          - "{{ .Values.storageclassAccessor.containerPort }}"
+          resources:
+            {{- toYaml .Values.storageclassAccessor.resources | nindent 12 }}
+          ports:
+          - containerPort: {{ .Values.storageclassAccessor.containerPort }}
+            name: {{ .Values.service.targetPort }}
+          volumeMounts:
+            - name: storage-utils-webhook-cert
+              mountPath: /etc/run/certs
+              readOnly: true
+        {{- end }}
+        {{- if .Values.pvcAutoResizer.enabled }}
+        - name: {{ .Values.pvcAutoResizer.name }}
+          securityContext:
+            {{- toYaml .Values.pvcAutoResizer.securityContext | nindent 12 }}
+          image: {{ template "pvcAutoResizer.image" . }}
+          imagePullPolicy: {{ .Values.pvcAutoResizer.image.pullPolicy }}
+          args:
+            - --prometheus-url
+            - {{ .Values.pvcAutoResizer.commandArgs.prometheusUrl }}
+            - --interval
+            - {{ .Values.pvcAutoResizer.commandArgs.interval }}
+            - --metrics-addr
+            - {{ .Values.pvcAutoResizer.commandArgs.metricsBindAddress }}
+            - --health-addr
+            - {{ .Values.pvcAutoResizer.commandArgs.healthProbeBindAddress }}
+          resources:
+            {{- toYaml .Values.pvcAutoResizer.resources | nindent 12 }}
+        {{- end }}
+        {{- if .Values.snapshotController.enabled }}
+        - name: {{ .Values.snapshotController.name }}
+          securityContext:
+            {{- toYaml .Values.snapshotController.securityContext | nindent 12 }}
+          image: {{ template "snapshotController.image" . }}
+          imagePullPolicy: {{ .Values.snapshotController.image.pullPolicy }}
+          args:
+            - --v
+            - "5"
+            - --leader-election
+            - "{{ .Values.snapshotController.commandArgs.leaderElection }}"
+          resources:
+            {{- toYaml .Values.snapshotController.resources | nindent 12 }}
+        {{- end }}
+        {{- if .Values.snapshotClassController.enabled }}
+        - name: {{ .Values.snapshotClassController.name }}
+          securityContext:
+            {{- toYaml .Values.snapshotClassController.securityContext | nindent 12 }}
+          image: {{ template "snapshotClassController.image" . }}
+          imagePullPolicy: {{ .Values.snapshotClassController.image.pullPolicy }}
+          args:
+            - --leader-elect
+            - "{{ .Values.snapshotClassController.commandArgs.leaderElection }}"
+            - --metrics-bind-address
+            - {{ .Values.snapshotClassController.commandArgs.metricsBindAddress }}
+            - --health-probe-bind-address
+            - {{ .Values.snapshotClassController.commandArgs.healthProbeBindAddress }}
+          resources:
+            {{- toYaml .Values.snapshotClassController.resources | nindent 12 }}
+        {{- end }}
+      {{- if .Values.storageclassAccessor.enabled }}
+      volumes:
+        - name: storage-utils-webhook-cert
+          secret:
+            secretName: storage-utils-webhook-cert
+      {{- end }}
+      serviceAccountName: {{ include "backend.fullname" . }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

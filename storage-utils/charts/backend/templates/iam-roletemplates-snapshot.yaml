@@ -1,0 +1,249 @@
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"volumesnapshotclasses": "view"}'
+  labels:
+    iam.kubesphere.io/aggregate-to-authenticated: ''
+    iam.kubesphere.io/category: storage-management
+    iam.kubesphere.io/scope: global
+    kubesphere.io/managed: 'true'
+  name: global-view-volumesnapshotclasses
+spec:
+  description:
+    en: 'View volumesnapshotclasses in global'
+    zh: 查看全局卷快照类
+  displayName:
+    en: Volume Snapshot Classes Viewing
+    zh: 卷快照类查看
+  rules:
+    - apiGroups:
+        - snapshot.storage.k8s.io
+      resources:
+        - volumesnapshotclasses
+      verbs:
+        - get
+        - list
+        - watch
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/dependencies: '["cluster-view-volumesnapshots"]'
+    iam.kubesphere.io/role-template-rules: '{"volumesnapshots": "manage"}'
+  labels:
+    iam.kubesphere.io/category: cluster-storage-management
+    iam.kubesphere.io/scope: cluster
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/aggregate-to-cluster-admin: ""
+  name: cluster-manage-volumesnapshots
+spec:
+  displayName:
+    en: Volume Snapshots Management
+    zh: 卷快照管理
+  description:
+    en: Create, edit and delete volumesnapshots in the cluster
+    zh: 创建、编辑和删除集群中的卷快照
+  rules: 
+    - apiGroups:
+        - snapshot.storage.k8s.io
+      resources:
+        - volumesnapshots
+      verbs:
+        - '*'
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"volumesnapshots": "view"}'
+  labels:
+    iam.kubesphere.io/category: cluster-storage-management
+    iam.kubesphere.io/scope: cluster
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/aggregate-to-cluster-viewer: ""
+  name: cluster-view-volumesnapshots
+spec:
+  displayName:
+    en: Volume Snapshots Viewing
+    zh: 卷快照查看
+  description:
+    en: View volumesnapshots in the cluster
+    zh: 查看集群中的卷快照
+  rules: 
+    - apiGroups:
+        - snapshot.storage.k8s.io
+      resources:
+        - volumesnapshots
+      verbs:
+        - get
+        - list
+        - watch
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/dependencies: '["cluster-view-volumesnapshotcontents"]'
+    iam.kubesphere.io/role-template-rules: '{"volumesnapshots": "manage"}'
+  labels:
+    iam.kubesphere.io/category: cluster-storage-management
+    iam.kubesphere.io/scope: cluster
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/aggregate-to-cluster-admin: ""
+  name: cluster-manage-volumesnapshotcontents
+spec:
+  displayName:
+    en: Volume Snapshot Contents Management
+    zh: 卷快照内容管理
+  description:
+    en: Create, edit and delete volumesnapshotcontents in the cluster
+    zh: 创建、编辑和删除集群中的卷快照内容
+  rules: 
+    - apiGroups:
+        - snapshot.storage.k8s.io
+      resources:
+        - volumesnapshotcontents
+      verbs:
+        - '*'
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"volumesnapshots": "view"}'
+  labels:
+    iam.kubesphere.io/category: cluster-storage-management
+    iam.kubesphere.io/scope: cluster
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/aggregate-to-cluster-viewer: ""
+  name: cluster-view-volumesnapshotcontents
+spec:
+  displayName:
+    en: Volume Snapshot Contents Viewing
+    zh: 卷快照内容查看
+  description:
+    en: View volumesnapshotcontents in the cluster
+    zh: 查看集群中的卷快照内容
+  rules: 
+    - apiGroups:
+        - snapshot.storage.k8s.io
+      resources:
+        - volumesnapshotcontents
+      verbs:
+        - get
+        - list
+        - watch
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/dependencies: '["cluster-view-volumesnapshotclasses"]'
+    iam.kubesphere.io/role-template-rules: '{"volumesnapshotclasses": "manage"}'
+  labels:
+    iam.kubesphere.io/category: cluster-storage-management
+    iam.kubesphere.io/scope: cluster
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/aggregate-to-cluster-admin: ""
+  name: cluster-manage-volumesnapshotclasses
+spec:
+  displayName:
+    en: Volume Snapshot Classes Management
+    zh: 卷快照类管理
+  description:
+    en: Create, edit and delete volumesnapshotclasses in the cluster
+    zh: 创建、编辑和删除集群中的卷快照类
+  rules: 
+    - apiGroups:
+        - snapshot.storage.k8s.io
+      resources:
+        - volumesnapshotclasses
+      verbs:
+        - '*'
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"volumesnapshotclasses": "view"}'
+  labels:
+    iam.kubesphere.io/category: cluster-storage-management
+    iam.kubesphere.io/scope: cluster
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/aggregate-to-cluster-viewer: ""
+  name: cluster-view-volumesnapshotclasses
+spec:
+  displayName:
+    en: Volume Snapshot Classes Viewing
+    zh: 卷快照类查看
+  description:
+    en: View volumesnapshotclasses in the cluster
+    zh: 查看集群中的卷快照类
+  rules: 
+    - apiGroups:
+        - snapshot.storage.k8s.io
+      resources:
+        - volumesnapshotclasses
+      verbs:
+        - get
+        - list
+        - watch
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/dependencies: '["namespace-view-volumesnapshots"]'
+    iam.kubesphere.io/role-template-rules: '{"volumesnapshots": "manage"}'
+  labels:
+    iam.kubesphere.io/category: namespace-storage-management
+    iam.kubesphere.io/scope: namespace
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/aggregate-to-operator: ""
+    iam.kubesphere.io/aggregate-to-admin: ""
+  name: namespace-manage-volumesnapshots
+spec:
+  displayName:
+    en: Volume Snapshots Management
+    zh: 卷快照管理
+  description:
+    en: Create, edit and delete volumesnapshots in the namespace
+    zh: 创建、编辑和删除项目中的卷快照
+  rules: 
+    - apiGroups:
+        - snapshot.storage.k8s.io
+      resources:
+        - volumesnapshots
+      verbs:
+        - '*'
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"volumesnapshots": "view"}'
+  labels:
+    iam.kubesphere.io/category: namespace-storage-management
+    iam.kubesphere.io/scope: namespace
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/aggregate-to-viewer: ""
+  name: namespace-view-volumesnapshots
+spec:
+  displayName:
+    en: Volume Snapshots Viewing
+    zh: 卷快照查看
+  description:
+    en: View volumesnapshots in the namespace
+    zh: 查看项目中的卷快照
+  rules: 
+    - apiGroups:
+        - snapshot.storage.k8s.io
+      resources:
+        - volumesnapshots
+      verbs:
+        - get
+        - list
+        - watch
