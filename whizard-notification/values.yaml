@@ -1,0 +1,174 @@
+global:
+  imageRegistry: ""
+  nodeSelector: {}
+  imagePullSecrets: []
+  clusterInfo: {}
+
+notification-manager:
+  kubesphere:
+    enabled: true
+    version: v4.0.2
+
+  operator:
+    containers:
+      operator:
+        image:
+          tag: v2.5.2
+
+  notificationmanager:
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    sidecar:
+      tenant:
+        resources:
+          limits:
+            cpu: 200m
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
+    annotations:
+      kubesphere.io/serviceaccount-name: notification-tenant-sidecar
+    image:
+      tag: v2.5.2
+    env:
+      - name: TZ
+        value: Asia/Shanghai
+    groupLabels:
+      - cluster
+      - namespace
+      - alerttype
+      - alertname
+      - severity
+
+alertmanager-proxy:
+  args:
+    - --alertmanager-name=whizard-notification-alertmanager
+    - --alertmanager-port=9093
+    - --alertmanager-target-port=9093
+  resources:
+    limits:
+      cpu: 500m
+      memory: 500Mi
+    requests:
+      cpu: 100m
+      memory: 100Mi
+  service:
+    nodePort: 31093
+
+alertmanager:
+  # The alertmanager replica count.
+  # If you want to control it by yourself, please firstly configure the replicaAutoSet item as false.
+  replicaCount: 1
+  # If true, will ignore the upper replicaCount item and try to auto set alertmanager replica count by the node num:
+  #   set the alertmanager replica count as 1 when the node num < 3, or set as 3.
+  replicaAutoSet: true
+
+  # alertmanager container config
+  image:
+    repository: prometheus/alertmanager
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  resources:
+    limits:
+      cpu: "1"
+      memory: 500Mi
+    requests:
+      cpu: 50m
+      memory: 50Mi
+
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: app.kubernetes.io/name
+              operator: In
+              values:
+              - alertmanager
+          namespaces:
+          - kubesphere-monitoring-system
+          topologyKey: kubernetes.io/hostname
+        weight: 100
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  # configReloader config to set the container in charge of triggerring alertmanager container reload changed config.
+  configmapReload:
+    enabled: true
+    image:
+      repository: prometheus-operator/prometheus-config-reloader
+      tag: v0.75.1
+    resources:
+      limits:
+        cpu: 100m
+        memory: 50Mi
+      requests:
+        cpu: 20m
+        memory: 20Mi
+  # alertmanager config
+  config:
+    inhibit_rules:
+    - equal: ["cluster", "namespace", "alertname"]
+      source_matchers:
+      - severity = "critical"
+      target_matchers:
+      - severity =~ "warning|info"
+    - equal: ["cluster", "namespace", "alertname"]
+      source_matchers:
+      - severity = "warning"
+      target_matchers:
+      - severity = "info"
+    - equal: ["cluster", "namespace"]
+      source_matchers:
+      - alertname = "InfoInhibitor"
+      target_matchers:
+      - severity = "info"
+
+    receivers:
+    - name: "Default"
+    - name: "null"
+    - name: Watchdog
+    - name: prometheus
+      webhook_configs:
+      - url: http://notification-manager-svc.kubesphere-monitoring-system.svc:19093/api/v2/alerts
+    - name: event
+      webhook_configs:
+      - send_resolved: false
+        url: http://notification-manager-svc.kubesphere-monitoring-system.svc:19093/api/v2/alerts
+    - name: auditing
+      webhook_configs:
+      - send_resolved: false
+        url: http://notification-manager-svc.kubesphere-monitoring-system.svc:19093/api/v2/alerts
+
+    route:
+      group_by:
+      - "cluster"
+      - "namespace"
+      - "alertname"
+      - "rule_id"
+      group_wait: 30s
+      receiver: "Default"
+      repeat_interval: 12h
+      routes:
+      - matchers:
+        - alertname = "Watchdog"
+        receiver: Watchdog
+      - matchers:
+        - alertname = "InfoInhibitor"
+        receiver: "null"
+      - group_interval: 30s
+        matchers:
+        - alerttype = "event"
+        receiver: "event"
+      - group_interval: 30s
+        matchers:
+        - alerttype = "auditing"
+        receiver: "auditing"
+      - matchers:
+        - alerttype =~ ".*"
+        receiver: "prometheus"

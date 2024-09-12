@@ -1,0 +1,43 @@
+apiVersion: v1
+name: whizard-telemetry
+version: 1.2.2
+displayName:
+  zh: WhizardTelemetry 平台服务
+  en: WhizardTelemetry Platform Service
+description:
+  zh: |-
+    WhizardTelemetry 平台服务是 KubeSphere 团队开发的 WhizardTelemetry 可观测平台中各扩展组件的公共服务。它是各个可观测性扩展组件通用的 APIServer，为所有可观测性扩展组件提供公共的后端平台服务。
+  en: |-
+    WhizardTelemetry Platform Service is a common service for all observability extensions of KubeSphere's WhizardTelemetry Observability Platform. It is a common APIServer for all observability extensions, providing common backend platform services for all observability extensions.
+category: observability
+keywords:
+  - APIServer
+  - Observability
+  - Monitoring
+  - Logging
+home: https://kubesphere.com.cn/
+sources: []
+kubeVersion: '>=1.19.0-0'
+ksVersion: '>=4.0.0-0'
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+dependencies:
+  - name: whizard-telemetry
+    tags:
+      - extension
+installationMode: HostOnly
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+staticFileDirectory: static
+icon: ./static/favicon.svg
+images:
+  - docker.io/kubesphere/whizard-telemetry-apiserver:v1.2.2
+docs: https://docs.kubesphere.com.cn/

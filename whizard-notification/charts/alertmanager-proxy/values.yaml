@@ -1,0 +1,30 @@
+namespaceOverride: ""
+
+imageRegistryOverride: ""
+
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  nodeSelector: {}
+
+nodeSelector: {}
+
+affinity: {}
+
+
+tolerations: []
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 500Mi
+  requests:
+    cpu: 100m
+    memory: 100Mi
+image:
+  repository: kubesphere/alertmanager-proxy
+  tag: v0.2.0
+  pullPolicy: IfNotPresent
+
+args:
+  - "--alertmanager-url=http://whizard-notification-alertmanager.kubesphere-monitoring-system.svc:9093"

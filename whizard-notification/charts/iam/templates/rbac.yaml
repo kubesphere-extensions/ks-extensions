@@ -1,0 +1,43 @@
+apiVersion: kubesphere.io/v1alpha1
+kind: ServiceAccount
+metadata:
+  name: notification-tenant-sidecar
+  namespace: {{ include "iam.namespaceOverride" . }}
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: GlobalRole
+metadata:
+  name: notification-tenant-sidecar
+rules:
+  - apiGroups:
+      - '*'
+    resources:
+      - clusters
+      - namespaces
+      - users
+      - subjectaccessreviews
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - 'iam.kubesphere.io'
+    resources:
+      - subjectaccessreviews
+    verbs:
+      - create
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: GlobalRoleBinding
+metadata:
+  name: notification-tenant-sidecar
+roleRef:
+  apiGroup: iam.kubesphere.io
+  kind: GlobalRole
+  name: notification-tenant-sidecar
+subjects:
+  - apiGroup: kubesphere.io
+    kind: ServiceAccount
+    name: notification-tenant-sidecar
+    namespace: {{ include "iam.namespaceOverride" . }}

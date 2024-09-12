@@ -1,0 +1,56 @@
+apiVersion: v2
+name: whizard-events
+namespace: kubesphere-logging-system
+version: 1.2.0
+displayName:
+  zh: WhizardTelemetry 事件
+  en: WhizardTelemetry Events
+description:
+  zh: |-
+    WhizardTelemetry 事件是 KubeSphere 团队开发的 WhizardTelemetry 可观测平台中用于 Kubernetes 事件导出的扩展组件。
+  en: |-
+    As a part of KubeSphere's WhizardTelemetry Observability Platform, WhizardTelemetry Events provides the exporting of Kubernetes events.
+category: observability
+keywords:
+  - Observability
+  - Events
+home: https://kubesphere.com.cn/
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+sources: []
+kubeVersion: '>=1.19.0-0'
+ksVersion: '>=4.0.0-0'
+dependencies:
+  - name: kube-events-exporter
+    tags:
+      - agent
+installationMode: Multicluster
+externalDependencies:
+  - name: vector
+    type: extension
+    version: '>=1.0.0'
+    required: true
+  - name: whizard-telemetry
+    type: extension
+    version: '>= 1.0.0-0'
+    required: true
+  - name: opensearch
+    type: extension
+    version: '>=2.11.1'
+    required: false
+staticFileDirectory: static
+icon: ./static/favicon.svg
+images:
+  - docker.io/kubesphere/kube-events-exporter:v0.8.0
+  - docker.io/jimmidyson/configmap-reload:v0.9.0
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+docs: https://docs.kubesphere.com.cn/

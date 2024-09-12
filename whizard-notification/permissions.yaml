@@ -1,0 +1,65 @@
+kind: ClusterRole
+rules:
+  - verbs:
+      - '*'
+    apiGroups:
+      - 'apiextensions.k8s.io'
+      - 'rbac.authorization.k8s.io'
+      - 'admissionregistration.k8s.io'
+      - 'coordination.k8s.io'
+    resources:
+      - 'customresourcedefinitions'
+      - 'clusterroles'
+      - 'roles'
+      - 'rolebindings'
+      - 'clusterrolebindings'
+      - 'validatingwebhookconfigurations'
+      - 'mutatingwebhookconfigurations'
+      - 'leases'
+  - verbs:
+      - '*'
+    apiGroups:
+      - ''
+      - 'apps'
+      - 'batch'
+      - 'network'
+      - 'policy'
+    resources:
+      - 'jobs'
+      - 'services'
+      - 'configmaps'
+      - 'deployments'
+      - 'statefulsets'
+      - 'serviceaccounts'
+      - 'secrets'
+      - 'namespaces'
+      - 'ingresses'
+      - 'poddisruptionbudgets'
+  - verbs:
+      - '*'
+    apiGroups:
+      - 'notification.kubesphere.io'
+      - 'cluster.kubesphere.io'
+      - 'kubesphere.io'
+      - 'iam.kubesphere.io'
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - 'extensions.kubesphere.io'
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - 'monitoring.coreos.com'
+    resources:
+      - 'servicemonitors'
+  - verbs:
+      - get
+      - list
+    apiGroups:
+      - ''
+    resources:
+      - 'nodes'

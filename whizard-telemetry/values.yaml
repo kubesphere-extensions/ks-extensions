@@ -1,0 +1,62 @@
+global:
+  ## Global image registry to use if it needs to be overriden for some specific use cases (e.g local registries, custom images, ...)
+  ##
+  imageRegistry: ""
+
+  ## Reference to one or more secrets to be used when pulling images
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  imagePullSecrets: []
+  # - name: "image-pull-secret"
+  # or
+  # - "image-pull-secret"
+  nodeSelector: {}
+
+whizard-telemetry:
+  config:
+    monitoring:
+      enabled: true
+      kind: 0
+      endpoint: http://prometheus-k8s.kubesphere-monitoring-system.svc:9090
+    observability:
+      enabled: false
+      endpoint: "http://query-frontend-whizard-operated.kubesphere-monitoring-system.svc:10902"
+    notification:
+      endpoint: http://notification-manager-svc.kubesphere-monitoring-system.svc:19093
+    events:
+      enable: true
+      servers:
+        - elasticsearch:
+            endpoints:
+              - https://opensearch-cluster-data.kubesphere-logging-system:9200
+            version: opensearchv2
+            indexPrefix: "{{ .cluster }}-events"
+            timestring: "%Y.%m.%d"
+            basicAuth: true
+            username: admin
+            password: admin
+    logging:
+      enable: true
+      servers:
+        - elasticsearch:
+            endpoints:
+              - https://opensearch-cluster-data.kubesphere-logging-system:9200
+            version: opensearchv2
+            indexPrefix: "{{ .cluster }}-logs"
+            timestring: "%Y.%m.%d"
+            basicAuth: true
+            username: admin
+            password: admin
+
+  apiserver:
+    image:
+      repository: kubesphere/whizard-telemetry-apiserver
+      pullPolicy: IfNotPresent
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: "v1.2.2"
+
+    nodeSelector: {}
+
+    tolerations: []
+
+    affinity: {}

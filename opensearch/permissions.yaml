@@ -1,0 +1,49 @@
+kind: ClusterRole
+rules:
+  - verbs:
+      - 'create'
+      - 'patch'
+      - 'update'
+      - 'get'
+    apiGroups:
+      - 'extensions.kubesphere.io'
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - ''
+      - 'batch'
+    resources:
+      - 'secrets'
+      - 'configmaps'
+      - 'services'
+      - 'namespaces'
+      - 'cronjobs'
+      - 'jobs'
+  - verbs:
+      - '*'
+    apiGroups:
+      - 'rbac.authorization.k8s.io'
+    resources:
+      - 'rolebindings'
+      - 'roles'
+  - verbs:
+      - '*'
+    apiGroups:
+      - 'apps'
+    resources:
+      - 'statefulsets'
+      - 'deployments'
+  - verbs:
+      - '*'
+    apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+  - verbs:
+      - '*'
+    apiGroups:
+      - ''
+    resources:
+      - '*'

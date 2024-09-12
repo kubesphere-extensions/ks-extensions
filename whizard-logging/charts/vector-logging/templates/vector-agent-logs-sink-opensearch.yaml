@@ -1,0 +1,63 @@
+{{- $namespace := include "logging.namespaceOverride" . }}
+{{- $sinks := (lookup "v1" "Secret" $namespace  "vector-sinks") -}}
+{{- $bulk := include "opensearch.bulk" . | fromYaml }}
+{{- $dst := .Values.sinks.opensearch.metadata | mustMerge $bulk }}
+
+{{- if .Values.sinks.opensearch.enabled }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vector-agent-logs-sink-opensearch
+  namespace: {{ include "logging.namespaceOverride" . }}
+  labels:
+    logging.whizard.io/component: "logs"
+    logging.whizard.io/vector-role: Agent
+    logging.whizard.io/enable: "true"
+stringData:
+  sink.yaml: |
+    transforms:
+      opensearch_logs_remapped:
+        drop_on_error: true
+        inputs:
+        - kube_logs_remapped
+        - systemd_logs_remapped
+        source: |-
+          {{- if and .Values.sinks.opensearch.index .Values.sinks.opensearch.index.timestring }}
+          .timestring = format_timestamp!(.timestamp, format: "{{ .Values.sinks.opensearch.index.timestring }}", timezone: "local")
+          {{- else }}
+          .timestring = format_timestamp!(.timestamp, format: "%Y.%m.%d", timezone: "local")
+          {{- end }}
+          .unixtime = to_unix_timestamp!(.timestamp, "nanoseconds")
+        type: remap
+      {{- if .Values.calico.enabled }}
+      opensearch_calico_logs_remapped:
+        drop_on_error: true
+        inputs:
+        - calico_logs_remapped
+        source: |-
+          {{- if and .Values.sinks.opensearch.index .Values.sinks.opensearch.index.timestring }}
+          .timestring = format_timestamp!(.time, format: "{{ .Values.sinks.opensearch.index.timestring }}", timezone: "local")
+          {{- else }}
+          .timestring = format_timestamp!(.time, format: "%Y.%m.%d", timezone: "local")
+          {{- end }}
+          .unixtime = to_unix_timestamp!(.timestamp, "nanoseconds")
+        type: remap
+      {{- end }}
+    sinks:
+      opensearch_logs:
+        {{- if $sinks -}}
+        {{- if $sinks.data.opensearch -}}
+        {{- $src := ($sinks.data.opensearch | b64dec | fromYaml) -}}
+        {{- $new := deepCopy $src | mustMerge $dst -}}
+        {{- toYaml $new | nindent 8 }}
+        {{- end}}
+        {{- else if $dst }}
+        {{- toYaml $dst | nindent 8 }}
+        {{- end}}
+        type: elasticsearch
+        inputs:
+        - opensearch_logs_remapped
+        {{- if .Values.calico.enabled }}
+        - opensearch_calico_logs_remapped
+        {{- end}}
+{{- end}}

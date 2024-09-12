@@ -1,0 +1,52 @@
+# Default values for kube-events-exporter.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+namespaceOverride: ""
+
+global:
+  nodeSelector: {}
+  imageRegistry: ""
+  imagePullSecrets: []
+  clusterInfo: {}
+
+imageRegistryOverride: ""
+
+replicaCount: 1
+
+eventsExporter:
+  image:
+    repository: kubesphere/kube-events-exporter
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "v0.8.0"
+  resources:
+    requests:
+      cpu: 20m
+      memory: 50Mi
+    limits:
+      cpu: 200m
+      memory: 500Mi
+
+configReloader:
+  image:
+    repository: jimmidyson/configmap-reload
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "v0.9.0"
+  resources:
+    requests:
+      cpu: 20m
+      memory: 50Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+nameOverride: ""
+fullnameOverride: "kube-events-exporter"
+
+tolerations: []
+
+affinity: {}
+
+nodeSelector: {}
