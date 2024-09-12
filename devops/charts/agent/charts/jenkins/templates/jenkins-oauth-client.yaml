@@ -1,0 +1,23 @@
+{{- if eq .Values.securityRealm.type "openIdConnect" }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template "jenkins.fullname" . }}-oauthclient
+  namespace: kubesphere-system
+  labels:
+    config.kubesphere.io/type: oauthclient
+type: config.kubesphere.io/oauthclient
+stringData:
+  configuration.yaml: |
+    name: {{ .Values.securityRealm.openIdConnect.clientId }}
+    secret: {{ .Values.securityRealm.openIdConnect.clientSecret }}
+    grantMethod: auto
+    trusted: true
+    accessTokenInactivityTimeoutSeconds: 3600
+    redirectURIs:
+      - {{ .Values.securityRealm.openIdConnect.jenkinsURL }}/securityRealm/finishLogin
+    {{- with .Values.securityRealm.openIdConnect.scopes }}
+    scopeRestrictions:
+    {{- toYaml . | nindent 6 }}
+    {{- end }}
+{{- end }}

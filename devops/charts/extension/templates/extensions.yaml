@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "devops.name" . }}-frontend
+  namespace: {{ default .Release.Namespace .Values.global.namespace }}
+  labels:
+    {{- include "extension.labels" . | nindent 4 }}
+data:
+  index.js: {{ .Values.indexJsContent | quote }}
+
+---
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: JSBundle
+metadata:
+  name: {{ include "devops.name" . }}-js-bundle
+  namespace: {{ default .Release.Namespace .Values.global.namespace }}
+spec:
+  rawFrom:
+    configMapKeyRef:
+      namespace: {{ default .Release.Namespace .Values.global.namespace }}
+      name: {{ include "devops.name" . }}-frontend
+      key: index.js
+status:
+  state: Available
+  link: /dist/devops-frontend/index.js
+
+---
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: APIService
+metadata:
+  name: v1alpha3.devops.kubesphere.io
+spec:
+  group: devops.kubesphere.io                               # API Group
+  version: v1alpha3                                         # API Version
+  url: http://devops-apiserver.{{ default .Release.Namespace .Values.global.namespace }}.svc:9090
+status:
+  state: Available
+
+---
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: APIService
+metadata:
+  name: v1alpha2.devops.kubesphere.io
+spec:
+  group: devops.kubesphere.io                               # API Group
+  version: v1alpha2                                         # API Version
+  url: http://devops-apiserver.{{ default .Release.Namespace .Values.global.namespace }}.svc:9090
+status:
+  state: Available
+
+---
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: APIService
+metadata:
+  name: v1alpha1.gitops.kubesphere.io
+spec:
+  group: gitops.kubesphere.io                               # API Group
+  version: v1alpha1                                         # API Version
+  url: http://devops-apiserver.{{ default .Release.Namespace .Values.global.namespace }}.svc:9090
+status:
+  state: Available

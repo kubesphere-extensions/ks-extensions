@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "devops.name" . }}-test-connection
+  namespace: {{ default .Release.Namespace .Values.global.namespace }}
+  labels:
+    {{- include "apiserver.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ["devops-apiserver:9090"]
+  restartPolicy: Never

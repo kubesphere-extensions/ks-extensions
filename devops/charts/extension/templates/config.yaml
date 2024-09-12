@@ -1,0 +1,22 @@
+apiVersion: v1
+data:
+  kubesphere.yaml: |
+    authentication:
+      authenticateRateLimiterMaxTries: 10
+      authenticateRateLimiterDuration: 10m0s
+      loginHistoryRetentionPeriod: 168h
+      maximumClockSkew: 10s
+      jwtSecret: {{ .Values.authentication.jwtSecret | quote }}
+
+    devops:
+      host: http://devops-jenkins.{{ default .Release.Namespace .Values.global.namespace }}
+      username: admin
+      maxConnections: 100
+      namespace: {{ default .Release.Namespace .Values.global.namespace }}
+    {{- if .Values.jenkins.enabled }}
+      workerNamespace: {{ .Values.jenkins.Agent.WorkerNamespace }}
+    {{- end }}
+kind: ConfigMap
+metadata:
+  name: devops-config
+  namespace: {{ default .Release.Namespace .Values.global.namespace }}

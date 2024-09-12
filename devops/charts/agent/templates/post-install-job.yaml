@@ -1,0 +1,76 @@
+# !!! this job only used for upgrade devops from 3.5.x to 4.1.x
+# TODO: delete this job in version > 1.1.1
+
+{{- if empty (lookup "v1" "ServiceAccount" .Release.Namespace "devops-post-install") }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: devops-post-install
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/hook: post-install
+    helm.sh/hook-weight: "0"
+{{- end }}
+
+{{- if empty (lookup "rbac.authorization.k8s.io/v1" "ClusterRole" "" "devops-post-install") }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: devops-post-install
+  annotations:
+    helm.sh/hook: post-install
+    helm.sh/hook-weight: "0"
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - "*"
+{{- end }}
+
+{{- if empty (lookup "rbac.authorization.k8s.io/v1" "ClusterRoleBinding" "" "devops-post-install") }}
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: devops-post-install
+  annotations:
+    helm.sh/hook: post-install
+    helm.sh/hook-weight: "1"
+subjects:
+  - kind: ServiceAccount
+    name: devops-post-install
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: devops-post-install
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-post-install
+  annotations:
+    helm.sh/hook: post-install
+    helm.sh/hook-weight: "2"
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: devops-post-install
+      {{- with (default .Values.global.imagePullSecrets .Values.tools.image.pullSecrets) }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: post-install-job
+          image: "{{ default .Values.tools.image.registry .Values.global.imageRegistry }}/{{ .Values.tools.image.repository }}:{{ .Values.tools.image.tag }}"
+          imagePullPolicy: {{ .Values.tools.image.pullPolicy }}
+          command:
+            - devops-tools
+            - restore-configmap

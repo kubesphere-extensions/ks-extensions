@@ -1,0 +1,91 @@
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterTemplate
+metadata:
+  name: nodejs
+  annotations:
+    devops.kubesphere.io/displayNameEN: "Node.js"
+    devops.kubesphere.io/displayNameZH: "Node.js"
+    devops.kubesphere.io/descriptionEN: "Designed for the continuous integration of most Node.js projects, including dependency downloading, testing, building, and artifact archiving."
+    devops.kubesphere.io/descriptionZH: "专为大多数 Node.js 项目的持续集成而设计，包括依赖下载、测试、构建和归档。"
+    devops.kubesphere.io/icon: "nodejs.svg"
+spec:
+  parameters:
+    - name: GitURL
+      description: The URL you want to clone.
+      required: true
+      default: https://github.com/kubesphere-sigs/demo-javascript
+    - name: GitRevision
+      description: Which revision you want to checkout from.
+      required: true
+      default: master
+    - name: NodeDockerImage
+      description: Docker image of node. Refer to https://hub.docker.com/_/node.
+      default: "node:14.19.0"
+      required: true
+    - name: InstallScript
+      description: Shell script to install dependencies.
+      required: true
+      default: "npm install"
+    - name: TestScript
+      description: Shell script to test project.
+      required: true
+      default: "npm run test"
+    - name: BuildScript
+      description: Shell script to build project.
+      required: true
+      default: "npm run build"
+    - name: ArtifactsLocation
+      description: Artifacts location. e.g. dist/
+      required: false
+      default: "dist/"
+  template: |
+    pipeline {
+      agent {
+        kubernetes {
+          inheritFrom 'nodejs base'
+          containerTemplate {
+            name 'nodejs'
+            image '$(.params.NodeDockerImage)'
+          }
+        }
+      }
+      stages {
+        stage('Clone repository') {
+          agent none
+          steps {
+            checkout([$class: 'GitSCM', branches: [[name: '$(.params.GitRevision)']], 
+                extensions: [[$class: 'CloneOption', depth: 1, shallow: true]], userRemoteConfigs: [[url: '$(.params.GitURL)']]
+            ])
+          }
+        }
+        stage('Run npm install') {
+          steps {
+            container('nodejs') {
+              sh '$(.params.InstallScript)'
+            }
+          }
+        }
+        stage('Run test') {
+          steps {
+            container('nodejs') {
+              sh '$(.params.TestScript)'
+            }
+          }
+        }
+        stage('Run build') {
+          steps {
+            container('nodejs') {
+              sh '$(.params.BuildScript)'
+            }
+          }
+        }
+        stage('Archive artifacts') {
+          steps {
+            container('base') {
+              sh 'zip -r dist.zip $(.params.ArtifactsLocation)'
+            }
+            archiveArtifacts(artifacts: 'dist.zip', followSymlinks: false)
+          }
+        }
+      }
+    }
