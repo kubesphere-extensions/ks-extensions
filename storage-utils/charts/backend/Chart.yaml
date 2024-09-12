@@ -1,0 +1,11 @@
+apiVersion: v2
+name: backend
+description: Backend of storage-utils extension.
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+home: https://github.com/kubesphere-extensions/kse-extensions
+sources:
+  - https://github.com/kubesphere/pvc-autoresizer
+  - https://github.com/kubesphere/storageclass-accessor
+  - https://github.com/kubernetes-csi/external-snapshotter

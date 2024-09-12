@@ -1,0 +1,49 @@
+apiVersion: kubesphere.io/v1alpha1
+name: storage-utils
+version: 1.0.0
+displayName:
+  zh: KubeSphere 存储
+  en: KubeSphere Storage
+description:
+  zh: |-
+    这个扩展组件包含多个与存储有关的实用工具
+  en: |-
+    This extension contains multiple storage utilities
+category: storage
+keywords:
+  - storage
+  - pvc
+  - snapshot
+  - accessor
+home: https://kubesphere.com.cn/
+sources: []
+kubeVersion: '>=1.19.0-0'
+ksVersion: '>=4.0.0-0'
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+staticFileDirectory: static
+icon: ./static/favicon.svg
+installationMode: Multicluster
+dependencies:
+  - name: frontend
+    tags:
+      - extension
+  - name: backend
+    tags:
+      - agent
+images:
+  - kubesphere/storageclass-accessor:v0.2.5
+  - kubesphere/snapshot-controller:v4.2.1
+  - kubesphere/snapshotclass-controller:v0.0.1
+  - kubesphere/pvc-autoresizer:v0.3.1
+docs: https://docs.kubesphere.com.cn/
