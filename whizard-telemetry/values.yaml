@@ -23,30 +23,6 @@ whizard-telemetry:
       endpoint: "http://query-frontend-whizard-operated.kubesphere-monitoring-system.svc:10902"
     notification:
       endpoint: http://notification-manager-svc.kubesphere-monitoring-system.svc:19093
-      history:
-        enable: true
-        server:
-          elasticsearch:
-            endpoints:
-              - https://opensearch-cluster-data.kubesphere-logging-system:9200
-            version: opensearchv2
-            indexPrefix: "{{ .cluster }}-notification-history"
-            timestring: "%Y.%m.%d"
-            basicAuth: true
-            username: admin
-            password: admin
-    auditing:
-      enable: true
-      servers:
-        - elasticsearch:
-            endpoints:
-              - https://opensearch-cluster-data.kubesphere-logging-system:9200
-            version: opensearchv2
-            indexPrefix: "{{ .cluster }}-auditing"
-            timestring: "%Y.%m.%d"
-            basicAuth: true
-            username: admin
-            password: admin
     events:
       enable: true
       servers:
