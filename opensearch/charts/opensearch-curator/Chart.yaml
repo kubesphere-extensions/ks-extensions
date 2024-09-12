@@ -1,0 +1,9 @@
+apiVersion: v1
+description: A Helm chart for Opensearch Curator
+keywords:
+- curator
+- opensearch
+- opensearch-curator
+name: opensearch-curator
+version: 0.0.5
+appVersion: 0.0.5

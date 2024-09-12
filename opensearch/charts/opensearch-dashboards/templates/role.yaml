@@ -1,0 +1,9 @@
+{{- if .Values.rbac.create -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ template "opensearch-dashboards.serviceAccountName" . }}
+  namespace: {{ include "opensearch-dashboards.namespaceOverride" . }}
+  labels:
+    {{- include "opensearch-dashboards.labels" . | nindent 4 }}
+{{- end -}}

@@ -1,0 +1,106 @@
+apiVersion: {{ template "cronjob.apiVersion" . }}
+kind: CronJob
+metadata:
+  name: {{ template "opensearch-curator.fullname" . }}
+  labels:
+    app: {{ template "opensearch-curator.name" . }}
+    chart: {{ template "opensearch-curator.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- if .Values.cronjob.annotations }}
+  annotations:
+{{ toYaml .Values.cronjob.annotations | indent 4 }}
+{{- end }}
+  namespace: {{ template "opensearch-curator.namespace" . }}
+spec:
+  schedule: "{{ .Values.cronjob.schedule }}"
+  {{- with .Values.cronjob.concurrencyPolicy }}
+  concurrencyPolicy: {{ . }}
+  {{- end }}
+  {{- with .Values.cronjob.failedJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ . }}
+  {{- end }}
+  {{- with .Values.cronjob.successfulJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ . }}
+  {{- end }}
+  jobTemplate:
+    metadata:
+      labels:
+        app: {{ template "opensearch-curator.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      template:
+        metadata:
+          labels:
+            app: {{ template "opensearch-curator.name" . }}
+            release: {{ .Release.Name }}
+{{- if .Values.pod.annotations }}
+          annotations:
+{{ toYaml .Values.pod.annotations | indent 12 }}
+{{- end }}
+        spec:
+          volumes:
+            - name: config-volume
+              configMap:
+                name: {{ template "opensearch-curator.fullname" . }}-config
+{{- if .Values.extraVolumes }}
+{{ toYaml .Values.extraVolumes | indent 12 }}
+{{- end }}
+          restartPolicy: Never
+{{- if .Values.priorityClassName }}
+          priorityClassName: "{{ .Values.priorityClassName }}"
+{{- end }}
+          {{- include "imagePullSecrets" . | nindent 10 }}
+          containers:
+            - name: {{ .Chart.Name }}
+              image: "{{ template "curator.image" . }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              volumeMounts:
+                - name: config-volume
+                  mountPath: /etc/opensearch-curator
+{{- if .Values.extraVolumeMounts }}
+{{ toYaml .Values.extraVolumeMounts | indent 16 }}
+{{ end }}
+{{ if .Values.command }}
+              command:
+{{ toYaml .Values.command | indent 16 }}
+{{- end }}
+{{- if .Values.dryrun }}
+              args: [ "--dry-run", "--config", "/etc/opensearch-curator/config.yml", "/etc/opensearch-curator/action_file.yml" ]
+{{- else }}
+              args: [ "--config", "/etc/opensearch-curator/config.yml", "/etc/opensearch-curator/action_file.yml" ]
+{{- end }}
+              env:
+{{- if .Values.env }}
+{{- range $key,$value := .Values.env }}
+              - name: {{ $key | upper | quote}}
+                value: {{ $value | quote}}
+{{- end }}
+{{- end }}
+{{- if .Values.envFromSecrets }}
+{{- range $key,$value := .Values.envFromSecrets }}
+              - name: {{ $key | upper | quote}}
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ $value.from.secret | quote}}
+                    key: {{ $value.from.key | quote}}
+{{- end }}
+{{- end }}
+              resources:
+{{ toYaml .Values.resources | indent 16 }}
+    {{- with .Values.nodeSelector }}
+          nodeSelector:
+{{ toYaml . | indent 12 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+          affinity:
+{{ toYaml . | indent 12 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+          tolerations:
+{{ toYaml . | indent 12 }}
+    {{- end }}
+    {{- with .Values.securityContext }}
+          securityContext:
+{{ toYaml . | indent 12 }}
+    {{- end }}

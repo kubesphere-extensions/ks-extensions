@@ -1,0 +1,56 @@
+apiVersion: v1
+name: opensearch
+namespace: kubesphere-logging-system
+version: 2.11.1
+displayName:
+  zh: OpenSearch 分布式检索与分析引擎
+  en: OpenSearch Distributed Search and Analytics Engine
+description:
+  zh: |-
+    OpenSearch 是 KubeSphere 团队开发的 WhizardTelemetry 可观测平台中内置的分布式检索与分析引擎，用于存储、检索与分析日志、审计、事件、通知历史等可观测数据。
+  en: |-
+    OpenSearch is the built-in distributed search and analytics engine of KubeSphere's WhizardTelemetry Observability Platform, which is used to store,search and analyze observability data including logs, auditing events, K8s events, and notification history etc.
+category: observability
+keywords:
+  - Logging
+  - Observability
+home: https://kubesphere.com.cn/
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+staticFileDirectory: static
+sources: []
+kubeVersion: '>=1.19.0-0'
+ksVersion: '>=4.0.0-0'
+icon: ./static/opensearch.svg
+dependencies:
+  - name: opensearch-master
+    tags:
+      - agent
+  - name: opensearch-data
+    tags:
+      - agent
+  - name: opensearch-dashboards
+    condition: opensearch-dashboards.enabled
+    tags:
+      - agent
+  - name: opensearch-curator
+    condition: opensearch-curator.enabled
+    tags:
+      - agent
+installationMode: Multicluster
+images:
+  - docker.io/opensearchproject/opensearch:2.11.1
+  - docker.io/library/busybox:1.35.0
+  - docker.io/kubesphere/opensearch-curator:v0.0.5
+  - docker.io/opensearchproject/opensearch-dashboards:2.11.1
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+docs: https://docs.kubesphere.com.cn/
