@@ -30,6 +30,9 @@ provider:
 staticFileDirectory: static
 icon: ./static/favicon.svg
 dependencies:
+  - name: frontend
+    tags:
+      - extension
   - name: whizard-monitoring-helper
     tags:
       - agent
@@ -41,10 +44,6 @@ dependencies:
     tags:
       - agent
     condition: dcgmExporter.enabled
-  - name: cadvisor
-    tags:
-      - agent
-    condition: cadvisor.enabled
 # installationMode describes how to install subcharts, it can be HostOnly or Multicluster.
 # In Multicluster mode, the subchart with tag `extension` will only be deployed to the host cluster,
 # and the subchart with tag `agent` will be deployed to all selected clusters.
