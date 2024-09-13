@@ -1,4 +1,4 @@
-FROM docker.io/kubesphere/extensions-museum:latest as base
+FROM docker.io/kubesphere/ks-extensions-museum:latest as base
 
 COPY bin/_output/ /charts/
 

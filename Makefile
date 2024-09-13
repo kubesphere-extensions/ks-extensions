@@ -1,7 +1,7 @@
 KSBUILDER_VERSION?=v0.3.11
 ARCH?=amd64
-IMAGE?=registry.cn-beijing.aliyuncs.com/kse/kse-extensions
-IMAGE_TAG?=latest
+IMAGE?=registry.cn-beijing.aliyuncs.com/kubespheredev/ks-extensions-museum
+IMAGE_TAG?=dev
 
 
 help:
