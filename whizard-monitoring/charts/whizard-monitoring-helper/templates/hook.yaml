@@ -1,0 +1,87 @@
+{{- if eq .Values.global.clusterInfo.role "host" }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "whizard-monitoring-helper.name" . }}-post-install
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "whizard-monitoring-helper.name" . }}-post-install
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+rules:
+  - apiGroups:
+      - extensions.kubesphere.io
+      - kubesphere.io
+    resources:
+      - '*'
+    verbs:
+      - '*'
+
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "whizard-monitoring-helper.name" . }}-post-install
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "3"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "whizard-monitoring-helper.name" . }}-post-install
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ include "whizard-monitoring-helper.name" . }}-post-install
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "whizard-monitoring-helper.name" . }}-post-install
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "4"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  backoffLimit: {{ .Values.hook.backoffLimit }}
+  template:
+    metadata:
+      name: {{ include "whizard-monitoring-helper.name" . }}
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ include "whizard-monitoring-helper.name" . }}-post-install
+      containers:
+        - name: post-install-job
+          image: "{{ .Values.global.imageRegistry | default .Values.hook.image.registry }}/{{ .Values.hook.image.repository }}:{{ .Values.hook.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.hook.image.pullPolicy }}
+          env: 
+            - name: EnabledGPUMonitoring
+              value: "{{ ternary "true" "" .Values.gpuMonitoringHelper.enabled }}"
+            - name: EnabledEtcdMonitoring
+              value: "{{ ternary "true" "" .Values.etcdMonitoringHelper.enabled }}"
+            - name: EnabledWhizard
+              value: "{{ ternary "true" "" .Values.whizardHelper.enabled }}"
+          {{- with .Values.hook.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+                kubectl annotate extensions.kubesphere.io whizard-monitoring monitoring.kubesphere.io/enable-gpu-monitoring=$EnabledGPUMonitoring  --overwrite
+                kubectl annotate extensions.kubesphere.io whizard-monitoring monitoring.kubesphere.io/enable-etcd-monitoring=$EnabledEtcdMonitoring --overwrite
+                kubectl annotate extensions.kubesphere.io whizard-monitoring monitoring.kubesphere.io/enable-whizard=$EnabledWhizard --overwrite
+{{ end }}

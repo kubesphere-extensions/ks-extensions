@@ -18,9 +18,6 @@ whizard-telemetry:
       enabled: true
       kind: 0
       endpoint: http://prometheus-k8s.kubesphere-monitoring-system.svc:9090
-    observability:
-      enabled: false
-      endpoint: "http://query-frontend-whizard-operated.kubesphere-monitoring-system.svc:10902"
     notification:
       endpoint: http://notification-manager-svc.kubesphere-monitoring-system.svc:19093
     events:

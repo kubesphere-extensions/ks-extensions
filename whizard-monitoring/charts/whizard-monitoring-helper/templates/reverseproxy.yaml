@@ -1,0 +1,16 @@
+{{- if .Values.reverseProxy.enabled }}
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: ReverseProxy
+metadata:
+  name: prometheus
+spec:
+  directives:
+    headerUp:
+    - -Authorization
+    stripPathPrefix: /proxy/prometheus.io
+  matcher:
+    method: '*'
+    path: /proxy/prometheus.io/*
+  upstream:
+    url: {{ .Values.reverseProxy.endpoint }}
+{{- end }}

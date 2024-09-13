@@ -1,0 +1,80 @@
+apiVersion: v2
+name: whizard-monitoring
+version: 1.1.0
+displayName:
+  zh: WhizardTelemetry 监控
+  en: WhizardTelemetry Monitoring
+description:
+  zh: |-
+    WhizardTelemetry 监控是 KubeSphere 团队开发的 WhizardTelemetry 可观测平台中提供监控功能的扩展组件。其中包含了 Whizard 可观测中心，可提供多租户视角的云原生资源监控能力, 包括针对多集群, 节点, 工作负载、GPU、K8s 控制面等对象的核心监控指标实时和历史数据展示等功能。
+  en: |-
+    As a part of KubeSphere's WhizardTelemetry Observability Platform that provides monitoring capabilities including Whizard Observability Center, WhizardTelemetry Monitoring provides multi-tenant monitoring capabilities for cloud-native resources, including real-time and historical data display of core monitoring metrics for multi-cluster, nodes, workloads, GPU, K8s control plane and other objects.
+category: observability
+keywords:
+  - Observability
+  - Monitoring
+  - Prometheus
+home: https://kubesphere.com.cn/
+sources: []
+kubeVersion: '>=1.19.0-0'
+ksVersion: '>=4.1.1-0'
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+staticFileDirectory: static
+icon: ./static/favicon.svg
+dependencies:
+  - name: whizard-monitoring-helper
+    tags:
+      - agent
+  - name: kube-prometheus-stack
+    tags:
+      - agent
+    condition: kubePrometheusStack.enabled
+  - name: dcgm-exporter
+    tags:
+      - agent
+    condition: dcgmExporter.enabled
+  - name: cadvisor
+    tags:
+      - agent
+    condition: cadvisor.enabled
+# installationMode describes how to install subcharts, it can be HostOnly or Multicluster.
+# In Multicluster mode, the subchart with tag `extension` will only be deployed to the host cluster,
+# and the subchart with tag `agent` will be deployed to all selected clusters.
+installationMode: Multicluster
+externalDependencies:
+  - name: whizard-telemetry
+    type: extension
+    version: '>= 1.2.1-0'
+    required: true
+namespace: kubesphere-monitoring-system
+images:
+  - docker.io/kubesphere/kubectl:v1.27.12
+  - docker.io/kubesphere/kube-state-metrics:v2.12.0
+  - docker.io/kubespheredev/kube-webhook-certgen:v20221220-controller-v1.5.1-58-g787ea74b6
+  - docker.io/thanosio/thanos:v0.36.1
+  - quay.io/brancz/kube-rbac-proxy:v0.18.0
+  - quay.io/prometheus-operator/prometheus-config-reloader:v0.75.1
+  - quay.io/prometheus-operator/prometheus-operator:v0.75.1
+  - quay.io/prometheus/node-exporter:v1.8.1
+  - quay.io/prometheus/prometheus:v2.51.2
+  - docker.io/kubesphere/dcgm-exporter:3.3.5-3.4.0-ubuntu22.04
+  - kubesphere/process-exporter:0.5.0
+  - nginxinc/nginx-unprivileged:1.24
+  - kubesphere/calico-exporter:v0.3.0
+  - gcr.io/cadvisor/cadvisor:v0.49.1
+  - kubesphere/whizard-monitoring-helm-init:v0.1.0
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+docs: https://docs.kubesphere.com.cn/
+annotations:
+  executor-hook-image.kubesphere.io/install: kubesphere/whizard-monitoring-helm-init:v0.1.0
+  executor-hook-image.kubesphere.io/upgrade: kubesphere/whizard-monitoring-helm-init:v0.1.0
