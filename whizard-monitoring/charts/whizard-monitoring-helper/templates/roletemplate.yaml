@@ -1,0 +1,204 @@
+{{- if .Values.roleTemplate.enabled }}
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  labels:
+    iam.kubesphere.io/scope: global
+    iam.kubesphere.io/aggregate-to-authenticated: ""
+    iam.kubesphere.io/aggregate-to-viewer: ""
+    kubesphere.io/managed: "true"
+  name: cluster-view-monitoring-authenticated
+spec:
+  rules:
+  - apiGroups:
+    - 'monitoring.kubesphere.io'
+    resources:
+    - cluster_metrics
+    verbs:
+    - get
+    - list 
+    - watch
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  name: cluster-monitoring-management
+  labels:
+    iam.kubesphere.io/scope: cluster
+    kubesphere.io/managed: 'true'
+spec:
+  displayName:
+    en: Monitoring
+    zh: 监控
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"monitoring": "view"}'
+  labels:
+    iam.kubesphere.io/aggregate-to-cluster-viewer: ""
+    iam.kubesphere.io/category: cluster-monitoring-management
+    iam.kubesphere.io/scope: cluster
+    kubesphere.io/managed: "true"
+  name: cluster-view-monitoring
+spec:
+  description:
+    en: View cluster monitoring.
+    zh: 集群监控查看。
+  displayName:
+    en: Monitoring Viewing
+    zh: 监控查看
+  rules:
+  - apiGroups:
+    - 'monitoring.kubesphere.io'
+    resources:
+    - metrics
+    - cluster_metrics
+    - node_metrics
+    - workspace_metrics
+    - namespace_metrics
+    - workload_metrics
+    - pod_metrics
+    - container_metrics
+    - pvc_metrics
+    - component_metrics
+    verbs:
+    - get
+    - list 
+    - watch
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/dependencies: '["cluster-view-monitoring"]'
+    iam.kubesphere.io/role-template-rules: '{"monitoring": "manage"}'
+  labels:
+    iam.kubesphere.io/category: cluster-monitoring-management
+    iam.kubesphere.io/scope: cluster
+    kubesphere.io/managed: "true"
+  name: cluster-manage-monitoring
+spec:
+  description:
+    en: cluster monitoring management.
+    zh: 集群监控管理。
+  displayName:
+    en: Monitoring Management
+    zh: 监控管理
+  rules:
+  - apiGroups:
+    - 'monitoring.kubesphere.io'
+    resources:
+    - clusterdashboards
+    verbs:
+    - '*'
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"monitoring": "view"}'
+  labels:
+    iam.kubesphere.io/aggregate-to-viewer: ""
+    iam.kubesphere.io/scope: workspace
+    kubesphere.io/managed: "true"
+  name: workspace-view-monitoring
+spec:
+  description:
+    en: View workspace monitoring.
+    zh: 查看企业空间监控。
+  displayName:
+    en: Monitoring Viewing
+    zh: 监控查看
+  rules:
+  - apiGroups:
+    - 'monitoring.kubesphere.io'
+    resources:
+    - metrics
+    - workspace_metrics
+    - namespace_metrics
+    - workload_metrics
+    - pod_metrics
+    - container_metrics
+    - pvc_metrics
+    - component_metrics
+    verbs:
+    - get
+    - list 
+    - watch
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  name: namespace-monitoring-management
+  labels:
+    iam.kubesphere.io/scope: namespace
+    kubesphere.io/managed: 'true'
+spec:
+  displayName:
+    en: Monitoring
+    zh: 监控
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"monitoring": "view"}'
+  labels:
+    iam.kubesphere.io/aggregate-to-viewer: ""
+    iam.kubesphere.io/aggregate-to-operator: ""
+    iam.kubesphere.io/category: namespace-monitoring-management
+    iam.kubesphere.io/scope: namespace
+    kubesphere.io/managed: "true"
+  name: namespace-view-monitoring
+spec:
+  description:
+    en: View namespace monitoring.
+    zh: 查看项目监控。
+  displayName:
+    en: Monitoring Viewing
+    zh: 监控查看
+  rules:
+  - apiGroups:
+    - 'monitoring.kubesphere.io'
+    resources:
+    - metrics
+    - namespace_metrics
+    - workload_metrics
+    - pod_metrics
+    - container_metrics
+    - pvc_metrics
+    - component_metrics
+    verbs:
+    - get
+    - list 
+    - watch
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/dependencies: '["namespace-view-monitoring"]'
+    iam.kubesphere.io/role-template-rules: '{"monitoring": "manage"}'
+  labels:
+    iam.kubesphere.io/aggregate-to-operator: ""
+    iam.kubesphere.io/category: namespace-monitoring-management
+    iam.kubesphere.io/scope: namespace
+    kubesphere.io/managed: "true"
+  name: namespace-manage-monitoring
+spec:
+  description:
+    en: Namespace monitoring management.
+    zh: 项目监控管理。
+  displayName:
+    en: Monitoring Management
+    zh: 监控管理
+  rules:
+  - apiGroups:
+    - 'monitoring.kubesphere.io'
+    resources:
+    - 'dashboards'
+    verbs:
+    - '*'
+{{- end }}  

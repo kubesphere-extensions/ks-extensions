@@ -1,0 +1,48 @@
+# Default values for whizard-monitoring-helper.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  ## Global image registry to use if it needs to be overriden for some specific use cases (e.g local registries, custom images, ...)
+  ##
+  imageRegistry: ""
+
+  ## Reference to one or more secrets to be used when pulling images
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  imagePullSecrets: []
+  # - name: "image-pull-secret"
+  # or
+  # - "image-pull-secret"
+  nodeSelector: {}
+
+  clusterInfo: {}
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+hook:
+  image:
+    registry: docker.io
+    repository: kubesphere/kubectl
+    tag: v1.27.12
+    pullPolicy: IfNotPresent
+  backoffLimit: 3
+
+etcdMonitoringHelper:
+  enabled: false
+
+gpuMonitoringHelper:
+  enabled: false
+
+whizardHelper:
+  enabled: false
+
+reverseProxy:
+  enabled: true
+  endpoint: http://prometheus-k8s.kubesphere-monitoring-system.svc:9090
+roleTemplate:
+  enabled: true
+
+extraManifests: []

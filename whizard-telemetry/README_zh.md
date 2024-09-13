@@ -8,18 +8,6 @@
 
 ## 配置
 
-### 配合 WhizardTelemetry 监控启用 Whizard 可观测中心
-
-修改 **WhizardTelemetry 平台服务** 的 **扩展组件配置**， 将 `whizard-telemetry.config.observability.enabled` 设置为 `true`
-
-```yaml
-whizard-telemetry:
-  config:
-    observability:
-      enabled: true
-      endpoint: "http://query-frontend-whizard-operated.kubesphere-monitoring-system.svc:10902"
-```
-
 ### 配置日志、事件的 OpenSearch
 
 如果集群需要使用多个 OpenSearch 存储，可以按如下配置。
@@ -31,9 +19,6 @@ whizard-telemetry:
       enabled: true
       kind: 0
       endpoint: http://prometheus-k8s.kubesphere-monitoring-system.svc:9090
-    observability:
-      enabled: false
-      endpoint: "http://query-frontend-whizard-operated.kubesphere-monitoring-system.svc:10902"
     notification:
       endpoint: http://notification-manager-svc.kubesphere-monitoring-system.svc:19093
     events:

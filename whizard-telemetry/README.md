@@ -7,19 +7,6 @@
 
 ## Configuration
 
-### Enable Whizard Observability Center with WhizardTelemetry Monitoring
-
-Modify the **extension Config** of the **WhizardTelemetry Platform Service** by setting `whizard-telemetry.config.observability.enabled` to `true`.
-
-```yaml
-whizard-telemetry:
-  config:
-    observability:
-      enabled: true
-      endpoint: "http://query-frontend-whizard-operated.kubesphere-monitoring-system.svc:10902"
-```
-
-
 ### Configure OpenSearch settings for logging, events
 
 If the cluster needs to use multiple OpenSearch, you can configure them as follows.
@@ -31,9 +18,6 @@ whizard-telemetry:
       enabled: true
       kind: 0
       endpoint: http://prometheus-k8s.kubesphere-monitoring-system.svc:9090
-    observability:
-      enabled: false
-      endpoint: "http://query-frontend-whizard-operated.kubesphere-monitoring-system.svc:10902"
     notification:
       endpoint: http://notification-manager-svc.kubesphere-monitoring-system.svc:19093
     events:
