@@ -16,10 +16,6 @@
 
   DCGM-Exporter 是一个用于收集 Nvidia GPU 性能和健康度指标的指标导出器。
 
-- cAdvisor
-
-  支持独立部署 cAdvisor， 用于容器的资源使用和性能数据的指标导出(默认 cAdvisor 已集成 kubelet 中，正常场景下无需部署)。
-
 ### API 更新
 
 - 监控 API 已集成入 `WhizardTelemetry 平台服务` 中，API 变更请参考 [WhizardTelemetry 平台服务变更日志](https://github.com/kubesphere-extensions/ks-extensions/tree/main/whizard-telemetry/CHANGELOG_zh.md#api-%E6%9B%B4%E6%96%B0)
@@ -28,7 +24,6 @@
 
 - Kube-Prometheus-Stack 与社区项目 [kube-prometheus](https://github.com/prometheus-operator/kube-prometheus) 完全兼容
 - DCGM-Exporter 优化默认指标配置，支持更多 GPU 指标采集
-- 支持单独部署 cAdvisor，用于修复 Kubernetes 1.24 及以上版本在使用 Docker Engine 的场景下容器指标的关键标签缺失，容器监控无法展示问题。
 
 ### 优化
 

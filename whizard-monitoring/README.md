@@ -108,26 +108,7 @@ kube-prometheus-stack:
     - volumeattachments
 ```
 
-### 4. Deploy the cadvisor alone
-
-It is suitable for scenarios where Docker Engine is still used in Kubernetes 1.24 and later versions.
-
-> Starting from Kubernetes 1.24, Docker is no longer natively supported as a container runtime. To continue using Docker, you may configure it with cri-dockerd, which acts as an adapter for Kubernetes.
-
-Modify the extension configuration to deploy a separate cadvisor component for collecting container metrics. At the same time, disable collecting metrics exposed by cadvisor from kubelet.
-
-```yaml
-kube-prometheus-stack:
-
-  kubelet:
-    serviceMonitor:
-      cAdvisor: false
-
-cadvisor:
-  enabled: true
-```
-
-### 5. Customizing kube-prometheus-stack Configuration
+### 4. Customizing kube-prometheus-stack Configuration
 
 If users need to modify the configuration of kube-prometheus-stack, they can refer to [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) and values.yaml for modification.
 

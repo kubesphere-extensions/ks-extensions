@@ -147,21 +147,3 @@ dcgmExporter:
     repository: kubesphere/dcgm-exporter
     tag: 3.3.5-3.4.0-ubuntu22.04
 
-cadvisor:
-  enabled: false
-
-  image:
-    registry: gcr.io
-    repository: cadvisor
-    tag: v0.49.1
-
-  resources:
-    limits:
-      cpu: 800m
-      memory: 2000Mi
-    requests:
-      cpu: 50m
-      memory: 50Mi
-
-  tolerations:
-    - operator: Exists

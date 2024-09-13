@@ -110,26 +110,7 @@ kube-prometheus-stack:
     - volumeattachments
 ```
 
-### 4. 单独部署 cadvisor 配置
-
-适用于在 k8s 1.24 及以上版本仍然使用 Docker Engine 的场景。
-
-> k8s 1.24 开始不再原生支持 docker 运行时, 通常可选择 cri-dockerd 提供适配支持。但 kubelet 不再支持提供 docker 运行时的容器指标。
-
-修改扩展组件配置，以部署单独的 cadvisor 组件，从该组件采集容器指标。同时禁用从 kubelet 采集 cadvisor 暴露的指标。
-
-```yaml
-kube-prometheus-stack:
-
-  kubelet:
-    serviceMonitor:
-      cAdvisor: false
-
-cadvisor:
-  enabled: true
-```
-
-### 5. kube-prometheus-stack 自定义配置
+### 4. kube-prometheus-stack 自定义配置
 
 如用户需要修改 kube-prometheus-stack 的配置， 可参考 [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) 及 values.yaml 进行修改。
 

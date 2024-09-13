@@ -16,10 +16,6 @@ With `WhizardTelemetry Monitoring`, you can deploy and manage the following comp
 
   DCGM-Exporter is an exporter for collecting Nvidia GPU performance and health metrics.
 
-- cAdvisor
-
-  Supports independent deployment of cAdvisor for exporting container resource usage and performance metrics (cAdvisor is already integrated in kubelet, and in normal scenarios, separate deployment is not needed).
-
 ### API Updates
 
 - Monitoring APIs have been integrated into the `WhizardTelemetry Platform Service`. For API changes, refer to the [WhizardTelemetry Platform Service changelog](https://github.com/kubesphere-extensions/ks-extensions/tree/main/whizard-telemetry/CHANGELOG_en.md#api-updates).
@@ -28,7 +24,6 @@ With `WhizardTelemetry Monitoring`, you can deploy and manage the following comp
 
 - Kube-Prometheus-Stack is fully compatible with the community project [kube-prometheus](https://github.com/prometheus-operator/kube-prometheus).
 - DCGM-Exporter has optimized the default metric configurations, supporting the collection of more GPU metrics.
-- Supports the independent deployment of cAdvisor to resolve missing key labels for container metrics in Kubernetes 1.24 and above when using Docker Engine, which previously caused container monitoring data to not display.
 
 ### Enhancements
 
