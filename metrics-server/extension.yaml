@@ -1,0 +1,45 @@
+apiVersion: kubesphere.io/v1alpha1
+name: metrics-server
+version: 0.7.0
+displayName:
+  zh: Metrics Server
+  en: Metrics Server
+description:
+  zh: |-
+    Metrics Server 是一个可扩展、高效的容器资源度量源，为 Kubernetes 内置的自动扩展管道提供服务。
+  en: |-
+    Scalable and efficient source of container resource metrics for Kubernetes built-in autoscaling pipelines
+category: computing
+keywords:
+  - kubernetes
+  - metrics-server
+  - metrics
+home: https://kubesphere.com.cn/
+sources: []
+kubeVersion: '>=1.19.0-0'
+ksVersion: '>=4.0.0-0'
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+icon: ./static/favicon.svg
+dependencies:
+  - name: metrics-server
+    tags:
+      - agent
+# installationMode describes how to install subcharts, it can be HostOnly or Multicluster.
+# In Multicluster mode, the subchart with tag `extension` will only be deployed to the host cluster,
+# and the subchart with tag `agent` will be deployed to all selected clusters.
+installationMode: Multicluster
+images:
+  - docker.io/kubesphere/metrics-server:v0.7.0
+  - docker.io/kubesphere/addon-resizer:1.8.20
+docs: https://docs.kubesphere.com.cn/
