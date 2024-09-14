@@ -80,7 +80,7 @@ jobs:
                   dstImage="swr.cn-southwest-2.myhuaweicloud.com/ks/"$image
                   image="docker.io/"$image
                 fi
-                oras cp $image $dstImage
+                oras cp $image $dstImage --platform linux/amd64
               done
             fi
           done
