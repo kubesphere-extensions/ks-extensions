@@ -1,0 +1,101 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: "{{ .Release.Name }}-kubefed-pre-delete"
+  namespace: "{{ .Values.namespace }}"
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+data:
+  delete.sh: |-
+    #!/bin/bash
+    set -euo pipefail
+    kubectl delete federatedtypeconfig --all -n {{ .Values.namespace }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-pre-delete-{{ randAlphaNum 10 | lower }}"
+  namespace: "{{ .Values.namespace }}"
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-4"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}"
+      labels:
+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      {{- include "postInstallJob.imagePullSecrets" . | nindent 6 }}
+      nodeSelector:
+        {{- toYaml .Values.commonNodeSelector | nindent 8 }}
+      tolerations:
+        {{- toYaml .Values.commonTolerations | nindent 8 }}
+      restartPolicy: Never
+      serviceAccountName: kubefed-pre-delete
+      automountServiceAccountToken: true
+      containers:
+      - name: job
+        image: {{ template "postInstallJob.image" . }}
+        imagePullPolicy: "{{ .Values.postInstallJob.image.pullPolicy }}"
+        command: ["/bin/bash"]
+        args: ["/opt/scripts/delete.sh"]
+        volumeMounts:
+        - name: "scripts"
+          mountPath: "/opt/scripts"
+      volumes:
+      - name: "scripts"
+        configMap:
+          name: "{{ .Release.Name }}-kubefed-pre-delete"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kubefed-pre-delete
+  namespace: {{ .Values.namespace }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+rules:
+  - apiGroups: ["core.kubefed.io"]
+    resources: ["federatedtypeconfigs"]
+    verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kubefed-pre-delete
+  namespace: {{ .Values.namespace }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kubefed-pre-delete
+subjects:
+  - kind: ServiceAccount
+    name: kubefed-pre-delete
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubefed-pre-delete
+  namespace: {{ .Values.namespace }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation

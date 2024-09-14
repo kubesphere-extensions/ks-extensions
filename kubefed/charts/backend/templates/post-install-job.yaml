@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-post-install"
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ printf "%s-extension" .Release.Name }}
+      containers:
+        - name: post-install-job
+          image:  {{ template "kubectl.image" . }}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              kubectl label --overwrite ns kube-federation-system kubesphere.io/workspace=system-workspace kubesphere.io/managed=true

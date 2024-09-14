@@ -1,0 +1,44 @@
+apiVersion: v1
+name: kubefed
+version: 1.0.0
+displayName:
+  zh: 联邦集群应用管理
+  en: Application Management for Cluster Federation
+description:
+  zh: |-
+    联邦集群应用管理是一个旨在简化跨多个联邦 Kubernetes 集群管理应用程序的扩展组件，用户可以轻松地在多个联邦集群中部署、更新和管理应用程序，同时提供灵活的配置选项以满足不同需求。
+  en: |-
+    Application Management for Cluster Federation is an extension aimed at simplifying the management of applications across federated Kubernetes clusters. It offers a unified interface for deploying, updating, and managing applications across federated clusters with flexible configuration options to meet diverse needs.
+category: computing
+keywords:
+  - multi-cluster
+  - federation
+home: https://kubesphere.com.cn/
+sources: []
+kubeVersion: '>=1.19.0-0'
+ksVersion: '>=4.0.0-0'
+namespace: kube-federation-system
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+staticFileDirectory: static
+icon: ./static/favicon.svg
+dependencies:
+  - name: kubefed
+    condition: kubefed.enabled
+  - name: backend
+    condition: backend.enabled
+images:
+  - kubesphere/kubefed-extension:v1.0.0
+  - kubesphere/kubefed:v0.8.1
+  - kubesphere/kubectl:v1.27.4
+docs: https://docs.kubesphere.com.cn/

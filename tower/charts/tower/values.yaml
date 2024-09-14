@@ -1,0 +1,39 @@
+replicaCount: 1
+serviceAccountName: kubesphere
+
+image:
+  repository: kubesphere/tower
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "v0.2.1"
+
+service:
+  create: true
+  port: 8080
+
+resources:
+  requests:
+    memory: 128Mi
+    cpu: 100m
+  limits:
+    memory: 256Mi
+    cpu: 500m
+
+nodeSelector: {}
+
+tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+  - key: CriticalAddonsOnly
+    operator: Exists
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 60
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 60
+
+affinity: {}

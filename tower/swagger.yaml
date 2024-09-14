@@ -1,0 +1,23 @@
+swagger: "2.0"
+info:
+  title: tower
+  description: API docs for the tower extension
+  version: 1.0.0
+paths:
+  /kapis/tower.kubesphere.io/v1alpha1/deployment:
+    get:
+      summary: Return deployment yaml for cluster agent
+      operationId: deployment
+      parameters:
+        - name: cluster
+          in: query
+          description: 'Name of the cluster'
+          required: true
+          type: string
+      produces:
+        - text/plain
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
