@@ -1,0 +1,107 @@
+# Default values for kubefed.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## Configuration values for kubefed controllermanager deployment.
+##
+controllermanager:
+  namespace: kube-federation-system
+  enabled: true
+  clusterAvailableDelay:
+  clusterUnavailableDelay:
+  leaderElectLeaseDuration:
+  leaderElectRenewDeadline:
+  leaderElectRetryPeriod:
+  clusterHealthCheckPeriod:
+  clusterHealthCheckFailureThreshold:
+  clusterHealthCheckSuccessThreshold:
+  clusterHealthCheckTimeout:
+  ## Supported options are `configmaps` and `endpoints`
+  leaderElectResourceLock:
+  syncController:
+    maxConcurrentReconciles:
+    adoptResources:
+  statusController:
+    maxConcurrentReconciles:
+  ## Value of feature gates item should be either `Enabled` or `Disabled`
+  featureGates:
+    PushReconciler:
+    SchedulerPreferences:
+    RawResourceStatusCollection:
+
+  ## common node selector
+  commonNodeSelector: {}
+  #  key1: value1
+  #  key2: value2
+
+  ## common tolerations
+  commonTolerations: []
+  # - key: "key"
+  #   operator: "Equal"
+  #   value: "value"
+  #   effect: "NoSchedule"
+
+  controller:
+    annotations: {}
+    replicaCount: 2
+    image:
+      repository: kubesphere/kubefed
+      pullPolicy: IfNotPresent
+      pullSecrets: []
+      tag: v0.8.1
+    logLevel: 2
+    forceRedeployment: false
+    env: {}
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 64Mi
+    restConfigQPS: 50
+    restConfigBurst: 100
+  webhook:
+    annotations: {}
+    image:
+      repository: kubesphere/kubefed
+      pullPolicy: IfNotPresent
+      pullSecrets: []
+      tag: v0.8.1
+    logLevel: 8
+    forceRedeployment: false
+    env: {}
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 64Mi
+
+  certManager:
+    enabled: false
+    rootCertificate:
+      organizations: []
+      dnsNames:
+        - ca.webhook.kubefed
+      commonName: ca.webhook.kubefed
+
+  postInstallJob:
+    image:
+      repository: kubesphere/kubectl
+      pullPolicy: IfNotPresent
+      pullSecrets: []
+      tag: v1.27.4
+
+  service:
+    labels: {}
+
+## Configuration global values for all charts
+##
+global:
+  ## The scope of the kubefed control plane. Supported options
+  ## are `Cluster` (watch cluster-scoped resources and resources in
+  ## all namespaces) and `Namespaced` (only watch resources in the
+  ## kubefed system namespace). If unset, will default to `Cluster`.
+  scope: ""

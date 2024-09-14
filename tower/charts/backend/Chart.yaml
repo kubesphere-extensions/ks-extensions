@@ -1,0 +1,9 @@
+apiVersion: v2
+name: backend
+description: Backend of tower extension.
+type: application
+version: 0.1.0
+appVersion: "v1.0.0"
+home: https://kubesphere.io
+sources:
+  - https://github.com/kubesphere-extensions/tower

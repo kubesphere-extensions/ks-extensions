@@ -1,0 +1,48 @@
+kind: ClusterRole
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - 'services'
+      - 'configmaps'
+      - 'serviceaccounts'
+    verbs:
+      - '*'
+  - apiGroups:
+      - 'apps'
+    resources:
+      - 'deployments'
+      - 'replicasets'
+    verbs:
+      - '*'
+  - apiGroups:
+      - 'extensions.kubesphere.io'
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - apiGroups:
+      - 'cluster.kubesphere.io'
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - apiGroups:
+      - 'rbac.authorization.k8s.io'
+    resources:
+      - 'roles'
+      - 'clusterroles'
+      - 'rolebindings'
+      - 'clusterrolebindings'
+    verbs:
+      - '*'
+
+---
+kind: Role
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - 'secrets'
+    verbs:
+      - '*'

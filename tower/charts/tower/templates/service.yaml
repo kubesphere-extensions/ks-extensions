@@ -1,0 +1,19 @@
+{{- if .Values.service.create -}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: tower
+  name: tower
+  namespace: kubesphere-system
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+    - port: {{ .Values.service.port }}
+      protocol: TCP
+      targetPort: {{ .Values.service.port }}
+  selector:
+    app: tower
+  sessionAffinity: None
+  type: NodePort
+{{- end }}

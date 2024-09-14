@@ -1,0 +1,41 @@
+apiVersion: v1
+name: tower
+version: 1.0.0
+displayName:
+  zh: KubeSphere 多集群代理连接
+  en: KubeSphere Multi-Cluster Agent Connection
+description:
+  zh: |-
+    KubeSphere 的组件 Tower 用于代理连接。Tower 是一种通过代理在集群间建立网络连接的工具。如果主集群无法直接访问成员集群，您可以暴露主集群的代理服务地址，这样可以让成员集群通过代理连接到主集群。当成员集群部署在私有环境（例如 IDC）并且主集群可以暴露代理服务时，适用此连接方法。当您的集群分布部署在不同的云厂商上时，同样适用代理连接的方法。
+  en: |-
+    The component Tower of KubeSphere is used for agent connection. Tower is a tool for network connection between clusters through the agent. If the host cluster cannot access the member cluster directly, you can expose the proxy service address of the host cluster. This enables the member cluster to connect to the host cluster through the agent. This method is applicable when the member cluster is in a private environment (for example, IDC) and the host cluster is able to expose the proxy service. The agent connection is also applicable when your clusters are distributed across different cloud providers.
+category: computing
+keywords:
+  - multi-cluster
+home: https://kubesphere.com.cn/
+sources: []
+kubeVersion: '>=1.19.0-0'
+ksVersion: '>=4.0.0-0'
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+staticFileDirectory: static
+icon: ./static/favicon.svg
+dependencies:
+  - name: tower
+    condition: tower.enabled
+  - name: backend
+    condition: backend.enabled
+images:
+  - kubesphere/tower:v0.2.1
+  - kubesphere/tower-extension:v1.0.0
+docs: https://docs.kubesphere.com.cn/

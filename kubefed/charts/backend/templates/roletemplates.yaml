@@ -1,0 +1,90 @@
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  labels:
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/scope: "workspace"
+  name: federated-project-management
+spec:
+  displayName:
+    en: Federated Project
+    zh: 联邦项目
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"federatedprojects": "view"}'
+  labels:
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/category: federated-project-management
+    iam.kubesphere.io/scope: workspace
+    iam.kubesphere.io/aggregate-to-viewer: ""
+    iam.kubesphere.io/aggregate-to-regular: ""
+    iam.kubesphere.io/aggregate-to-self-provisioner: ""
+  name: federatedprojects-view
+spec:
+  description:
+    en: 'View Federated Project'
+    zh: '联邦项目查看'
+  displayName:
+    en: 'View Federated Project'
+    zh: '联邦项目查看'
+  rules:
+    - apiGroups:
+        - 'types.kubefed.io'
+      resources:
+        - '*'
+      verbs:
+        - get
+        - list
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"federatedprojects": "manage"}'
+    iam.kubesphere.io/dependencies: '["federatedprojects-view"]'
+  labels:
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/category: federated-project-management
+    iam.kubesphere.io/scope: workspace
+    iam.kubesphere.io/aggregate-to-admin: ""
+  name: federatedprojects-manage
+spec:
+  description:
+    en: 'Manage Federated Project'
+    zh: '联邦项目管理'
+  displayName:
+    en: 'Manage Federated Project'
+    zh: '联邦项目管理'
+  rules:
+    - apiGroups:
+        - 'types.kubefed.io'
+      resources:
+        - '*'
+      verbs:
+        - '*'
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  labels:
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/scope: global
+    iam.kubesphere.io/aggregate-to-authenticated: ""
+  name: federatedprojects-view-monitoring-authenticated
+spec:
+  rules:
+    - apiGroups:
+        - 'monitoring.kubesphere.io'
+      resources:
+        - namespace_metrics
+        - workload_metrics
+      verbs:
+        - get
+        - list
+        - watch
