@@ -1,0 +1,68 @@
+apiVersion: v2
+name: whizard-alerting
+version: 1.0.3
+displayName:
+  zh: WhizardTelemetry 告警
+  en: WhizardTelemetry Alerting
+description:
+  zh: |-
+    WhizardTelemetry 告警是 KubeSphere 团队开发的 WhizardTelemetry 可观测平台中基于监控指标进行告警管理的扩展组件。
+  en: |-
+    As a part of KubeSphere's WhizardTelemetry Observability Platform, WhizardTelemetry Alerting provides alerting management based on metrics data.
+category: observability
+keywords:
+  - Alerting
+  - Observability
+home: https://kubesphere.com.cn/
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+sources: []
+kubeVersion: '>=1.19.0-0'
+ksVersion: '>=4.0.0-0'
+installationMode: Multicluster
+dependencies:
+  - name: extension
+    tags:
+      - extension
+    version: 0.1.*
+  - name: frontend
+    tags:
+      - extension
+    version: 0.1.*
+  - name: agent
+    tags:
+      - agent
+    version: 0.1.*
+externalDependencies:
+  - name: whizard-monitoring
+    type: extension
+    version: '>= 0.1.0'
+    required: true
+  - name: whizard-telemetry
+    type: extension
+    version: '>= 0.4.3'
+    required: true
+  - name: whizard-notification
+    type: extension
+    version: '>= 2.5.0'
+    required: false
+staticFileDirectory: static
+icon: ./favicon.svg
+images:
+  - kubesphere/whizard-alerting-apiserver:v1.0.2
+  - kubesphere/whizard-alerting-controller-manager:v1.0.2
+  - thanosio/thanos:v0.36.1
+  - kubesphere/kubectl:v1.27.12
+  - kubesphere/cortex-tenant:v1.12.5
+  - quay.io/prometheus-operator/prometheus-config-reloader:v0.75.1
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+docs: https://docs.kubesphere.com.cn/

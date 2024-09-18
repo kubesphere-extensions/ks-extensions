@@ -1,0 +1,141 @@
+extension:
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+  # apiserver container config
+  apiserver:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 500Mi
+      requests:
+        cpu: 20m
+        memory: 30Mi
+
+    image:
+      repository: kubesphere/whizard-alerting-apiserver
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+
+  # container-manager container config
+  controllerManager:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 500Mi
+      requests:
+        cpu: 20m
+        memory: 30Mi
+
+    image:
+      repository: kubesphere/whizard-alerting-controller-manager
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+
+    additionalArgs:
+    - name: alert.relabel-config
+      value:
+        - source_labels: ['job','namespace']
+          separator: ;
+          regex: '(node-exporter);.*'
+          target_label: 'namespace'
+          replacement: '$2'
+        - source_labels: ['job','pod']
+          separator: ;
+          regex: '(node-exporter);.*'
+          target_label: 'pod'
+          replacement: '$2'
+
+    # Do not modify it unless you want alerts to be sent to an external service.
+    #
+    # The alertmanager urls that the extension ruler will send alerts to.
+    alertmanagersUrl:
+    - 'dnssrv+http://whizard-notification-alertmanager-headless.kubesphere-monitoring-system.svc:9093'
+
+    # Configure how many shards the ruler is divided into.
+    # It is a horizontal scale which decides the ruler statusfulset num.
+    # When the ruler has a high load, you can increase the resources, or the number of shards here.
+    shards: 1
+
+  crds:
+    update: true
+
+  kubectl:
+    image:
+      repository: kubesphere/kubectl
+      tag: "v1.27.12"
+
+agent:
+
+  # Thanos ruler statefulset config.
+  ruler:
+    # Should usually configure it with the address of the alertmanager-proxy service (which is provided 
+    # by the ***WhizardTelemetry Notification*** extension, installed in the host cluster, 
+    # and is accessible by default at `http://<host node ip>:31093`).
+    # 
+    # The alertmanager urls that the ruler will send alerts to.
+    alertmanagersUrl: []
+    # - '<alertmanager_proxy_url_in_host>'
+
+    additionalArgs:
+    - name: alert.relabel-config
+      value:
+        - source_labels: ['job','namespace']
+          separator: ;
+          regex: '(node-exporter);.*'
+          target_label: 'namespace'
+          replacement: '$2'
+        - source_labels: ['job','pod']
+          separator: ;
+          regex: '(node-exporter);.*'
+          target_label: 'pod'
+          replacement: '$2'
+
+    # ruler container config.
+    image:
+      repository: thanosio/thanos
+      tag: v0.36.1
+    resources:
+      limits:
+        cpu: "1"
+        memory: 1Gi
+      requests:
+        cpu: 30m
+        memory: 50Mi
+    
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+    # configReloader config to set the container in charge of triggerring ruler container reload changed config.
+    configReloader:
+      image:
+        repository: prometheus-operator/prometheus-config-reloader
+        tag: v0.75.1
+      resources:
+        requests:
+          cpu: 10m
+          memory: 10Mi
+        limits:
+          cpu: 100m
+          memory: 50Mi
+
+    # prometheus config to set where the ruler will send ALERTS and ALERTS_FOR_STATE metrics.
+    prometheus:
+      name: k8s
+      namespace: kubesphere-monitoring-system
+      port: 9090
+      # The prometheus replicas. It is just for generating remote write config.
+      # If you want to control it by yourself, please firstly configure the replicasAutoGet item as false.
+      replicas: 1
+      # If true, will ignore the upper replicas item and auto get the prometheus replicas.
+      replicasAutoGet: true
+
+  crds:
+    update: true
+  
+  kubectl:
+    image:
+      repository: kubesphere/kubectl
+      tag: "v1.27.12"
