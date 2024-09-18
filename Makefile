@@ -8,18 +8,6 @@ help:
 	@grep -hE '^[ a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-17s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: generate-extensions-charts
-generate-extensions-charts: generate-kse-extensions generate-kse-extensions-publish ## Generate charts template for kse-extensions and kse-extensions-publish
-
-.PHONY: generate-kse-extensions
-generate-kse-extensions: ksbuilder ## Generate kse-extensions charts code
-	.deploy/hack/upgrade-kse-extensions.sh
-
-
-.PHONY: generate-kse-extensions-publish
-generate-kse-extensions-publish: ksbuilder ## Generate kse-extensions-publish charts code
-	.deploy/hack/upgrade-kse-extensions-publish.sh
-
 .PHONY: ksbuilder
 ksbuilder: ## install ksbuilder in "bin/"
 	if [ ! -d bin ]; then \
