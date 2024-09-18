@@ -1,0 +1,54 @@
+apiVersion: v1
+name: gateway
+version: 1.0.2
+displayName:
+  zh: KubeSphere 网关
+  en: KubeSphere Gateway
+description:
+  zh: |-
+    KubeSphere 网关是聚合服务、管理 KubeSphere 平台外部访问的扩展组件，现已形成“集群、项目、企业空间”三类资源管理维度的网关体系，帮助企业实现各层级网络配置的全覆盖。
+  en: |-
+    The KubeSphere Gateway is an extension component that aggregates services and manages external access to the KubeSphere platform. It has formed a gateway system with three types of resource management dimensions: "cluster, project, enterprise space," helping enterprises achieve full coverage of network configurations at various levels.
+category: networking
+keywords:
+  - gateway
+  - kubesphere
+  - nginx ingress
+  - ingress controller
+home: https://kubesphere.com.cn/
+sources: []
+kubeVersion: '>=1.21.0-0'
+ksVersion: '>=4.0.0-0'
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+staticFileDirectory: static
+icon: ./static/favicon.svg
+dependencies:
+  - name: frontend
+    tags:
+      - extension
+  - name: backend
+    tags:
+      - agent
+externalDependencies:
+  - name: whizard-monitoring
+    type: extension
+    version: '>= 1.0.0-0'
+    required: false
+installationMode: Multicluster
+images:
+  - docker.io/kubesphere/nginx-ingress-controller:v1.4.0
+  - docker.io/kubesphere/gateway-apiserver:v1.0.2
+  - docker.io/kubesphere/gateway-controller-manager:v1.0.2
+  - docker.io/kubesphere/kubectl:v1.27.16
+docs: https://docs.kubesphere.com.cn/
