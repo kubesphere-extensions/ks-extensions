@@ -46,8 +46,6 @@ Compared to KSE 3.5, The primary changes are in the request paths:
 
 The request body and response data structures remain unchanged.
 
-For more details, please refer to [the API Documentation](https://github.com/kubesphere-extensions/kse-extensions/blob/v4.1.0/whizard-alerting/api.md).
-
 ### Enhancements
 
 - The request flow has been streamlined, notably when the Whizard Observability Center is enabled.

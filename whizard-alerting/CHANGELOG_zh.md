@@ -45,8 +45,6 @@ Please do not delete this line of version tag
 
 请求体和响应的数据结构保持不变。
 
-更多细节请参考 [API 文档](https://github.com/kubesphere-extensions/kse-extensions/blob/v4.1.0/whizard-alerting/api_zh.md)。
-
 ### 优化
 
 - 告警流程优化，尤其在启用可观测中心的场景下显著缩短了告警流程。
