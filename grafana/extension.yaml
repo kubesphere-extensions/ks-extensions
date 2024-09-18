@@ -1,0 +1,48 @@
+apiVersion: kubesphere.io/v1alpha1
+name: grafana
+version: 10.4.1
+displayName:
+  zh: Grafana for WhizardTelemetry
+  en: Grafana for WhizardTelemetry
+description:
+  zh: Grafana 是一个开放且可组合的观测和数据可视化平台，可以从多个来源（如Prometheus、Loki、Elasticsearch、InfluxDB、Postgres等）可视化指标、日志和跟踪数据。
+  en: The open and composable observability and data visualization platform. Visualize metrics, logs, and traces from multiple sources like Prometheus, Loki, Elasticsearch, InfluxDB, Postgres and many more.
+category: observability
+keywords:
+  - observability
+  - monitoring
+  - metric
+home: https://grafana.com
+sources:
+  - https://github.com/grafana/grafana
+kubeVersion: ">=1.19.0-0"
+ksVersion: ">=4.0.0-0"
+maintainers:
+  - name: "grafana"
+    email: ""
+    url: "https://grafana.com"
+provider:
+  zh:
+    name: "grafana"
+    email: ""
+    url: "https://grafana.com"
+  en:
+    name: "grafana"
+    email: ""
+    url: "https://grafana.com"
+docs: https://grafana.com/docs/grafana
+icon: ./static/favicon.svg
+screenshots: []
+dependencies:
+  - name: grafana
+    tags:
+    - extension
+# installationMode describes how to install subcharts, it can be HostOnly or Multicluster.
+# In Multicluster mode, the subchart with tag `extension` will only be deployed to the host cluster,
+# and the subchart with tag `agent` will be deployed to all selected clusters.
+installationMode: HostOnly
+namespace: kubesphere-monitoring-system
+images:
+  - docker.io/curlimages/curl:7.85.0
+  - docker.io/grafana/grafana:10.4.1
+  - docker.io/library/busybox:1.31.1
