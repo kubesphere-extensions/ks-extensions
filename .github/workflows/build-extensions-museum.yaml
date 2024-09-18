@@ -66,3 +66,19 @@ jobs:
           tags: |
               docker.io/kubesphere/ks-extensions-museum:${{ steps.prepare.outputs.version }}
               registry.cn-beijing.aliyuncs.com/kubesphereio/ks-extensions-museum:${{ steps.prepare.outputs.version }}
+
+      - name: Login to HUAWEICLOUD
+        uses: docker/login-action@v3
+        with:
+          registry: swr.cn-southwest-2.myhuaweicloud.com
+          username: ${{ secrets.HUAWEICLOUD_USERNAME }}
+          password: ${{ secrets.HUAWEICLOUD_PASSWORD }}
+
+      - name: Sync extension museum to HUAWEICLOUD
+        run: |
+          docker pull docker.io/kubesphere/ks-extensions-museum:${{ steps.prepare.outputs.version }}
+          docker tag docker.io/kubesphere/ks-extensions-museum:${{ steps.prepare.outputs.version }} swr.cn-southwest-2.myhuaweicloud.com/ks/kubesphere/ks-extensions-museum:${{ steps.prepare.outputs.version }}
+          docker push swr.cn-southwest-2.myhuaweicloud.com/ks/kubesphere/ks-extensions-museum:${{ steps.prepare.outputs.version }}
+          
+
+
