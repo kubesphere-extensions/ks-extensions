@@ -1,0 +1,248 @@
+global:
+  imageRegistry: null
+
+  imagePullSecrets: []
+
+grafana:
+  image:
+    registry: docker.io
+    repository: grafana/grafana
+    tag: "10.4.1"
+
+  resources: {}
+  #  limits:
+  #    cpu: 100m
+  #    memory: 128Mi
+  #  requests:
+  #    cpu: 100m
+  #    memory: 128Mi
+
+  ## Expose the grafana service to be accessed from outside the cluster (LoadBalancer service).
+  ## or access it from within the cluster (ClusterIP service). Set the service type and the port to serve it.
+  ## ref: http://kubernetes.io/docs/user-guide/services/
+  ##
+  service:
+    enabled: true
+    type: ClusterIP
+    loadBalancerIP: ""
+    loadBalancerClass: ""
+    loadBalancerSourceRanges: []
+    port: 80
+    targetPort: 3000
+    # nodePort: 32000
+
+  ## Enable persistence using Persistent Volume Claims
+  ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+  ##
+  persistence:
+    type: pvc
+    enabled: false
+    # storageClassName: default
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+    # annotations: {}
+    finalizers:
+      - kubernetes.io/pvc-protection
+    # selectorLabels: {}
+    ## Sub-directory of the PV to mount. Can be templated.
+    # subPath: ""
+    ## Name of an existing PVC. Can be templated.
+    # existingClaim:
+    ## Extra labels to apply to a PVC.
+    extraPvcLabels: {}
+
+    ## If persistence is not enabled, this allows to mount the
+    ## local storage in-memory to improve performance
+    ##
+    inMemory:
+      enabled: false
+      ## The maximum usage on memory medium EmptyDir would be
+      ## the minimum value between the SizeLimit specified
+      ## here and the sum of memory limits of all containers in a pod
+      ##
+      # sizeLimit: 300Mi
+
+  initChownData:
+    ## If false, data ownership will not be reset at startup
+    ## This allows the grafana-server to be run with an arbitrary user
+    ##
+    enabled: true
+
+    ## initChownData container image
+    ##
+    image:
+      # -- The Docker registry
+      registry: docker.io
+      repository: library/busybox
+      tag: "1.31.1"
+      sha: ""
+      pullPolicy: IfNotPresent
+
+    ## initChownData resource requests and limits
+    ## Ref: http://kubernetes.io/docs/user-guide/compute-resources/
+    ##
+    resources: {}
+    #  limits:
+    #    cpu: 100m
+    #    memory: 128Mi
+    #  requests:
+    #    cpu: 100m
+    #    memory: 128Mi
+    securityContext:
+      runAsNonRoot: false
+      runAsUser: 0
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        add:
+          - CHOWN
+
+  downloadDashboardsImage:
+    registry: docker.io
+    repository: curlimages/curl
+    tag: 7.85.0
+
+  # Administrator credentials when not using an existing secret (see below)
+  adminUser: admin
+  adminPassword: admin
+  # adminPassword: strongpassword
+
+  # Use an existing secret for the admin user.
+  admin:
+    ## Name of the secret. Can be templated.
+    existingSecret: ""
+    userKey: admin-user
+    passwordKey: admin-password
+
+  ## Configure grafana datasources
+  ## ref: http://docs.grafana.org/administration/provisioning/#datasources
+  ##
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+      - name: Prometheus
+        uid: prometheus
+        type: prometheus
+        url: http://prometheus-k8s.kubesphere-monitoring-system.svc:9090
+        access: proxy
+        isDefault: true
+        jsonData:
+          timeInterval: 1m
+
+  ## Configure grafana dashboard providers
+  ## ref: http://docs.grafana.org/administration/provisioning/#dashboards
+  ##
+  ## `path` must be /var/lib/grafana/dashboards/<provider_name>
+  ##
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+      - name: 'kube-prometheus-stack'
+        orgId: 1
+        folder: 'kube-prometheus-stack'
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/kube-prometheus-stack
+
+  ## Configure grafana dashboard to import
+  ## NOTE: To use dashboards you must also enable/configure dashboardProviders
+  ## ref: https://grafana.com/dashboards
+  ##
+  ## dashboards per provider, use provider name as key.
+  ##
+  dashboards:
+    kube-prometheus-stack:
+      apiserver:
+        file: dashboards/kube-prometheus-stack/apiserver.json
+      alertmanager-overview:
+        file: dashboards/kube-prometheus-stack/alertmanager-overview.json
+      cluster-total:
+        file: dashboards/kube-prometheus-stack/cluster-total.json
+      controller-manager:
+        file: dashboards/kube-prometheus-stack/controller-manager.json
+      grafana-overview:
+        file: dashboards/kube-prometheus-stack/grafana-overview.json
+      k8s-resources-cluster:
+        file: dashboards/kube-prometheus-stack/k8s-resources-cluster.json
+      k8s-resources-multicluster:
+        file: dashboards/kube-prometheus-stack/k8s-resources-multicluster.json
+      k8s-resources-namespace:
+        file: dashboards/kube-prometheus-stack/k8s-resources-namespace.json
+      k8s-resources-node:
+        file: dashboards/kube-prometheus-stack/k8s-resources-node.json
+      k8s-resources-pod:
+        file: dashboards/kube-prometheus-stack/k8s-resources-pod.json
+      k8s-resources-workload:
+        file: dashboards/kube-prometheus-stack/k8s-resources-workload.json
+      k8s-resources-workloads-namespace:
+        file: dashboards/kube-prometheus-stack/k8s-resources-workloads-namespace.json
+      kubelet:
+        file: dashboards/kube-prometheus-stack/kubelet.json
+      namespace-by-pod:
+        file: dashboards/kube-prometheus-stack/namespace-by-pod.json
+      namespace-by-workload:
+        file: dashboards/kube-prometheus-stack/namespace-by-workload.json
+      node-cluster-rsrc-use:
+        file: dashboards/kube-prometheus-stack/node-cluster-rsrc-use.json
+      node-rsrc-use:
+        file: dashboards/kube-prometheus-stack/node-rsrc-use.json
+      nodes:
+        file: dashboards/kube-prometheus-stack/nodes.json
+      nodes-darwin:
+        file: dashboards/kube-prometheus-stack/nodes-darwin.json
+      persistentvolumesusage:
+        file: dashboards/kube-prometheus-stack/persistentvolumesusage.json
+      pod-total:
+        file: dashboards/kube-prometheus-stack/pod-total.json
+      prometheus:
+        file: dashboards/kube-prometheus-stack/prometheus.json
+      prometheus-remote-write:
+        file: dashboards/kube-prometheus-stack/prometheus-remote-write.json
+      proxy:
+        file: dashboards/kube-prometheus-stack/proxy.json
+      scheduler:
+        file: dashboards/kube-prometheus-stack/scheduler.json
+      workload-total:
+        file: dashboards/kube-prometheus-stack/workload-total.json
+    default:
+      # some-dashboard:
+      #   json: |
+      #     $RAW_JSON
+      # custom-dashboard:
+      #   file: dashboards/custom-dashboard.json
+
+  ## Grafana's primary configuration
+  ## NOTE: values in map will be converted to ini format
+  ## ref: http://docs.grafana.org/installation/configuration/
+  ##
+  grafana.ini:
+    paths:
+      data: /var/lib/grafana/
+      logs: /var/log/grafana
+      plugins: /var/lib/grafana/plugins
+      provisioning: /etc/grafana/provisioning
+    analytics:
+      check_for_updates: true
+    log:
+      mode: console
+    grafana_net:
+      url: https://grafana.net
+    server:
+      domain: "{{ if (and .Values.ingress.enabled .Values.ingress.hosts) }}{{ .Values.ingress.hosts | first }}{{ else }}''{{ end }}"
+    security:
+      allow_embedding: true
+    auth.anonymous:
+      enabled: true
