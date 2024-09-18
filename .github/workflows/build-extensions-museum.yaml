@@ -79,6 +79,3 @@ jobs:
           docker pull docker.io/kubesphere/ks-extensions-museum:${{ steps.prepare.outputs.version }}
           docker tag docker.io/kubesphere/ks-extensions-museum:${{ steps.prepare.outputs.version }} swr.cn-southwest-2.myhuaweicloud.com/ks/kubesphere/ks-extensions-museum:${{ steps.prepare.outputs.version }}
           docker push swr.cn-southwest-2.myhuaweicloud.com/ks/kubesphere/ks-extensions-museum:${{ steps.prepare.outputs.version }}
-          
-
-
