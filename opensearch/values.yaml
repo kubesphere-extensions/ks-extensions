@@ -2,13 +2,13 @@ global:
   imageRegistry: docker.io
   imagePullSecrets: []
 
-#opensearch-master:
-#  image:
-#    repository: "opensearchproject/opensearch"
-#    # override image tag, which is .Chart.AppVersion by default
-#    # change tag to an old version like "2.6.0" if OpenSearch pod failed to start on your node with old CPU with error log message "Fatal glibc error: CPU does not support x86-64-v2"
-#    tag: "2.11.1"
-#    pullPolicy: "IfNotPresent"
+opensearch-master:
+  image:
+    repository: "opensearchproject/opensearch"
+    # override image tag, which is .Chart.AppVersion by default
+    # change tag to an old version like "2.6.0" if OpenSearch pod failed to start on your node with old CPU with error log message "Fatal glibc error: CPU does not support x86-64-v2"
+    tag: "2.8.0"
+    pullPolicy: "IfNotPresent"
 #  opensearchJavaOpts: "-Xmx512M -Xms512M"
 #  replicas: 1
 #  resources:
@@ -16,12 +16,12 @@ global:
 #      cpu: "100m"
 #      memory: "512Mi"
 opensearch-data:
-#  image:
-#    repository: "opensearchproject/opensearch"
-#    # override image tag, which is .Chart.AppVersion by default
-#    # change tag to an old version like "2.6.0" if OpenSearch pod failed to start on your node with old CPU with error log message "Fatal glibc error: CPU does not support x86-64-v2"
-#    tag: "2.11.1"
-#    pullPolicy: "IfNotPresent"
+  image:
+    repository: "opensearchproject/opensearch"
+    # override image tag, which is .Chart.AppVersion by default
+    # change tag to an old version like "2.6.0" if OpenSearch pod failed to start on your node with old CPU with error log message "Fatal glibc error: CPU does not support x86-64-v2"
+    tag: "2.8.0"
+    pullPolicy: "IfNotPresent"
   service:
     type: NodePort
     nodePort: 30920

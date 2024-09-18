@@ -1,0 +1,110 @@
+loki:
+  global:
+    dnsService: coredns
+  kubectlImage:
+    registry: docker.io
+    repository: kubesphere/kubectl
+    tag: v1.27.12
+  loki:
+    schemaConfig:
+      configs:
+        - from: 2024-04-01
+          store: tsdb
+          object_store: s3
+          schema: v13
+          index:
+            prefix: loki_index_
+            period: 24h
+    limits_config:
+      retention_period: 168h
+    ingester:
+      chunk_encoding: snappy
+    compactor:
+      working_directory: /data/retention
+      compaction_interval: 10m
+      retention_enabled: true
+      retention_delete_delay: 2h
+      retention_delete_worker_count: 150
+      delete_request_store: s3
+    tracing:
+      enabled: true
+    querier:
+      max_concurrent: 4
+    storage:
+      # Loki requires a bucket for chunks and the ruler. GEL requires a third bucket for the admin API.
+      # Please provide these values if you are using object storage.
+      bucketNames:
+        chunks: whizard-loki-chunks
+        ruler: whizard-loki-ruler
+        admin: whizard-loki-admin
+      type: s3
+      # Below S3 config will be enabled after setting `minio.enable` to false
+      s3:
+        endpoint: <your-s3-endpoint> # "s3.gd2.qingstor.com"
+        secretAccessKey: <your-s3-secret-access-key> # 'secret-access-key'
+        accessKeyId: <your-s3-access-key> # 'access-key'
+        s3ForcePathStyle: true
+        insecure: false
+        http_config:
+          idle_conn_timeout: 90s
+          response_header_timeout: 0s
+          insecure_skip_verify: false
+        backoff_config: { }
+  gateway:
+    verboseLogging: false
+  deploymentMode: SimpleScalable
+  backend:
+    affinity: {}
+    replicas: 3
+    extraArgs:
+      - -log.level=warn
+    extraVolumeMounts:
+      - name: compactor
+        mountPath: /data/retention
+    extraVolumes:
+      - name: compactor
+        emptyDir: {}
+  read:
+    affinity: {}
+    replicas: 3
+    extraArgs:
+      - -log.level=warn
+  write:
+    affinity: {}
+    replicas: 3
+    extraArgs:
+      - -log.level=warn
+  minio:
+    # Set minio.enable to false will not deploy minio or delete existing minio,
+    # and will store logs in buckets specified in `loki.storage.s3` instead
+    enabled: true
+    persistence:
+      size: 20Gi
+  singleBinary:
+    replicas: 0
+  ingester:
+    replicas: 0
+  querier:
+    replicas: 0
+  queryFrontend:
+    replicas: 0
+  queryScheduler:
+    replicas: 0
+  distributor:
+    replicas: 0
+  compactor:
+    replicas: 0
+  indexGateway:
+    replicas: 0
+  bloomCompactor:
+    replicas: 0
+  bloomGateway:
+    replicas: 0
+  lokiCanary:
+    enabled: false
+  test:
+    enabled: false
+  resultsCache:
+    enabled: false
+  chunksCache:
+    enabled: false
