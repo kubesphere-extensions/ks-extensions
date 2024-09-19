@@ -1,0 +1,34 @@
+apiVersion: kiali.io/v1alpha1
+kind: Kiali
+metadata:
+  name: kiali
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    ansible.sdk.operatorframework.io/verbosity: "1"
+spec:
+  istio_namespace: {{ .Release.Namespace }}
+  auth:
+    strategy: "token"
+  deployment:
+    accessible_namespaces: [ "**" ]
+    image_name: {{ .Values.kiali.registry | default .Values.global.imageRegistry }}/{{ .Values.kiali.repo }}
+    image_version: {{ .Values.kiali.tag }}
+    image_pull_policy: "IfNotPresent"
+    ingress_enabled: false
+    namespace: {{ .Release.Namespace }}
+    service_type: "ClusterIP"
+  external_services:
+    istio:
+      config_map_name: istio-{{ .Values.istio.revision }}
+    prometheus:
+      url: {{ .Values.kiali.prometheus_url }}
+    tracing:
+      enabled: true
+      use_grpc: false
+      in_cluster_url: http://jaeger-query.{{ .Release.Namespace }}.svc:16686
+  api:
+    namespaces:
+      exclude:
+        - "kube-.*"
+        - "kubesphere-.*system"
+        - "extension-.*"

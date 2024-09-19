@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: servicemesh-controller-manager
+    tier: backend
+    version: {{ .Chart.AppVersion }}
+  name: servicemesh-controller-manager
+spec:
+  ports:
+    - port: 443
+      protocol: TCP
+      targetPort: 8443
+  selector:
+    app: servicemesh-controller-manager
+    tier: backend
+  type: ClusterIP

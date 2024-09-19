@@ -1,0 +1,9 @@
+dependencies:
+- name: jaeger-operator
+  repository: https://jaegertracing.github.io/helm-charts
+  version: 2.33.0
+- name: kiali-operator
+  repository: https://kiali.org/helm-charts
+  version: 1.59.1
+digest: sha256:f1982ef14b21f4bae6388161b6057564a08f0b3fc6119d1d326e5551ad0cf5b3
+generated: "2024-03-08T16:14:46.651181+08:00"

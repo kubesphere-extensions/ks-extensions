@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-pre-install"
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ template "serviceAccountName" . }}
+      containers:
+      - name: pre-install-job
+        image: "{{ template "kubectl.image" . }}"
+        command: 
+          - /bin/sh
+          - -c
+          - |
+            #!/bin/bash
+            kubectl create namespace istio-system --dry-run=client -o yaml | kubectl apply -f -
+            if kubectl get mutatingwebhookconfigurations istio-sidecar-injector-1-14-6 >/dev/null 2>&1; then
+                kubectl delete mutatingwebhookconfigurations istio-sidecar-injector-1-14-6
+            fi
+            if kubectl get validatingwebhookconfigurations istio-validator-1-14-6-istio-system >/dev/null 2>&1; then
+                kubectl delete validatingwebhookconfigurations istio-validator-1-14-6-istio-system
+            fi
+            if kubectl -n istio-system get deployment kiali-operator >/dev/null 2>&1; then
+                kubectl -n istio-system delete deployment kiali-operator
+            fi
+            if kubectl -n istio-system get deployment jaeger-operator >/dev/null 2>&1; then
+                kubectl -n istio-system delete deployment jaeger-operator
+            fi

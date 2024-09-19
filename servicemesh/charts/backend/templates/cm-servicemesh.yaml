@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: servicemesh-config
+data:
+  servicemesh.yaml: |
+    {{- with .Values.config.servicemesh }}
+    servicemesh:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+

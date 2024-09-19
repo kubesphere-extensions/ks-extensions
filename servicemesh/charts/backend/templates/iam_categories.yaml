@@ -1,0 +1,14 @@
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  name: servicemesh
+  labels:
+    iam.kubesphere.io/scope: namespace
+    kubesphere.io/managed: "true"
+spec:
+  description:
+    en: 'Service Mesh microservices.'
+    zh: 'Service Mesh 微服务。'
+  displayName:
+    en: Service Mesh
+    zh: 服务网格

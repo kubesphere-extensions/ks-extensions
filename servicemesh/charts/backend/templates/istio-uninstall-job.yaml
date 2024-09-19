@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-istio-uninstaller"
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-delete
+    "helm.sh/hook-weight": "-4"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ template "serviceAccountName" . }}
+      containers:
+        - name: istio-uninstaller
+          image: {{ template "istioctl.image" . }}
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              istioctl uninstall --set revision={{ .Values.istio.revision }} -f /config/istio-config.yaml  -y
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+              readOnly: true
+      volumes:
+        - name: config-volume
+          configMap:
+            name: "{{ .Release.Name }}-istio-config"
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-kiali-patcher"
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-delete
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ template "serviceAccountName" . }}
+      containers:
+      - name: post-delete-job
+        image: "{{ template "kubectl.image" . }}"
+        command: 
+          - /bin/sh
+          - -c
+          - |
+            kubectl patch kialis.kiali.io -n {{ .Release.Namespace }} kiali --type='json' -p='[{"op": "remove", "path": "/metadata/finalizers"}]'
+

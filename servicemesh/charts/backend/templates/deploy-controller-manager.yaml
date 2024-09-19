@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: servicemesh-controller-manager
+    tier: backend
+    version: {{ .Chart.AppVersion }}
+  name: servicemesh-controller-manager
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+    type: RollingUpdate
+  progressDeadlineSeconds: 600
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: servicemesh-controller-manager
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: servicemesh-controller-manager
+        tier: backend
+    spec:
+      {{- include "imagePullSecrets" . | nindent 6 }}
+      serviceAccountName: {{ template "serviceAccountName" . }}
+      containers:
+        - command:
+            - controller-manager
+            - --logtostderr=true
+            - --leader-elect=true
+          image: "{{ template "controller.image" . }}"
+          imagePullPolicy: {{ .Values.controller.image.pullPolicy }}
+          name: servicemesh-controller-manager
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 8443
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.controller.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /etc/servicemesh/
+              name: servicemesh-config
+            - mountPath: /etc/localtime
+              name: host-time
+              readOnly: true
+          {{- if .Values.controller.extraVolumeMounts }}
+          {{- toYaml .Values.controller.extraVolumeMounts | nindent 8 }}
+          {{- end }}
+          env:
+          {{- if .Values.env }}
+          {{- toYaml .Values.env | nindent 8 }}
+          {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: servicemesh-config
+          configMap:
+            name: servicemesh-config
+            defaultMode: 420
+        - hostPath:
+            path: /etc/localtime
+            type: ""
+          name: host-time
+      {{- if .Values.controller.extraVolumes }}
+      {{ toYaml .Values.controller.extraVolumes | nindent 6 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

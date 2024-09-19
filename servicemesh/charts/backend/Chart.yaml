@@ -1,0 +1,16 @@
+apiVersion: v2
+name: backend
+description: Backend of servicemesh extension.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+home: https://kubesphere.io
+sources:
+  - https://github.com/kubesphere-extensions/servicemesh
+dependencies:
+  - name: jaeger-operator
+    version: "2.33.0"
+    repository: "https://jaegertracing.github.io/helm-charts"
+  - name: kiali-operator
+    version: "1.59.1"
+    repository: "https://kiali.org/helm-charts"
