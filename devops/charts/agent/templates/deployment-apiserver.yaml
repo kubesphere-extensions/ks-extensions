@@ -1,0 +1,91 @@
+{{- if ne (include "apiserver.ownedByExtension" . | trim) "true" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-apiserver
+  namespace: {{ default .Release.Namespace .Values.global.namespace }}
+  labels:
+    {{- include "apiserver.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.apiserver.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "apiserver.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.apiserver.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "apiserver.selectorLabels" . | nindent 8 }}
+    spec:
+      volumes:
+        - name: kubesphere-config
+          configMap:
+            name: devops-config
+            defaultMode: 420
+      {{- with (default .Values.global.imagePullSecrets .Values.apiserver.image.pullSecrets) }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      securityContext:
+        {{- toYaml .Values.apiserver.podSecurityContext | nindent 8 }}
+      containers:
+        - name: apiserver
+          securityContext:
+            {{- toYaml .Values.apiserver.securityContext | nindent 12 }}
+          image: "{{ default .Values.apiserver.image.registry .Values.global.imageRegistry }}/{{ .Values.apiserver.image.repository }}:{{ .Values.apiserver.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.apiserver.image.pullPolicy }}
+          {{- if .Values.argocd.enabled }}
+          args:
+          - --argocd-namespace={{ default .Release.Namespace .Values.argocd.namespace }}
+          - --argocd-enabled=true
+          {{- end }}
+          env:
+            - name: JENKINS_ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.jenkins.fullnameOverride }}
+                  key: jenkins-admin-token
+          ports:
+            - containerPort: 9090
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.apiserver.resources | nindent 12 }}
+          volumeMounts:
+            - name: kubesphere-config
+              mountPath: /etc/kubesphere/
+      {{- with .Values.apiserver.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.apiserver.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.apiserver.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-apiserver
+  namespace: {{ default .Release.Namespace .Values.global.namespace }}
+  labels:
+    {{- include "apiserver.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9090
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    {{- include "apiserver.selectorLabels" . | nindent 4 }}
+{{- end }}

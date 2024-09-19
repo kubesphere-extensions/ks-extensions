@@ -1,0 +1,102 @@
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  name: workspace-devops-projects
+  labels:
+    iam.kubesphere.io/scope: workspace
+    kubesphere.io/managed: "true"
+spec:
+  displayName:
+    en: DevOps Projects
+    zh: DevOps 项目
+
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  name: devops-credentials
+  labels:
+    iam.kubesphere.io/scope: namespace
+    devops.kubesphere.io/managed: "true"
+spec:
+  description:
+    en: Credentials Management
+  displayName:
+    en: Credentials
+    zh: 凭证
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  name: devops-code-repositories
+  labels:
+    iam.kubesphere.io/scope: namespace
+    devops.kubesphere.io/managed: "true"
+spec:
+  description:
+    en: Code Repositories Management
+  displayName:
+    en: Code Repositories
+    zh: 代码仓库
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  name: devops-pipelines
+  labels:
+    iam.kubesphere.io/scope: namespace
+    devops.kubesphere.io/managed: "true"
+spec:
+  description:
+    en: Pipeline Management
+  displayName:
+    en: Pipeline
+    zh: 流水线
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  name: devops-continuous-deployments
+  labels:
+    iam.kubesphere.io/scope: namespace
+    devops.kubesphere.io/managed: "true"
+spec:
+  description:
+    en: Continuous Deployments Management
+  displayName:
+    en: Continuous Deployments
+    zh: 持续部署
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  name: devops-access-control
+  labels:
+    iam.kubesphere.io/scope: namespace
+    devops.kubesphere.io/managed: "true"
+spec:
+  description:
+    en: Access Control Management
+  displayName:
+    en: Access Control
+    zh: 访问控制
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  name: devops-project-settings
+  labels:
+    iam.kubesphere.io/scope: namespace
+    devops.kubesphere.io/managed: "true"
+spec:
+  description:
+    en: DevOps Project Settings
+  displayName:
+    en: Project Settings
+    zh: 项目设置

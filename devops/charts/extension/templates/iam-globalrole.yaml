@@ -1,0 +1,61 @@
+apiVersion: iam.kubesphere.io/v1beta1
+kind: GlobalRole
+metadata:
+  name: devops-authenticated
+rules:
+  - apiGroups:
+      - devops.kubesphere.io
+    resources:
+      - namespaces
+      - clustersteptemplates
+      - clustertemplates
+      - scms/servers
+      - scms/organizations
+      - scms/organizations/repositories
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - devops.kubesphere.io
+    resources:
+      - clustertemplates/render
+      - clustersteptemplates/render
+      - scms/servers
+      - scms/verify
+    verbs:
+      - create
+  - apiGroups:
+      - gitops.kubesphere.io
+    resources:
+      - clusters
+    verbs:
+      - list
+  - nonResourceURLs:
+      - search
+      - crumbissuer
+      - webhook/git
+      - webhook/github
+      - webhook/generic-trigger
+      - webhooks/jenkins
+      - webhooks/scm
+      - jenkins
+      - jenkins/*
+      - ci/nodelabels
+      - oauth/authenticate
+    verbs:
+      - get
+      - create
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: GlobalRoleBinding
+metadata:
+  name: devops-authenticated
+roleRef:
+  apiGroup: iam.kubesphere.io
+  kind: GlobalRole
+  name: devops-authenticated
+subjects:
+  - apiGroup: iam.kubesphere.io
+    kind: Group
+    name: system:authenticated

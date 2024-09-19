@@ -1,0 +1,934 @@
+# SCM
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: git
+  labels:
+    step.devops.kubesphere.io/category: "SCM"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "Git Clone"
+    devops.kubesphere.io/descriptionZH: "拉取 Git 仓库的代码"
+    devops.kubesphere.io/displayNameEN: "Git Clone"
+    devops.kubesphere.io/descriptionEN: "Pull code from Git-Repo"
+    step.devops.kubesphere.io/icon: "git"
+spec:
+  runtime: dsl
+  parameters:
+    - name: url
+      type: string
+      display: 'Repository URL'
+      required: true
+    - name: credentialsId
+      type: secret
+      display: 'Credential Name'
+    - name: branch
+      type: string
+      display: 'Branch'
+      defaultValue: 'master'
+      required: true
+    - name: importCodeRepo
+      type: importCodeRepo
+      reactions: {{`'[{"target": "url", "fulfill": {"state": {"value": "{{$context?.getRepoUrl?.($self.value)}}"}}}, {"target": "credentialsId", "fulfill": {"state": {"value": "{{$self.value?.secret}}"}}}]'`}}
+  template: |
+    {{`{
+      "arguments": [
+        {
+          "key": "url",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.url}}"
+          }
+        },
+        {
+          "key": "credentialsId",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.credentialsId.name}}"
+          }
+        },
+        {
+          "key": "branch",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.branch}}"
+          }
+        },
+        {
+          "key": "changelog",
+          "value": {
+            "isLiteral": true,
+            "value": true
+          }
+        },
+        {
+          "key": "poll",
+          "value": {
+            "isLiteral": true,
+            "value": false
+          }
+        }
+      ],
+      "name": "git"
+    }`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: checkout
+  labels:
+    step.devops.kubesphere.io/category: "SCM"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "Checkout"
+    devops.kubesphere.io/descriptionZH: "拉取源代码，常用于拉取非 Git 仓库代码，例如 SVN 等等"
+    devops.kubesphere.io/displayNameEN: "Checkout"
+    devops.kubesphere.io/descriptionEN: "check out source code, often used for non-git repository, such as svn"
+spec:
+  runtime: dsl
+  parameters:
+    - name: remote
+      type: string
+      display: 'Repository URL'
+      required: true
+    - name: credentialsId
+      type: secret
+      display: 'Credential Name'
+    - name: importCodeRepo
+      type: importCodeRepo
+      reactions: {{`'[{"target": "remote", "fulfill": {"state": {"value": "{{$context?.getRepoUrl?.($self.value)}}"}}}, {"target": "credentialsId", "fulfill": {"state": {"value": "{{$self.value?.secret}}"}}}]'`}}
+  template: |
+    {{`{
+      "arguments": [
+        {
+          "key": "scm",
+          "value": {
+            "isLiteral": false,
+            "value": "[$class: 'SubversionSCM', locations: [[cancelProcessOnExternalsFail: true,  credentialsId: '{{.param.credentialsId.name}}', depthOption: 'infinity', ignoreExternalsOption: true, local: '.', remote: '{{.param.remote}}']], quietOperation: true, workspaceUpdater: [$class: 'UpdateUpdater']]"
+          }
+        },
+        {
+          "key": "poll",
+          "value": {
+            "isLiteral": true,
+            "value": false
+          }
+        }
+      ],
+      "name": "checkout"
+    }`}}
+
+---
+# General
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: echo
+  labels:
+    step.devops.kubesphere.io/category: "General"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "打印消息"
+    devops.kubesphere.io/descriptionZH: "在构建过程中打印消息"
+    devops.kubesphere.io/displayNameEN: "Echo"
+    devops.kubesphere.io/descriptionEN: "Print a message in the build"
+    step.devops.kubesphere.io/icon: "loudspeaker"
+spec:
+  runtime: dsl
+  parameters:
+    - name: message
+      type: string
+      display: 'The message to print'
+      required: true
+  template: |
+    {{`{
+      "arguments": [
+        {
+          "key": "message",
+          "value": {
+            "isLiteral": true,
+            "value": {{printf "%q" .param.message}}
+          }
+        }
+      ],
+      "name": "echo"
+    }`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: shell
+  labels:
+    step.devops.kubesphere.io/category: "General"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "Shell"
+    devops.kubesphere.io/descriptionZH: "在构建中执行 shell 命令或者 windows 的 batch 命令"
+    devops.kubesphere.io/displayNameEN: "Shell"
+    devops.kubesphere.io/descriptionEN: "Execute shell commands or windows batch commands in the build"
+    step.devops.kubesphere.io/icon: "terminal"
+spec:
+  runtime: shell
+  parameters:
+    - name: command
+      type: code
+      display: 'Shell command line'
+  template: |
+    {{`{{.param.command}}`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: mail
+  labels:
+    step.devops.kubesphere.io/category: "General"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "邮件"
+    devops.kubesphere.io/descriptionZH: "通过邮件发送消息"
+    devops.kubesphere.io/displayNameEN: "Mail"
+    devops.kubesphere.io/descriptionEN: "Send message by email"
+    step.devops.kubesphere.io/icon: "mail"
+spec:
+  runtime: dsl
+  parameters:
+    - name: to
+      type: string
+      display: 'Recipient'
+    - name: cc
+      type: string
+      display: 'CC'
+    - name: subject
+      type: string
+      display: 'Subject'
+      required: true
+    - name: body
+      type: text
+      display: 'Body'
+      required: true
+  template: |
+    {{`{
+      "arguments": [
+        {
+          "key": "to",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.to}}"
+          }
+        },
+        {
+          "key": "cc",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.cc}}"
+          }
+        },
+        {
+          "key": "subject",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.subject}}"
+          }
+        },
+        {
+          "key": "body",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.body}}"
+          }
+        }
+      ],
+      "name": "mail"
+    }`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: withcredentials
+  labels:
+    step.devops.kubesphere.io/category: "General"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "添加凭证"
+    devops.kubesphere.io/descriptionZH: "加载凭证到环境变量"
+    devops.kubesphere.io/displayNameEN: "WithCredential"
+    devops.kubesphere.io/descriptionEN: "Bind credentials to the environment variables"
+    step.devops.kubesphere.io/icon: "key"
+spec:
+  runtime: dsl
+  parameters:
+    - name: credentialsId
+      type: secret
+      display: 'Credential Name'
+    - name: usernameVariable
+      type: string
+      display: 'Username Variable'
+      defaultValue: 'USER'
+      condition: '.param.credentialsId.type==credential.devops.kubesphere.io/basic-auth||.param.credentialsId.type==credential.devops.kubesphere.io/ssh-auth'
+    - name: passwordVariable
+      type: string
+      display: 'Password Variable'
+      defaultValue: 'PASSWD'
+      condition: '.param.credentialsId.type==credential.devops.kubesphere.io/basic-auth'
+    - name: variable
+      type: string
+      display: 'Variable'
+      defaultValue: 'VARIABLE'
+      condition: '.param.credentialsId.type==credential.devops.kubesphere.io/secret-text||.param.credentialsId.type==credential.devops.kubesphere.io/kubeconfig'
+    - name: keyFileVariable
+      type: string
+      display: 'KeyFile Variable'
+      defaultValue: 'KEYFILEVARIABLE'
+      condition: '.param.credentialsId.type==credential.devops.kubesphere.io/ssh-auth'
+    - name: passphraseVariable
+      type: string
+      display: 'Passphrase Variable'
+      defaultValue: 'PASSPHRASEVARIABLE'
+      condition: '.param.credentialsId.type==credential.devops.kubesphere.io/ssh-auth'
+    - name: type
+      type: hidden
+      defaultValue: 'PASSPHRASEVARIABLE'
+  template: |
+    {{`{{if eq .param.credentialsId.type "credential.devops.kubesphere.io/basic-auth"}}
+      {
+        "arguments": {
+          "isLiteral": false,
+          "value": "${[usernamePassword(credentialsId: '{{.param.credentialsId.name}}', passwordVariable: '{{.param.passwordVariable}}', usernameVariable: '{{.param.usernameVariable}}')]}"
+        },
+        "children": [],
+        "name": "withCredentials"
+      }
+    {{else if eq .param.credentialsId.type "credential.devops.kubesphere.io/secret-text"}}
+      {
+        "arguments": {
+          "isLiteral": false,
+          "value": "${[string(credentialsId: '{{.param.credentialsId.name}}', variable: '{{.param.variable}}')]}"
+        },
+        "children": [],
+        "name": "withCredentials"
+      }
+    {{else if eq .param.credentialsId.type "credential.devops.kubesphere.io/kubeconfig"}}
+      {
+        "arguments": {
+          "isLiteral": false,
+          "value": "${[kubeconfigContent(credentialsId: '{{.param.credentialsId.name}}', variable: '{{.param.variable}}')]}"
+        },
+        "children": [],
+        "name": "withCredentials"
+      }
+    {{else if eq .param.credentialsId.type "credential.devops.kubesphere.io/ssh-auth"}}
+      {
+        "arguments": {
+          "isLiteral": false,
+          "value": "${[sshUserPrivateKey(credentialsId: '{{.param.credentialsId.name}}', keyFileVariable : '{{.param.keyFileVariable}}' ,passphraseVariable : '{{.param.passphraseVariable}}' ,usernameVariable : '{{.param.usernameVariable}}')]}"
+        },
+        "children": [],
+        "name": "withCredentials"
+      }
+    {{end}}`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: archiveartifacts
+  labels:
+    step.devops.kubesphere.io/category: "General"
+  annotations:
+    devops.kubesphere.io/descriptionZH: "保存构建过程中生成的制品"
+    devops.kubesphere.io/displayNameZH: "保存制品"
+    devops.kubesphere.io/displayNameEN: "Archive artifacts"
+    devops.kubesphere.io/descriptionEN: "Archive artifacts of the build records"
+    step.devops.kubesphere.io/icon: "terminal"
+spec:
+  runtime: dsl
+  parameters:
+    - name: artifacts
+      type: string
+      display: 'Artifacts Location'
+      required: true
+  template: |
+    {{`{
+      "arguments": [
+        {
+          "key": "artifacts",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.artifacts}}"
+          }
+        },
+        {
+          "key": "followSymlinks",
+          "value": {
+            "isLiteral": true,
+            "value": false
+          }
+        }
+      ],
+      "name": "archiveArtifacts"
+    }`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: timeout
+  labels:
+    step.devops.kubesphere.io/category: "General"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "超时"
+    devops.kubesphere.io/descriptionZH: "配置块内执行代码的超时限制"
+    devops.kubesphere.io/displayNameEN: "Timeout"
+    devops.kubesphere.io/descriptionEN: "Executes the code inside the block with a determined time out limit"
+    step.devops.kubesphere.io/icon: "clock"
+spec:
+  runtime: dsl
+  parameters:
+    - name: time
+      display: 'Time'
+      type: number
+      required: true
+    - name: unit
+      type: enum
+      defaultValue: 'SECONDS'
+      options: '[{"label":"Seconds","value":"SECONDS"},{"label":"Minutes","value":"MINUTES"},{"label":"Hours","value":"HOURS"}]'
+      display: 'Unit'
+    - name: activity
+      display: 'Timeout after no activity in logs for this block'
+      type: bool
+      defaultValue: 'false'
+  template: |
+    {{`{
+      "name": "timeout",
+      "arguments": [
+        {
+          "key": "unit",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.unit}}"
+          }
+        },
+        {
+          "key": "activity",
+          "value": {
+            "isLiteral": true,
+            "value": {{.param.activity}}
+          }
+        },
+        {
+          "key": "time",
+          "value": {
+            "isLiteral": true,
+            "value": {{.param.time}}
+          }
+        }
+      ],
+      "children": []
+    }`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: script
+  labels:
+    step.devops.kubesphere.io/category: "General"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "Groovy Script"
+    devops.kubesphere.io/descriptionZH: "执行 groovy 脚本"
+    devops.kubesphere.io/displayNameEN: "Groovy Script"
+    devops.kubesphere.io/descriptionEN: "Execute groovy script"
+    step.devops.kubesphere.io/icon: "terminal"
+spec:
+  runtime: dsl
+  parameters:
+    - name: script
+      type: code
+      display: 'Groovy script'
+      required: true
+  template: |
+    {{`{
+      "arguments": [
+        {
+          "key": "scriptBlock",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.script}}"
+          }
+        }
+      ],
+      "name": "script"
+    }`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: build
+  labels:
+    step.devops.kubesphere.io/category: "General"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "触发流水线"
+    devops.kubesphere.io/descriptionZH: "触发运行指定的流水线"
+    devops.kubesphere.io/displayNameEN: "Pipeline trigger"
+    devops.kubesphere.io/descriptionEN: "Trigger a new build for a given job"
+    step.devops.kubesphere.io/icon: "terminal"
+spec:
+  runtime: dsl
+  parameters:
+    - name: job
+      type: pipeline
+      display: 'Target Pipeline Name'
+      required: true
+    - name: quietPeriod
+      type: number
+      display: 'Quiet Period'
+      defaultValue: "0"
+    - name: wait
+      type: bool
+      display: 'Wait For Completion'
+      defaultValue: "true"
+    - name: propagate
+      type: bool
+      display: 'Propagate Errors'
+      defaultValue: "true"
+  template: |
+    {{`{
+      "arguments": [
+        {
+          "key": "quietPeriod",
+          "value": {
+            "isLiteral": true,
+            "value": {{.param.quietPeriod}}
+          }
+        },
+        {
+          "key": "wait",
+          "value": {
+            "isLiteral": true,
+            "value": {{.param.wait}}
+          }
+        },
+        {
+          "key": "propagate",
+          "value": {
+            "isLiteral": true,
+            "value": {{.param.propagate}}
+          }
+        },
+        {
+          "key": "job",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.job}}"
+          }
+        }
+      ],
+      "name": "build"
+    }`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: error
+  labels:
+    step.devops.kubesphere.io/category: "General"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "异常退出"
+    devops.kubesphere.io/descriptionZH: "错误信号，异常退出流水线"
+    devops.kubesphere.io/displayNameEN: "Exit With Error"
+    devops.kubesphere.io/descriptionEN: "Signals an error, exit the Pipeline and mark it as failed"
+    step.devops.kubesphere.io/icon: "clock"
+spec:
+  runtime: dsl
+  parameters:
+    - name: message
+      type: string
+      display: 'Error Message'
+  template: |
+    {{`{
+      "arguments": [
+        {
+          "key": "message",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.message}}"
+          }
+        }
+      ],
+      "name": "error"
+    }`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: sleep
+  labels:
+    step.devops.kubesphere.io/category: "General"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "Sleep"
+    devops.kubesphere.io/descriptionZH: "睡眠一段时间"
+    devops.kubesphere.io/displayNameEN: "Sleep"
+    devops.kubesphere.io/descriptionEN: "Pause the process for specific time"
+    step.devops.kubesphere.io/icon: "clock"
+spec:
+  runtime: dsl
+  parameters:
+    - name: time
+      type: number
+      display: 'Time'
+      required: true
+    - name: unit
+      type: enum
+      defaultValue: 'SECONDS'
+      options: '[{"label":"Seconds","value":"SECONDS"},{"label":"Minutes","value":"MINUTES"},{"label":"Hours","value":"HOURS"}]'
+      display: 'Unit'
+  template: |
+    {{`{
+      "arguments": [
+        {
+          "key": "time",
+          "value": {
+            "isLiteral": true,
+            "value": {{.param.time}}
+          }
+        },
+        {
+          "key": "unit",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.unit}}"
+          }
+        }
+      ],
+      "name": "sleep"
+    }`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: junit
+  labels:
+    step.devops.kubesphere.io/category: "General"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "JUnit 报告"
+    devops.kubesphere.io/descriptionZH: "格式化 JUnit 测试结果"
+    devops.kubesphere.io/displayNameEN: "JUnit Report"
+    devops.kubesphere.io/descriptionEN: "Archive JUnit-formatted test results"
+    step.devops.kubesphere.io/icon: "test"
+spec:
+  runtime: dsl
+  parameters:
+    - name: testResults
+      type: string
+      display: 'Test Results Location'
+    - name: allowEmptyResults
+      type: bool
+      display: 'Allow Empty Results'
+    - name: keepLongStdio
+      type: bool
+      display: 'Keep Long Output'
+    - name: skipPublishingChecks
+      type: bool
+      display: 'Skip Publishing Checks'
+  template: |
+    {{`{
+      "arguments": [
+        {
+          "key": "allowEmptyResults",
+          "value": {
+            "isLiteral": true,
+            "value": {{.param.allowEmptyResults}}
+          }
+        },
+        {
+          "key": "keepLongStdio",
+          "value": {
+            "isLiteral": true,
+            "value": {{.param.keepLongStdio}}
+          }
+        },
+        {
+          "key": "skipPublishingChecks",
+          "value": {
+            "isLiteral": true,
+            "value": {{.param.skipPublishingChecks}}
+          }
+        },
+        {
+          "key": "testResults",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.testResults}}"
+          }
+        }
+      ],
+      "name": "junit"
+    }`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: retry
+  labels:
+    step.devops.kubesphere.io/category: "General"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "重试"
+    devops.kubesphere.io/descriptionZH: "重试执行指定的步骤"
+    devops.kubesphere.io/displayNameEN: "Retry"
+    devops.kubesphere.io/descriptionEN: "Repeatedly run given steps"
+    step.devops.kubesphere.io/icon: "clock"
+spec:
+  runtime: dsl
+  parameters:
+    - name: count
+      type: number
+      display: 'Retry Count'
+  template: |
+    {{`{
+      "arguments": {
+        "isLiteral": true,
+        "value": {{.param.count}}
+      },
+      "children": [],
+      "name": "retry"
+    }`}}
+
+---
+# Review
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: input
+  labels:
+    step.devops.kubesphere.io/category: "Review"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "审核"
+    devops.kubesphere.io/descriptionZH: "流水线运行至此任务将会暂停，审核后可选择继续或终止"
+    devops.kubesphere.io/displayNameEN: "input"
+    devops.kubesphere.io/descriptionEN: "When the pipeline runs here, this task will be suspended, and you can choose to continue or terminate after the review"
+    step.devops.kubesphere.io/icon: "rocket"
+    step.devops.kubesphere.io/tip: "When the pipeline runs here, the task will be suspended, and the creator and @somebody can choose to continue or terminate the pipeline."
+spec:
+  runtime: dsl
+  parameters:
+    - name: message
+      type: text
+      display: 'Message'
+      required: true
+    - name: submitter
+      type: string
+      display: 'Submitter'
+  template: |
+    {{`{
+      "arguments": [
+        {
+          "key": "message",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.message}}"
+          }
+        },
+        {
+          "key": "submitter",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.submitter}}"
+          }
+        }
+      ],
+      "name": "input"
+    }`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: withsonarqubeenv
+  labels:
+    step.devops.kubesphere.io/category: "Review"
+  annotations:
+    devops.kubesphere.io/descriptionZH: "加载附带 SonarQube 配置的代码块（在其中运行代码检查））"
+    devops.kubesphere.io/displayNameZH: "SonarQube 配置"
+    devops.kubesphere.io/descriptionEN: "Load a code block with sonarqube configuration environments(run code-review in it)"
+    devops.kubesphere.io/displayNameEN: "WithSonarQubeEnv"
+    step.devops.kubesphere.io/icon: "terminal"
+spec:
+  runtime: dsl
+  parameters:
+    - name: config
+      type: string
+      display: 'Config Name'
+      required: true
+  template: |
+    {{`{
+      "arguments": {
+        "isLiteral": true,
+        "value": "{{.param.config}}"
+      },
+      "children": [],
+      "name": "withSonarQubeEnv"
+    }`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: waitforqualitygate
+  labels:
+    step.devops.kubesphere.io/category: "Review"
+  annotations:
+    devops.kubesphere.io/descriptionZH: "代码质量检查"
+    devops.kubesphere.io/displayNameZH: "运行代码质量检查（SonarQube）"
+    devops.kubesphere.io/descriptionEN: "Execute code analysis(SonarQube)"
+    devops.kubesphere.io/displayNameEN: "WaitForQualityGate"
+    step.devops.kubesphere.io/icon: "terminal"
+    step.devops.kubesphere.io/tip: "Code quality check standards are derived from SonarQube's Quality Gate. If you need to customize the standards, go to SonarQube settings."
+spec:
+  runtime: dsl
+  parameters:
+    - name: abortPipeline
+      type: bool
+      display: "AbortPipeline if quality gate status is not green"
+      defaultValue: "false"
+  template: |
+    {{`{
+      "arguments": [
+        {
+          "key": "abortPipeline",
+          "value": {
+            "isLiteral": true,
+            "value": "{{.param.abortPipeline}}"
+          }
+        }
+      ],
+      "name": "waitForQualityGate"
+    }`}}
+
+---
+# Container
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: container
+  labels:
+    step.devops.kubesphere.io/category: "Container"
+  annotations:
+    devops.kubesphere.io/displayNameEN: "Specify Container"
+    devops.kubesphere.io/descriptionEN: "Specify a container to add nested tasks to execute inside the container"
+    devops.kubesphere.io/displayNameZH: "指定容器"
+    devops.kubesphere.io/descriptionZH: "指定执行任务的容器"
+    step.devops.kubesphere.io/icon: "container"
+spec:
+  runtime: dsl
+  parameters:
+    - name: name
+      type: string
+      display: 'Container Name'
+  template: |
+    {{`{
+      "arguments": {
+        "isLiteral": true,
+        "value": "{{.param.name}}"
+      },
+      "children": [],
+      "name": "container"
+    }`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: cd
+  labels:
+    step.devops.kubesphere.io/category: "Container"
+  annotations:
+    devops.kubesphere.io/displayNameEN: "CD"
+    devops.kubesphere.io/descriptionEN: "Update image information using continuous deployment"
+    devops.kubesphere.io/descriptionZH: "通过持续部署更新镜像信息"
+    devops.kubesphere.io/displayNameZH: "CD"
+    step.devops.kubesphere.io/icon: "rocket"
+spec:
+  runtime: dsl
+  parameters:
+    - name: application
+      type: application
+      display: 'Continuous Deployments'
+      required: true
+    - name: branch
+      type: string
+      display: 'Branch'
+      required: true
+    - name: originalName
+      type: string
+      display: 'Original Image Address'
+      required: true
+    - name: newImageName
+      type: string
+      required: true
+      display: 'New Image Address'
+    - name: newImageTag
+      type: string
+      display: 'New Image Tag'
+    - name: secret
+      type: secret
+      display: 'Credential'
+      required: true
+  template: |
+    {{`{
+      "arguments": {
+        "isLiteral": true,
+        "value": "base"
+      },
+      "children": [
+        {
+          "arguments": {
+            "isLiteral": false,
+            "value": "${[usernamePassword(credentialsId : '{{.param.secret.name}}' ,passwordVariable : 'PASS' ,usernameVariable : 'USER')]}"
+          },
+          "children": [
+            {
+              "arguments": [
+                {
+                  "key": "script",
+                  "value": {
+                    "isLiteral": true,
+                    "value": "ks app update --app-name {{.param.application.name}} \\\n --app-namespace {{.param.application.namespace}} \\\n --name {{.param.originalName}} \\\n --newName {{.param.newName}} \\\n --git-password $PASS --git-username=$USER \\\n --git-target-branch {{.param.branch}}"
+                  }
+                }
+              ],
+              "name": "sh"
+            }
+          ],
+          "name": "withCredentials"
+        }
+      ],
+      "name": "container"
+    }`}}
+
+---
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterStepTemplate
+metadata:
+  name: wrap
+  labels:
+    step.devops.kubesphere.io/category: "General"
+  annotations:
+    devops.kubesphere.io/displayNameZH: "用户信息"
+    devops.kubesphere.io/descriptionZH: "提供构建用户的环境变量，包括：BUILD_USER、BUILD_USER_ID 等"
+    devops.kubesphere.io/displayNameEN: "User Vars"
+    devops.kubesphere.io/descriptionEN: "Provide build user environment variables, including: BUILD_USER, BUILD_USER_ID, etc."
+    step.devops.kubesphere.io/icon: "key"
+spec:
+  runtime: dsl
+  template: |
+    {
+      "arguments": {
+        "isLiteral": false,
+        "value": "${[$class: 'BuildUser']}"
+      },
+      "children": [],
+      "name": "wrap"
+    }

@@ -1,0 +1,94 @@
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterTemplate
+metadata:
+  name: cicd
+  annotations:
+    devops.kubesphere.io/displayNameEN: "Continuous Integration & Delivery (CI/CD)"
+    devops.kubesphere.io/displayNameZH: "持续集成&交付 (CI/CD)"
+    devops.kubesphere.io/descriptionEN: "Continuous deployment (CD) refers to the idea of automatically providing the release version in the continuous delivery pipeline to end users. According to the user\'s installation method, automatic deployment in the cloud environment, app upgrades (such as apps on mobile phones), website updates, or only the list of available versions."
+    devops.kubesphere.io/descriptionZH: "持续部署（CD）是指能够自动提供持续交付管道中发布版本给最终用户使用的想法。根据用户的安装方式，在云环境中自动部署、app 升级（如手机上的应用程序）、更新网站或只更新可用版本列表。"
+    devops.kubesphere.io/icon: "cicd-temple-en.svg"
+spec:
+  template: |
+    pipeline {
+      agent {
+        node {
+          label 'maven'
+        }
+      }
+      parameters {
+        string(name:'TAG_NAME',defaultValue: '',description:'')
+      }
+      environment {
+        DOCKER_CREDENTIAL_ID = 'dockerhub-id'
+        GITHUB_CREDENTIAL_ID = 'github-id'
+        KUBECONFIG_CREDENTIAL_ID = 'demo-kubeconfig'
+        REGISTRY = 'docker.io'
+        DOCKERHUB_NAMESPACE = 'docker_username'
+        GITHUB_ACCOUNT = 'kubesphere'
+        APP_NAME = 'devops-java-sample'
+      }
+      stages {
+        stage('clone code') {
+          steps {
+            container('maven') {
+              checkout([$class: 'GitSCM', branches: [[name: '*/$BRANCH_NAME']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/kubesphere/devops-python-sample.git']]])
+            }
+          }
+        }
+        stage ('unit test') {
+          steps {
+            container ('maven') {
+              sh 'mvn clean -o -gs `pwd`/configuration/settings.xml test'
+            }
+          }
+        }
+        stage ('build & push') {
+          steps {
+            container ('maven') {
+              sh 'mvn -o -Dmaven.test.skip=true -gs `pwd`/configuration/settings.xml clean package'
+              sh 'docker build -f Dockerfile-online -t $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER .'
+              withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "$DOCKER_CREDENTIAL_ID" ,)]) {
+                sh 'echo "$DOCKER_PASSWORD" | docker login $REGISTRY -u "$DOCKER_USERNAME" --password-stdin'
+                sh 'docker push  $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER'
+              }
+            }
+          }
+        }
+        stage('push latest') {
+          when{
+            branch 'master'
+          }
+          steps {
+             container ('maven') {
+               sh 'docker tag  $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:latest '
+               sh 'docker push  $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:latest '
+             }
+          }
+        }
+        stage('deploy to dev') {
+          steps {
+            container('maven') {
+              input(id: 'deploy-to-dev', message: 'deploy to dev?')
+              withCredentials([kubeconfigContent(credentialsId : 'KUBECONFIG_CREDENTIAL_ID' ,variable : 'KUBECONFIG_CONFIG' ,)]) {
+                sh 'mkdir -p ~/.kube/'
+                sh 'echo "$KUBECONFIG_CONFIG" > ~/.kube/config'
+                sh 'envsubst < deploy/dev-ol/deploy.yaml | kubectl apply -f -'
+              }
+            }
+          }
+        }
+        stage('deploy to production') {
+          steps {
+            container('maven') {
+              input(id: 'deploy-to-production', message: 'deploy to production?')
+              withCredentials([kubeconfigContent(credentialsId : 'KUBECONFIG_CREDENTIAL_ID' ,variable : 'KUBECONFIG_CONFIG' ,)]) {
+                sh 'mkdir -p ~/.kube/'
+                sh 'echo "$KUBECONFIG_CONFIG" > ~/.kube/config'
+                sh 'envsubst < deploy/prod-ol/deploy.yaml | kubectl apply -f -'
+              }
+            }
+          }
+        }
+      }
+    }

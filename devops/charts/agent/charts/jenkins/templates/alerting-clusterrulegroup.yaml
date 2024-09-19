@@ -1,0 +1,51 @@
+{{ if and (not .Values.prometheus.alertRuleGroup.disabled) (.Capabilities.APIVersions.Has "alerting.kubesphere.io/v2beta1/ClusterRuleGroup") }}
+apiVersion: alerting.kubesphere.io/v2beta1
+kind: ClusterRuleGroup
+metadata:
+  labels:
+    alerting.kubesphere.io/enable: 'true'
+  name: {{ template "jenkins.fullname" . }}-rules
+  namespace: {{ default .Release.Namespace .Values.global.namespace }}
+spec:
+  rules:
+    - alert: jenkins-too-many-stuck-jobs
+      expr: 'avg_over_time(jenkins_queue_size_value[5m]) > 10'
+      for: 5m
+      severity: warning
+      labels:
+        rule_id: fcc4c016-69e6-46cd-a2c3-fbbf8018f7d9
+        namespace: '{{ default .Release.Namespace .Values.global.namespace }}'
+      annotations:
+        message: {{`Jenkins has more than 10 stuck jobs({{ $value | humanize }}) in the past 5 minutes. Please have an inspection about jenkins.`}}
+        summary: Jenkins has too many stuck jobs.
+    - alert: jenkins-too-many-failure-jobs
+      expr: increase(jenkins_runs_failure_total{namespace='{{ default .Release.Namespace .Values.global.namespace }}', container='{{ template "jenkins.fullname" . }}', job='{{ template "jenkins.fullname" }}'}[5m]) > 5
+      for: 5m
+      severity: warning
+      labels:
+        rule_id: 41a1b6cc-9be4-487e-9dea-e9be77247b01
+        namespace: '{{ default .Release.Namespace .Values.global.namespace }}'
+      annotations:
+        message: {{`Jenkins has more than 5 failed jobs({{ $value | humanize }}) in the past 5 minutes.`}}
+        summary: Jenkins has too many failed jobs.
+    - alert: jenkins-down
+      expr: absent(default_jenkins_up)
+      for: 5m
+      severity: error
+      labels:
+        rule_id: 921e8583-0c11-4e85-bb8a-dd26d44d769a
+        namespace: '{{ default .Release.Namespace .Values.global.namespace }}'
+      annotations:
+        message: Jenkins has disppeared from Prometheus target discovery.
+        summary: Jenkins is unreachable.
+    - alert: jenkins-cpu-overcommit
+      expr: sum(rate(process_cpu_seconds_total{container="{{ template "jenkins.fullname" . }}", namespace="{{ default .Release.Namespace .Values.global.namespace }}"}[5m])) by (container, instance) > 0.8
+      for: 5m
+      severity: warning
+      labels:
+        rule_id: cf08e315-32ac-4d99-824d-735ff9e94d6c
+        namespace: '{{ default .Release.Namespace .Values.global.namespace }}'
+      annotations:
+        message: {{`Jenkins({{ $labels.instance }}) process has overcommitted CPU resource requests.`}}
+        summary: Jenkins has overcommitted CPU
+  {{ end -}}

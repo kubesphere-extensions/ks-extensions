@@ -1,0 +1,50 @@
+kind: CronJob
+{{- if .Capabilities.APIVersions.Has "batch/v1/CronJob" }}
+apiVersion: batch/v1
+{{- else }}
+apiVersion: batch/v1beta1
+{{- end }}
+metadata:
+  name: {{ include "devops.name" . }}
+  namespace: {{ default .Release.Namespace .Values.global.namespace }}
+  labels:
+    app: ks-devops
+spec:
+  concurrencyPolicy: {{ .Values.tools.concurrencyPolicy }}
+  failedJobsHistoryLimit: {{ .Values.tools.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 3600
+      template:
+        metadata:
+          labels:
+            app: {{ include "devops.name" . }}
+            release: {{ .Release.Name }}
+{{- if .Values.tools.podAnnotations }}
+          annotations:
+{{ toYaml .Values.tools.podAnnotations | indent 12 }}
+{{- end }}
+        spec:
+          {{- with (default .Values.global.imagePullSecrets .Values.tools.image.pullSecrets) }}
+          imagePullSecrets:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: "pipeline-run-gc"
+              image: "{{ default .Values.tools.image.registry .Values.global.imageRegistry }}/{{ .Values.tools.image.repository }}:{{ .Values.tools.image.tag }}"
+              imagePullPolicy: {{ .Values.tools.image.pullPolicy }}
+              command:
+                - ks
+                - pip
+                - gc
+              args:
+                - "--max-count={{ .Values.tools.maxCount }}"
+                - "--max-age={{ .Values.tools.maxAge }}"
+                - "--condition=ignoreTime"
+          restartPolicy: Never
+          terminationGracePeriodSeconds: 30
+          serviceAccountName: {{ .Values.serviceAccount.name }}
+  successfulJobsHistoryLimit: {{ .Values.tools.successfulJobsHistoryLimit }}
+  schedule: {{ .Values.tools.schedule | quote }}
+  startingDeadlineSeconds: 4000
+  suspend: false
