@@ -1,0 +1,88 @@
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterTemplate
+metadata:
+  name: golang
+  annotations:
+    devops.kubesphere.io/displayNameEN: "Golang"
+    devops.kubesphere.io/displayNameZH: "Golang"
+    devops.kubesphere.io/descriptionEN: "Designed for the continuous integration of most Golang projects, including dependency downloading, testing, building, and artifact archiving."
+    devops.kubesphere.io/descriptionZH: "专为大多数 Golang 项目的持续集成而设计，包括依赖下载、测试、构建和归档。"
+    devops.kubesphere.io/icon: "golang.svg"
+spec:
+  parameters:
+    - name: GitRepository
+      description: The URL you want to clone
+      required: true
+      default: https://github.com/kubesphere-sigs/demo-go-http
+    - name: GitRevision
+      description: Which revision you want to checkout from
+      required: true
+      default: master
+    - name: GolangDockerImage
+      description: Docker image of Golang. Refer to https://hub.docker.com/_/golang
+      default: "golang:1.17"
+      required: true
+    - name: DependencyDownloadScript
+      description: Shell script for depedency download.
+      default: "go mod download"
+      required: true
+    - name: TestScript
+      description: Shell script for testing.
+      default: "go test ./..."
+      required: true
+    - name: BuildScript
+      description: Shell script for building.
+      default: "go build -o service main.go"
+      required: true
+    - name: ArtifactsLocation
+      description: Artifacts location. e.g. service or build/.
+      default: "service"
+      required: true
+
+  template: |
+    pipeline {
+      agent {
+        kubernetes {
+          inheritFrom 'go'
+          containerTemplate {
+            name 'go'
+            image '$(.params.GolangDockerImage)'
+          }
+        }
+      }
+      stages {
+        stage('Clone repository') {
+          steps {
+            checkout([$class: 'GitSCM', branches: [[name: '$(.params.GitRevision)']], 
+                extensions: [[$class: 'CloneOption', depth: 1, shallow: true]], userRemoteConfigs: [[url: '$(.params.GitRepository)']]
+            ])
+          }
+        }
+        stage('Download dependencies') {
+          steps {
+            container('go') {
+              sh '''$(.params.DependencyDownloadScript)'''
+            }
+          }
+        }
+        stage('Run test') {
+          steps {
+            container('go') {
+              sh '''$(.params.TestScript)'''
+            }
+          }
+        }
+        stage('Run build') {
+          steps {
+            container('go') {
+              sh '''$(.params.BuildScript)'''
+            }
+          }
+        }
+        stage('Archive artifacts') {
+          steps {
+            archiveArtifacts(artifacts: '$(.params.ArtifactsLocation)', followSymlinks: false)
+          }
+        }
+      }
+    }

@@ -1,0 +1,36 @@
+{{- if ne (include "apiservice.ownedByExtension" . | trim) "true" }}
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: APIService
+metadata:
+  name: v1alpha3.devops.kubesphere.io
+spec:
+  group: devops.kubesphere.io                               # API Group
+  version: v1alpha3                                         # API Version
+  url: http://devops-apiserver.{{ default .Release.Namespace .Values.global.namespace }}.svc:9090
+status:
+  state: Available
+
+---
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: APIService
+metadata:
+  name: v1alpha2.devops.kubesphere.io
+spec:
+  group: devops.kubesphere.io                               # API Group
+  version: v1alpha2                                         # API Version
+  url: http://devops-apiserver.{{ default .Release.Namespace .Values.global.namespace }}.svc:9090
+status:
+  state: Available
+
+---
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: APIService
+metadata:
+  name: v1alpha1.gitops.kubesphere.io
+spec:
+  group: gitops.kubesphere.io                               # API Group
+  version: v1alpha1                                         # API Version
+  url: http://devops-apiserver.{{ default .Release.Namespace .Values.global.namespace }}.svc:9090
+status:
+  state: Available
+{{- end }}

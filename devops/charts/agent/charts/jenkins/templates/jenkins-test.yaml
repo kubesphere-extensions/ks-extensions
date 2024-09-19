@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ .Release.Name }}-ui-test-{{ randAlphaNum 5 | lower }}"
+  namespace: {{ default .Release.Namespace .Values.global.namespace }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  {{- if .Values.Master.NodeSelector }}
+  nodeSelector:
+{{ toYaml .Values.Master.NodeSelector | indent 4 }}
+  {{- end }}
+  {{- if .Values.Master.Tolerations }}
+  tolerations:
+{{ toYaml .Values.Master.Tolerations | indent 4 }}
+  {{- end }}
+  initContainers:
+    - name: "test-framework"
+      image: "bats/bats:v1.1.0"
+      command:
+      - "bash"
+      - "-c"
+      - |
+        set -ex
+        # copy bats to tools dir
+        cp -R /usr/local/libexec/ /tools/bats/
+      volumeMounts:
+      - mountPath: /tools
+        name: tools
+  containers:
+    - name: {{ .Release.Name }}-ui-test
+      image: "{{ default .Values.Master.image.registry .Values.global.imageRegistry }}/{{ .Values.Master.image.repository }}:{{ .Values.Master.image.tag }}"
+      command: ["/tools/bats/bats", "-t", "/tests/run.sh"]
+      volumeMounts:
+      - mountPath: /tests
+        name: tests
+        readOnly: true
+      - mountPath: /tools
+        name: tools
+  volumes:
+  - name: tests
+    configMap:
+      name: {{ template "jenkins.fullname" . }}-tests
+  - name: tools
+    emptyDir: {}
+  restartPolicy: Never

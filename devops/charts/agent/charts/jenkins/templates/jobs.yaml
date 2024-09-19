@@ -1,0 +1,9 @@
+{{- if .Values.Master.Jobs }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "jenkins.fullname" . }}-jobs
+  namespace: {{ default .Release.Namespace .Values.global.namespace }}
+data:
+{{ .Values.Master.Jobs | indent 2 }}
+{{- end -}}

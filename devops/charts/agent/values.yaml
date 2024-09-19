@@ -1,0 +1,157 @@
+nameOverride: devops
+fullnameOverride:
+
+global:
+  namespace: kubesphere-devops-system
+  imageRegistry:
+  imagePullSecrets: []
+
+autoscaling:
+  enabled: false
+
+authentication:
+  # If not set, jwt tools will generate and set it automatically
+  jwtSecret: "UDjssmmDgxZtkXVDSeFvBtsZeBSFWhJ6"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "devops"
+
+apiserver:
+  replicas: 1
+  image:
+    registry: docker.io
+    repository: kubesphere/devops-apiserver
+    tag: v4.1.2
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      memory: 128Mi
+      cpu: 100m
+  podAnnotations: {}
+  podSecurityContext: {}
+    # fsGroup: 2000
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+controller:
+  replicas: 1
+  image:
+    registry: docker.io
+    repository: kubesphere/devops-controller
+    tag: v4.1.2
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  podAnnotations: {}
+  podSecurityContext: {}
+  # fsGroup: 2000
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+  # runAsUser: 1000
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+tools:
+  image:
+    registry: docker.io
+    repository: kubesphere/devops-tools
+    tag: v4.1.2
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  # gcJobs.maxAge -- Max age from which `PipelineRun`s will be deleted
+  maxAge: 168h
+  # gcJobs.maxCount -- Max count from which `PipelineRun`s will be deleted
+  maxCount: 30
+  # gcJobs.schedule -- Cron expression to periodically delete `PipelineRun`s
+  schedule: "0/30 * * * *"
+  # gcJobs.failedJobsHistoryLimit -- Drives the failed jobs history limit
+  failedJobsHistoryLimit: 1
+  # gcJobs.successfulJobsHistoryLimit -- Drives the successful jobs history limit
+  successfulJobsHistoryLimit: 3
+  # gcJobs.concurrencyPolicy -- Drives the job's concurrency policy
+  concurrencyPolicy: Forbid
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+jenkins:
+  enabled: true
+  fullnameOverride: devops-jenkins
+  kubeconfigEnabled: true
+  Master:
+    ServiceType: NodePort
+    resources:
+      requests:
+        cpu: 0.5
+        memory: 6Gi
+      limits:
+        cpu: 2
+        memory: 6Gi # Set same as requests.memory
+    # smtp server settings for notification
+    smtp:
+      EMAIL_SMTP_HOST: "mail.example.com"
+      EMAIL_SMTP_PORT: "465"
+      EMAIL_USE_SSL: false
+      EMAIL_FROM_NAME: "KubeSphere"
+      EMAIL_FROM_ADDR: "admin@example.com"
+      EMAIL_FROM_PASS: "P@ssw0rd"
+    # sonarQube settings
+    sonarqube:
+      serverUrl: ""
+      authToken: ""
+  Agent:
+    WorkerNamespace: kubesphere-devops-worker
+  persistence:
+    size: 16Gi
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    # existingClaim: ""
+  securityRealm:
+    openIdConnect:
+      # the kubesphere-core api used for jenkins OIDC
+      # if want to access to jenkinsUI, the ksCoreApi must be specified and browser-accessible
+      kubesphereCoreApi: "http://ks-apiserver:30880"
+      jenkinsURL: "http://devops-jenkins:30180"
+
+argocd:
+  enabled: true
+  namespace: "argocd"

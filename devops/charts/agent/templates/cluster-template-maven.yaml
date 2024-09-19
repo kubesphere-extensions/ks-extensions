@@ -1,0 +1,88 @@
+apiVersion: devops.kubesphere.io/v1alpha3
+kind: ClusterTemplate
+metadata:
+  name: maven
+  annotations:
+    devops.kubesphere.io/displayNameEN: "Maven"
+    devops.kubesphere.io/displayNameZH: "Maven"
+    devops.kubesphere.io/descriptionEN: "Designed for the continuous integration of most Maven projects, including dependency downloading, testing, building, and artifact archiving."
+    devops.kubesphere.io/descriptionZH: "专为大多数 Maven 项目的持续集成而设计，包括依赖下载、测试、构建和归档。"
+    devops.kubesphere.io/icon: "maven.svg"
+spec:
+  parameters:
+    - name: GitRepository
+      description: The Git repository you want to clone
+      required: true
+      default: https://github.com/kubesphere-sigs/demo-java
+    - name: GitRevision
+      description: Which revision you want to checkout from
+      required: true
+      default: master
+    - name: MavenDockerImage
+      description: Docker image of Maven. Refer to https://hub.docker.com/_/maven
+      default: "maven:3.8.4-jdk-11"
+      required: true
+    - name: CompileScript
+      description: Shell script for depedency download and compile.
+      default: "mvn compile"
+      required: true
+    - name: TestScript
+      description: Shell script for testing.
+      default: "mvn clean test"
+      required: true
+    - name: BuildScript
+      description: Shell script for building.
+      default: "mvn package"
+      required: true
+    - name: ArtifactsLocation
+      description: Artifacts location. e.g. target/demo-java-1.0.0.jar or target/*.jar.
+      default: "target/*.jar"
+      required: true
+
+  template: |
+    pipeline {
+      agent {
+        kubernetes {
+          inheritFrom 'maven'
+          containerTemplate {
+            name 'maven'
+            image '$(.params.MavenDockerImage)'
+          }
+        }
+      }
+      stages {
+        stage('Clone repository') {
+          steps {
+            checkout([$class: 'GitSCM', branches: [[name: '$(.params.GitRevision)']], 
+                extensions: [[$class: 'CloneOption', depth: 1, shallow: true]], userRemoteConfigs: [[url: '$(.params.GitRepository)']]
+            ])
+          }
+        }
+        stage('Run compile') {
+          steps {
+            container('maven') {
+              sh '''$(.params.CompileScript)'''
+            }
+          }
+        }
+        stage('Run test') {
+          steps {
+            container('maven') {
+              sh '''$(.params.TestScript)'''
+            }
+          }
+        }
+        stage('Run build') {
+          steps {
+            container('maven') {
+              sh '''$(.params.BuildScript)'''
+            }
+          }
+        }
+        stage('Archive artifacts') {
+          steps {
+            archiveArtifacts(artifacts: '$(.params.ArtifactsLocation)', followSymlinks: false)
+          }
+        }
+      }
+    }

@@ -1,0 +1,72 @@
+apiVersion: v1
+name: devops
+version: 1.1.1
+namespace: kubesphere-devops-system
+displayName:
+  zh: DevOps
+  en: DevOps
+description:
+  zh: |-
+    KubeSphere DevOps 提供端到端的工作流，集成主流 CI/CD 工具，帮助不同的组织加快产品上市时间。
+  en: |-
+    KubeSphere DevOps offers an end-to-end workflow, integrating mainstream CI/CD tools, and helps organizations accelerate the time to market for products.
+keywords:
+  - DevOps
+  - CI/CD
+  - Integration & Delivery
+home: https://kubesphere.com.cn/
+category: integration-delivery
+sources: []
+kubeVersion: '>=1.19.0-0'
+ksVersion: '>=4.1.1-0'
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+staticFileDirectory: static
+icon: ./static/devops-icon.png
+installationMode: Multicluster
+dependencies:
+  - name: extension
+    tags:
+      - extension
+  - name: agent
+    tags:
+      - agent
+images:
+  - docker.io/kubesphere/devops-apiserver:v4.1.2
+  - docker.io/kubesphere/devops-controller:v4.1.2
+  - docker.io/kubesphere/devops-tools:v4.1.2
+  - docker.io/kubesphere/devops-jenkins:v4.1.2-2.346.3
+  - docker.io/jenkins/inbound-agent:4.10-2
+  - docker.io/kubesphere/builder-base:v3.2.2
+  - docker.io/kubesphere/builder-nodejs:v3.2.0
+  - docker.io/kubesphere/builder-maven:v3.2.0
+  - docker.io/kubesphere/builder-maven:v3.2.1-jdk11
+  - docker.io/kubesphere/builder-python:v3.2.0
+  - docker.io/kubesphere/builder-go:v3.2.0
+  - docker.io/kubesphere/builder-go:v3.2.2-1.16
+  - docker.io/kubesphere/builder-go:v3.2.2-1.17
+  - docker.io/kubesphere/builder-go:v3.2.2-1.18
+  - docker.io/kubesphere/builder-base:v3.2.2-podman
+  - docker.io/kubesphere/builder-nodejs:v3.2.0-podman
+  - docker.io/kubesphere/builder-maven:v3.2.0-podman
+  - docker.io/kubesphere/builder-maven:v3.2.1-jdk11-podman
+  - docker.io/kubesphere/builder-python:v3.2.0-podman
+  - docker.io/kubesphere/builder-go:v3.2.0-podman
+  - docker.io/kubesphere/builder-go:v3.2.2-1.16-podman
+  - docker.io/kubesphere/builder-go:v3.2.2-1.17-podman
+  - docker.io/kubesphere/builder-go:v3.2.2-1.18-podman
+  - quay.io/argoproj/argocd:v2.3.3
+  - quay.io/argoproj/argocd-applicationset:v0.4.1
+  - ghcr.io/dexidp/dex:v2.30.2
+  - docker.io/library/redis:6.2.6-alpine
+docs: https://docs.kubesphere.com.cn/

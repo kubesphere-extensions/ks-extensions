@@ -1,0 +1,79 @@
+{{- if .Values.global.namespace }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Release.Name }}-pre-install
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/hook: pre-install
+    helm.sh/hook-weight: "0"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}-pre-install
+  annotations:
+    helm.sh/hook: pre-install
+    helm.sh/hook-weight: "0"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - "*"
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ .Release.Name }}-pre-install
+  annotations:
+    helm.sh/hook: pre-install
+    helm.sh/hook-weight: "1"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Release.Name }}-pre-install
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ .Release.Name }}-pre-install
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-pre-install
+  annotations:
+    helm.sh/hook: pre-install
+    helm.sh/hook-weight: "2"
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ .Release.Name }}-pre-install
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: pre-install-job
+        image: '{{ default "docker.io" .Values.global.imageRegistry }}/kubesphere/kubectl:v1.27.4'
+        command: ["/bin/bash"]
+        args:
+          - "-c"
+          - |
+            if kubectl get namespace {{ .Values.global.namespace }} &>/dev/null; then
+              echo "namespace {{ .Values.global.namespace }} already exists, skipping..."
+            else
+              kubectl create namespace {{ .Values.global.namespace }}
+              kubectl label namespace {{ .Values.global.namespace }} kubesphere.io/workspace=system-workspace
+            fi
+{{- end }}

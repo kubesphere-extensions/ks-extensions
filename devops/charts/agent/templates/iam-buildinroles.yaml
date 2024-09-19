@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: List
+items:
+  - apiVersion: iam.kubesphere.io/v1beta1
+    kind: BuiltinRole
+    metadata:
+      name: devops-project-admin
+      labels:
+        iam.kubesphere.io/scope: namespace
+    targetSelector:
+      matchLabels:
+        devops.kubesphere.io/managed: "true"
+    role:
+      aggregationRoleTemplates:
+        roleSelector:
+          matchLabels:
+            iam.kubesphere.io/aggregate-to-admin: ""
+            devops.kubesphere.io/managed: "true"
+      apiVersion: iam.kubesphere.io/v1beta1
+      kind: Role
+      metadata:
+        annotations:
+          kubesphere.io/creator: system
+        name: admin
+      rules:
+        - apiGroups:
+            - devops.kubesphere.io
+            - gitops.kubesphere.io
+          resources:
+            - '*'
+          verbs:
+            - '*'
+  - apiVersion: iam.kubesphere.io/v1beta1
+    kind: BuiltinRole
+    metadata:
+      name: devops-project-operator
+      labels:
+        iam.kubesphere.io/scope: namespace
+    targetSelector:
+      matchLabels:
+        devops.kubesphere.io/managed: "true"
+    role:
+      aggregationRoleTemplates:
+        roleSelector:
+          matchLabels:
+            iam.kubesphere.io/aggregate-to-operator: ""
+            devops.kubesphere.io/managed: "true"
+      apiVersion: iam.kubesphere.io/v1beta1
+      kind: Role
+      metadata:
+        name: operator
+        annotations:
+          kubesphere.io/creator: system
+      rules:
+        - apiGroups:
+            - devops.kubesphere.io
+            - gitops.kubesphere.io
+          resources:
+            - '*'
+          verbs:
+            - get
+            - list
+            - watch
+  - apiVersion: iam.kubesphere.io/v1beta1
+    kind: BuiltinRole
+    metadata:
+      name: devops-project-viewer
+      labels:
+        iam.kubesphere.io/scope: namespace
+    targetSelector:
+      matchLabels:
+        devops.kubesphere.io/managed: "true"
+    role:
+      aggregationRoleTemplates:
+        roleSelector:
+          matchLabels:
+            iam.kubesphere.io/aggregate-to-viewer: ""
+            devops.kubesphere.io/managed: "true"
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: Role
+      metadata:
+        name: viewer
+        annotations:
+          kubesphere.io/creator: system
+      rules:
+        - apiGroups:
+            - devops.kubesphere.io
+            - gitops.kubesphere.io
+          resources:
+            - '*'
+          verbs:
+            - get
+            - list
+            - watch
