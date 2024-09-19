@@ -1,0 +1,64 @@
+# Default values for demo.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+ippool:
+  type: "calico"
+
+apiserver:
+  replicas: 1
+  service:
+    type: ClusterIP
+    port: 8080
+  # image:
+  #   registry: registry.cn-beijing.aliyuncs.com
+  #   repository: kse/network-extension-apiserver
+  #   tag: "v1.1.0"
+  #   pullPolicy: IfNotPresent
+  # resources:
+  #   limits:
+  #     cpu: 100m
+  #     memory: 200Mi
+  #   requests:
+  #     cpu: 5m
+  #     memory: 50Mi
+
+controller:
+  replicas: 1
+  service:
+    type: ClusterIP
+    port: 443
+  # image:
+  #   registry: registry.cn-beijing.aliyuncs.com
+  #   repository: kse/network-extension-controller
+  #   tag: "v1.1.0"
+  #   pullPolicy: IfNotPresent
+  # resources:
+  #   limits:
+  #     cpu: 100m
+  #     memory: 200Mi
+  #   requests:
+  #     cpu: 10m
+  #     memory: 50Mi
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+# fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

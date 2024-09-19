@@ -1,0 +1,54 @@
+{{- $ca := genCA "network-extension-controller-ca" 3650 }}
+{{- $cn := printf "%s-admission-webhook" .Release.Name }}
+{{- $ippoolName := printf "%s-controller" (include "backend.fullname" .) }}
+{{- $altName1 := printf "%s.%s" $ippoolName .Release.Namespace }}
+{{- $altName2 := printf "%s.%s.svc" $ippoolName .Release.Namespace }}
+{{- $cert := genSignedCert $cn nil (list $altName1 $altName2) 3650 $ca }}
+
+apiVersion: v1
+data:
+  ca.crt: {{ b64enc $ca.Cert | quote }}
+  tls.crt: {{ b64enc  $cert.Cert | quote }}
+  tls.key: {{ b64enc  $cert.Key | quote }}
+kind: Secret
+metadata:
+  name: controller-webhook-cert
+type: Opaque
+
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: crd.projectcalico.org
+webhooks:
+  - admissionReviewVersions:
+      - v1beta1
+    clientConfig:
+      caBundle: {{ b64enc $ca.Cert | quote }}
+      service:
+        name: {{ include "backend.fullname" . }}-controller
+        namespace: {{ .Release.Namespace }}
+        path: /validate-crd-projectcalico-org-v1
+        port: 443
+    failurePolicy: Fail
+    matchPolicy: Exact
+    name: validating-crd.projectcalico.org
+    namespaceSelector:
+      matchExpressions:
+        - key: control-plane
+          operator: DoesNotExist
+    objectSelector: {}
+    rules:
+      - apiGroups:
+          - crd.projectcalico.org
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+          - DELETE
+        resources:
+          - ippools
+        scope: '*'
+    sideEffects: None
+    timeoutSeconds: 30
