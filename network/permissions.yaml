@@ -1,0 +1,25 @@
+kind: ClusterRole
+rules:
+  - verbs:
+      - '*'
+    apiGroups:
+      - 'extensions.kubesphere.io'
+      - 'iam.kubesphere.io'
+      - 'admissionregistration.k8s.io'
+      - 'rbac.authorization.k8s.io'
+      - 'crd.projectcalico.org'
+      - 'coordination.k8s.io'
+      - 'apiextensions.k8s.io'
+      - 'tenant.kubesphere.io'
+      - 'network.kubesphere.io'
+      - 'networking.k8s.io'
+      - ''
+      - 'apps'
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - ''
+    resources:
+      - '*'

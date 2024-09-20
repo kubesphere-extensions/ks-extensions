@@ -1,0 +1,198 @@
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  name: cluster-view-network
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"network":"view"}'
+  labels:
+    iam.kubesphere.io/category: cluster-network-management
+    iam.kubesphere.io/aggregate-to-cluster-viewer: ""
+    iam.kubesphere.io/scope: cluster
+    kubesphere.io/managed: 'true'
+spec:
+  displayName:
+    en: Cluster Network Resource Viewing
+    zh: 集群网络资源查看
+  rules: []
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  name: cluster-manage-network
+  annotations:
+    iam.kubesphere.io/dependencies: cluster-view-network
+    iam.kubesphere.io/role-template-rules: '{"network":"manage"}'
+  labels:
+    iam.kubesphere.io/category: cluster-network-management
+    iam.kubesphere.io/scope: cluster
+    kubesphere.io/managed: 'true'
+spec:
+  displayName:
+    en: Cluster Network Resource Management
+    zh: 集群网络资源管理
+  rules: []
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  name: cluster-network-management
+  labels:
+    iam.kubesphere.io/scope: cluster
+    kubesphere.io/managed: 'true'
+spec:
+  displayName:        
+    en: Cluster Network Resource Management
+    zh: 集群网络资源管理
+
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  name: workspace-view-networkpolicies
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"networkpolicies":"view"}'
+  labels:
+    iam.kubesphere.io/aggregate-to-viewer: ''
+    iam.kubesphere.io/aggregate-to-self-provisioner: ''
+    iam.kubesphere.io/category: workspace-network-management
+    iam.kubesphere.io/scope: workspace
+    kubesphere.io/managed: 'true'
+spec:
+  displayName:
+    en: Workspace NetworkPolicy Viewing
+    zh: 企业空间网络隔离查看
+  rules: 
+    - apiGroups:
+        - tenant.kubesphere.io
+      resources:
+        - workspaces
+      verbs:
+        - get
+        - list
+        - watch
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  name: workspace-manage-networkpolicies
+  annotations:
+    iam.kubesphere.io/dependencies: workspace-view-networkpolicies
+    iam.kubesphere.io/role-template-rules: '{"networkpolicies":"manage"}'
+  labels:
+    iam.kubesphere.io/aggregate-to-self-provisioner: ''
+    iam.kubesphere.io/category: workspace-network-management
+    iam.kubesphere.io/scope: workspace
+    kubesphere.io/managed: 'true'
+spec:
+  displayName:
+    en: Workspace NetworkPolicy Management
+    zh: 企业空间网络隔离管理
+  rules:
+    - apiGroups:
+        - tenant.kubesphere.io
+      resources:
+        - workspaces
+      verbs:
+        - get
+        - list
+        - watch
+        - update
+        - patch
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  name: workspace-network-management
+  labels:
+    iam.kubesphere.io/scope: workspace
+    kubesphere.io/managed: 'true'
+spec:
+  displayName:        
+    en: Network NetworkPolicy Management
+    zh: 企业空间网络隔离管理
+
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  name: namespace-view-networkpolicies
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"networkpolicies":"view"}'
+  labels:
+    iam.kubesphere.io/aggregate-to-viewer: ''
+    iam.kubesphere.io/aggregate-to-operator: ''
+    iam.kubesphere.io/category: namespace-network-management
+    iam.kubesphere.io/scope: namespace
+    kubesphere.io/managed: 'true'
+spec:
+  displayName:
+    en: Namespace NetworkPolicy Viewing
+    zh: 项目网络隔离查看
+  rules: 
+    - apiGroups:
+      - ''
+      resources:
+      - namspaces
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - network.kubesphere.io
+      resources:
+      - namespacenetworkpolicies
+      verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  name: namespace-manage-networkpolicies
+  annotations:
+    iam.kubesphere.io/dependencies: namespace-view-networkpolicies
+    iam.kubesphere.io/role-template-rules: '{"networkpolicies":"manage"}'
+  labels:
+    iam.kubesphere.io/aggregate-to-operator: ''
+    iam.kubesphere.io/category: namespace-network-management
+    iam.kubesphere.io/scope: namespace
+    kubesphere.io/managed: 'true'
+spec:
+  displayName:
+    en: Namespace NetworkPolicy Management
+    zh: 项目网络隔离管理
+  rules:
+    - apiGroups:
+      - ''
+      resources:
+      - namspaces
+      verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+    - apiGroups:
+      - network.kubesphere.io
+      resources:
+      - namespacenetworkpolicies
+      verbs:
+      - '*'
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: Category
+metadata:
+  name: namespace-network-management
+  labels:
+    iam.kubesphere.io/scope: namespace
+    kubesphere.io/managed: 'true'
+spec:
+  displayName:        
+    en: Namespace NetworkPolicy Management
+    zh: 项目网络隔离管理
+

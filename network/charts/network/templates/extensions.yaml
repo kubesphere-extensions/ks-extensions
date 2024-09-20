@@ -1,0 +1,11 @@
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: APIService
+metadata:
+  name: v1alpha2.network.kubesphere.io
+spec:
+  group: network.kubesphere.io                          # API Group
+  version: v1alpha2                                         # API Version
+  url: http://{{ include "backend.fullname" . }}-apiserver.{{ .Release.Namespace }}.svc:{{ .Values.apiserver.service.port }}  # backend
+#  insecureSkipTLSVerify: true
+status:
+  state: Available

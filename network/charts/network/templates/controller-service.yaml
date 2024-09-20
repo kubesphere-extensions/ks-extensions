@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "backend.fullname" . }}-controller
+  labels:
+    app: network-extension-controller
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.controller.service.type }}
+  ports:
+    - port: {{ .Values.controller.service.port }}
+      targetPort: 8443
+      protocol: TCP
+      name: http
+  selector:
+    app: network-extension-controller

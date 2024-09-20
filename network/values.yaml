@@ -1,0 +1,38 @@
+global:
+  # will override the all registry and tag if set
+  imageRegistry: docker.io
+  tag:
+  imagePullSecrets: []
+
+network:
+  ippool:
+    type: "calico" # only support calico now
+
+  apiserver:
+    image:
+      # registry: docker.io
+      repository: kubesphere/network-extension-apiserver
+      tag: "v1.1.0"
+      pullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: 100m
+        memory: 200Mi
+      requests:
+        cpu: 5m
+        memory: 50Mi
+
+  controller:
+    image:
+      # registry: docker.io
+      repository: kubesphere/network-extension-controller
+      tag: "v1.1.0"
+      pullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: 100m
+        memory: 200Mi
+      requests:
+        cpu: 10m
+        memory: 50Mi
+
