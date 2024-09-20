@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-post-install"
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ template "serviceAccountName" . }}
+      containers:
+      - name: post-install-job
+        image: "{{ template "kubectl.image" . }}"
+        command: 
+          - /bin/sh
+          - -c
+          - |
+            kubectl patch mutatingwebhookconfigurations istio-sidecar-injector-1-16-5-extension-servicemesh --type='json' -p='[{ "op": "remove", "path": "/webhooks/1/objectSelector/matchExpressions/1" }]';
+            kubectl label namespaces istio-system istio-injection=disabled --overwrite;
+

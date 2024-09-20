@@ -1,0 +1,68 @@
+apiVersion: v1
+name: servicemesh
+version: 1.0.0
+displayName:
+  zh: KubeSphere 服务网格
+  en: KubeSphere Service Mesh
+description:
+  zh: |-
+    KubeSphere 服务网格是一款强大的微服务治理与微服务可视化管理工具。它提供包括蓝绿部署、金丝雀发布与流量镜像三种灰度发布策略，与流量监控、链路追踪两项可观测能力。
+  en: |-
+    KubeSphere Service Mesh is a powerful microservice governance and microservice visual management tool. It provides three grayscale release strategies including blue-green deployment, canary release and traffic mirroring, as well as two observable capabilities: traffic monitoring and link tracking.
+category: dev-tools
+keywords:
+  - kubesphere
+  - servicemesh
+  - istio
+  - kiali
+  - jaeger
+home: https://kubesphere.com.cn/
+sources: []
+kubeVersion: '>=1.21.0-0'
+ksVersion: '>=4.0.0-0'
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+staticFileDirectory: static
+icon: ./static/favicon.svg
+dependencies:
+  - name: frontend
+    tags:
+      - extension
+  - name: backend
+    tags:
+      - agent
+externalDependencies:
+  - name: whizard-monitoring
+    type: extension
+    version: '>= 1.0.0-0'
+    required: true
+  - name: opensearch
+    type: extension
+    version: '>=2.11.1'
+    required: false
+installationMode: Multicluster
+images:
+  - docker.io/istio/pilot:1.16.5
+  - docker.io/istio/proxyv2:1.16.5
+  - docker.io/istio/istioctl:1.16.5
+  - docker.io/kubesphere/kubectl:v1.27.4
+  - docker.io/kubesphere/kiali-operator:v1.59.1
+  - docker.io/kubesphere/kiali:v1.59
+  - docker.io/jaegertracing/jaeger-operator:1.35.0
+  - docker.io/jaegertracing/jaeger-agent:1.35
+  - docker.io/jaegertracing/jaeger-collector:1.35
+  - docker.io/jaegertracing/jaeger-query:1.35
+  - docker.io/jaegertracing/jaeger-es-index-cleaner:1.35
+  - docker.io/kubesphere/servicemesh-apiserver:v0.1.0
+  - docker.io/kubesphere/servicemesh-controller-manager:v0.1.0
+docs: https://docs.kubesphere.com.cn/

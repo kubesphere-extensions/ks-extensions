@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-istio-installer"
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-2"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ template "serviceAccountName" . }}
+      containers:
+        - name: istio-installer
+          image: {{ template "istioctl.image" . }}
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              set -e
+              istioctl install --set revision={{ .Values.istio.revision }} -f /config/istio-config.yaml -y
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+              readOnly: true
+      volumes:
+        - name: config-volume
+          configMap:
+            name: "{{ .Release.Name }}-istio-config"

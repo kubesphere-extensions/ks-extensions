@@ -1,0 +1,11 @@
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: APIService
+metadata:
+  name: v1alpha2.servicemesh.kubesphere.io
+spec:
+  group: servicemesh.kubesphere.io
+  version: v1alpha2
+  url: http://servicemesh-apiserver.{{ .Release.Namespace }}.svc:80
+#  insecureSkipTLSVerify: true
+status:
+  state: Available

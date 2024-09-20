@@ -1,0 +1,57 @@
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"servicemesh": "view"}'
+  labels:
+    iam.kubesphere.io/category: servicemesh
+    iam.kubesphere.io/scope: namespace
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/aggregate-to-viewer: ""
+  name: servicemesh-view
+spec:
+  description:
+    en: 'View Service Mesh Composed Apps, Grayscale Release.'
+    zh: '查看 Service Mesh 应用编排、灰度发布。'
+  displayName:
+    en: 'Service Mesh View'
+    zh: 'Service Mesh 查看'
+  rules:
+  - apiGroups:
+    - servicemesh.kubesphere.io
+    - app.k8s.io
+    resources:
+    - '*'
+    verbs:
+    - get
+    - list
+
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: RoleTemplate
+metadata:
+  annotations:
+    iam.kubesphere.io/role-template-rules: '{"servicemesh": "manage"}'
+    iam.kubesphere.io/dependencies: '["servicemesh-view"]'
+  labels:
+    iam.kubesphere.io/category: servicemesh
+    iam.kubesphere.io/scope: namespace
+    kubesphere.io/managed: "true"
+    iam.kubesphere.io/aggregate-to-operator: ""
+    iam.kubesphere.io/aggregate-to-admin: ""
+  name: servicemesh-manage
+spec:
+  description:
+    en: 'Management Service Mesh Composed Apps, Grayscale Release.'
+    zh: '管理 Service Mesh 应用编排、灰度发布。'
+  displayName:
+    en: 'Service Mesh Management'
+    zh: 'Service Mesh 管理'
+  rules:
+  - apiGroups:
+    - servicemesh.kubesphere.io
+    - app.k8s.io
+    resources:
+    - '*'
+    verbs:
+    - '*'

@@ -1,0 +1,199 @@
+replicaCount: 1
+
+# Specifies whether the servicemesh-config configmap
+config:
+  servicemesh:
+    jaegerQueryHost: http://jaeger-query.extension-servicemesh.svc:16686
+    kialiQueryHost: http://kiali.extension-servicemesh.svc:20001
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+env: []
+tolerations:
+  - key: node-role.kubernetes.io/master
+    effect: NoSchedule
+  - key: CriticalAddonsOnly
+    operator: Exists
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 60
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 60
+affinity: {}
+nodeSelector: {}
+
+
+kubectl:
+  image:
+    # registry: docker.io
+    repository: kubesphere/kubectl
+    # pullPolicy: IfNotPresent
+    tag: "v1.27.4"
+
+## deployment specific configuration
+
+apiserver:
+  image:
+    repository: kubesphere/servicemesh-apiserver
+    pullPolicy: IfNotPresent
+    tag: "v0.1.0"
+  resources:
+    limits:
+      cpu: 1
+      memory: 1024Mi
+    requests:
+      cpu: 20m
+      memory: 100Mi
+  extraVolumeMounts: []
+  ## Additional volumeMounts to the apiserver container.
+  #  - name: example-config
+  #   mountPath: /etc/kubesphere/example
+  extraVolumes: []
+  ## Additional volumes to the apiserver pod.
+  #  - name: example-config
+  #    emptyDir: {}
+
+controller:
+  image:
+    repository: kubesphere/servicemesh-controller-manager
+    pullPolicy: IfNotPresent
+    tag: "v0.1.0"
+  resources:
+    limits:
+      cpu: 1
+      memory: 1000Mi
+    requests:
+      cpu: 30m
+      memory: 50Mi
+  extraVolumeMounts: []
+  ## Additional volumeMounts to the controller container.
+  #  - name: example-config
+  #   mountPath: /etc/kubesphere/example
+  extraVolumes: []
+  ## Additional volumes to the controller pod.
+  #  - name: example-config
+  #    emptyDir: {}
+
+istioctl:
+  image:
+    # registry: docker.io
+    repository: istio/istioctl
+    tag: "1.16.5"
+
+## === istio start ===
+# refer: https://github.com/istio/istio/blob/1.16.5/manifests/charts/istio-control/istio-discovery/values.yaml
+istio:
+#  pilot:
+#    # Can be a full hub/image:tag
+#    hub: "istio"
+#    image: pilot
+#    tag: "1.16.5"
+  global:
+    istioNamespace: extension-servicemesh
+    proxy:
+      autoInject: disabled
+  # tracing configuration
+  meshConfig:
+    defaultConfig:
+      proxyMetadata: {}
+      tracing:
+        zipkin:
+          address: jaeger-collector.extension-servicemesh.svc:9411
+        # sampling: 1.0
+    enablePrometheusMerge: true
+  # telemetry configuration
+  telemetry:
+    enabled: true
+    v2:
+      enabled: true
+      metadataExchange:
+        wasmEnabled: false
+      prometheus:
+        wasmEnabled: false
+        enabled: true
+      stackdriver:
+        enabled: false
+        logging: false
+        monitoring: false
+        topology: false
+        configOverride: { }
+  revision: "1-16-5"
+## === istio end ===
+
+# kiali-operator
+# https://github.com/kiali/helm-charts/blob/v1.59.1/kiali-operator/values.yaml
+
+kiali-operator:
+  allowAdHocKialiImage: true
+  repository: kiali/kiali-operator # quay.io/kiali/kiali-operator
+  tag: v1.59.1 # version string like v1.39.0 or a digest hash
+
+## kiali
+kiali:
+  # registry: docker.io
+  repo: kubesphere/kiali
+  tag: "v1.59"
+  prometheus_url: http://prometheus-k8s.kubesphere-monitoring-system.svc:9090
+
+
+## jaeger-operator
+# https://github.com/jaegertracing/helm-charts/blob/jaeger-operator-2.33.0/charts/jaeger-operator/values.yaml
+jaeger-operator:
+  certs:
+    issuer:
+      create: false
+    certificate:
+      create: false
+      namespace: ""
+      secretName: ""
+    secret:
+      create: true
+
+  webhooks:
+    mutatingWebhook:
+      create: false
+    validatingWebhook:
+      create: false
+    service:
+      create: false
+
+  rbac:
+    # Specifies whether RBAC resources should be created
+    create: true
+    pspEnabled: false
+    clusterRole: true
+
+## jaeger
+jaeger:
+  image:
+    operator:
+      repository: jaegertracing/jaeger-operator
+      tag: "1.35"
+    agent:
+      repository: jaegertracing/jaeger-agent
+      tag: "1.35"
+    collector:
+      repository: jaegertracing/jaeger-collector
+      tag: "1.35"
+    query:
+      repository: jaegertracing/jaeger-query
+      tag: "1.35"
+    esIndexCleaner:
+      repository: jaegertracing/jaeger-es-index-cleaner
+      tag: "1.35" 
+  storage:
+    options:
+      es:
+        index-prefix: whizard
+        tls:
+          enabled: true
+          skip-host-verify: true
+        version: 7
+        server-urls: https://opensearch-cluster-data.kubesphere-logging-system.svc:9200
+#        username: admin
+#        password: admin
+#      secretName: jaeger-secret-opensearch

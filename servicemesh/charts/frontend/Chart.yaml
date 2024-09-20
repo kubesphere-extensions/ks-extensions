@@ -1,0 +1,11 @@
+apiVersion: v1
+name: frontend
+description: Frontend of servicemesh extension.
+type: application
+version: 0.0.2
+appVersion: "0.0.2"
+home: https://kubesphere.io
+sources:
+  - https://github.com/kubesphere-extensions
+annotations:
+  extensions.kubesphere.io/foo: bar
