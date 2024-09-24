@@ -2,8 +2,8 @@ apiVersion: v1
 name: frontend
 description: Frontend of whizard-monitoring extension.
 type: application
-version: 0.1.0
-appVersion: "0.1.0"
+version: 0.1.1
+appVersion: "0.1.1"
 home: https://kubesphere.io
 sources:
   - https://github.com/kubesphere-extensions
