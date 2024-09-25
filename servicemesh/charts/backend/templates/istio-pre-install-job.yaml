@@ -21,6 +21,7 @@ spec:
           - |
             #!/bin/bash
             kubectl create namespace istio-system --dry-run=client -o yaml | kubectl apply -f -
+            kubectl label namespace istio-system kubesphere.io/workspace=system-workspace kubesphere.io/managed=true --overwrite
             if kubectl get mutatingwebhookconfigurations istio-sidecar-injector-1-14-6 >/dev/null 2>&1; then
                 kubectl delete mutatingwebhookconfigurations istio-sidecar-injector-1-14-6
             fi
