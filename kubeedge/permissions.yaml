@@ -1,0 +1,43 @@
+kind: ClusterRole
+rules:
+  - verbs:
+      - '*'
+    apiGroups:
+      - 'extensions.kubesphere.io'
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - 'apps.kubeedge.io'
+      - 'reliablesyncs.kubeedge.io'
+      - 'devices.kubeedge.io'
+      - 'operations.kubeedge.io'
+      - 'rules.kubeedge.io'   
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - ''
+    resources:
+      - 'configmaps'
+      - 'secrets'
+      - 'services'
+      - 'serviceaccounts'
+      - 'namespaces'
+  - verbs:
+      - '*'
+    apiGroups:
+      - 'apps'
+    resources:
+      - 'deployments'
+      - 'daemonsets'
+  - verbs:
+      - '*'
+    apiGroups:
+      - 'admissionregistration.k8s.io'
+      - 'rbac.authorization.k8s.io'
+      - 'apiextensions.k8s.io'
+    resources:
+      - '*'

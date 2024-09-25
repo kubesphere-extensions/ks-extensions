@@ -1,0 +1,10 @@
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: APIService
+metadata:
+  name: v1beta1.kubeedge.kubesphere.io
+spec:
+  group: kubeedge.kubesphere.io
+  version: "v1beta1"
+  url: http://kubeedge-proxy.{{ template "cloudcore.namespace" . }}.svc
+status:
+  state: Available

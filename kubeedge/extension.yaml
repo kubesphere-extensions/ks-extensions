@@ -1,0 +1,44 @@
+apiVersion: v1
+name: kubeedge
+namespace: kubeedge
+version: 1.13.1
+displayName:
+  zh: KubeEdge 边缘计算框架
+  en: KubeEdge Edge Computing Framework
+description:
+  zh: |-
+    KubeEdge 是一个开源的系统，可将本机容器化应用编排和管理扩展到边缘端设备。
+  en: |-
+    KubeEdge is built upon Kubernetes and extends native containerized application orchestration and device management to hosts at the Edge.
+category: computing
+keywords:
+  - Edge Computing
+  - KubeEdge
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+home: https://kubesphere.com.cn/
+sources: []
+kubeVersion: '>=1.19.0-0'
+ksVersion: '>=4.0.0-0'
+staticFileDirectory: static
+dependencies:
+  - name: cloudcore
+  - name: frontend
+icon: ./favicon.svg
+installationMode: HostOnly
+images:
+  - docker.io/kubeedge/iptables-manager:v1.13.1
+  - docker.io/kubeedge/cloudcore:v1.13.1
+  - docker.io/kubeedge/controller-manager:v1.13.1
+  - docker.io/kubesphere/kubeedge-proxy:v0.4.1
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+docs: https://docs.kubesphere.com.cn/
