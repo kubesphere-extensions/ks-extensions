@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  {{- with .Values.kubeEdgeProxy.labels }}
+  labels: {{- toYaml . | nindent 4 }}
+  {{- end }}
+  name: kubeedge-proxy
+  namespace: {{ template "cloudcore.namespace" . }}
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8081
+  selector:
+    {{- with .Values.kubeEdgeProxy.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}

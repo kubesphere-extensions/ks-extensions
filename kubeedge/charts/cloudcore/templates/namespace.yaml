@@ -1,0 +1,12 @@
+{{- $existing := (lookup "v1" "Namespace" "" (include "cloudcore.namespace" .)) -}}
+{{- if not $existing }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ template "cloudcore.namespace" . }}
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-weight": "-5" 
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+
+{{- end }}

@@ -1,0 +1,64 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  {{- with .Values.kubeEdgeProxy.annotations }}
+  annotations: {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.kubeEdgeProxy.labels }}
+  labels: {{- toYaml . | nindent 4 }}
+  {{- end }}
+  name: kubeedge-proxy
+  namespace: {{ template "cloudcore.namespace" . }}
+spec:
+  replicas: {{ .Values.kubeEdgeProxy.replicaCount }}
+  selector:
+    matchLabels:
+      {{- with .Values.kubeEdgeProxy.labels }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+  template:
+    metadata:
+      {{- with .Values.kubeEdgeProxy.labels }}
+      labels: {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccount: kubeedge-proxy-sa
+      {{- include "backend.imagePullSecrets" . | nindent 6 }}
+      containers:
+      - name: kubeedge-proxy
+        image: {{ template "kubeEdgeProxy.image" . }}
+        ports:
+        - name: http
+          protocol: TCP
+          containerPort: 8081
+        command:
+        - edgeservice
+        env:
+          - name: REGION
+            value: "zh"
+          - name: VERSION 
+            value: "v1.13.1"
+        imagePullPolicy: {{ .Values.kubeEdgeProxy.image.pullPolicy }}
+        {{- with .Values.kubeEdgeProxy.resources }}
+        resources: {{ toYaml . | nindent 10 }}
+        {{- end }} 
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: host-time
+          readOnly: true
+      restartPolicy: Always
+      {{- with .Values.kubeEdgeProxy.affinity }}
+      affinity: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.kubeEdgeProxy.tolerations }}
+      tolerations: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.kubeEdgeProxy.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - hostPath:
+          path: /etc/localtime
+          type: ""
+        name: host-time
