@@ -16,7 +16,7 @@ keywords:
   - networkpolicy
 home: https://kubesphere.com.cn/
 sources: []
-kubeVersion: '>=1.19.0'
+kubeVersion: '>=1.19.0-0'
 ksVersion: '>=4.1.1-0'
 maintainers:
   - name: KubeSphere
