@@ -26,7 +26,7 @@ Many pages under clusters, workspaces, and projects, such as the Overview page, 
 
 2. Modify the **Extension Config** and include the following section. Save and update the configuration, then start the installation.
 
-    Set `whizard-monitoring-helper.enabledEtcdMonitoring.enabled` to `true`
+    Set `whizard-monitoring-helper.etcdMonitoringHelper.enabled` to `true`
 
     ```yaml
     whizard-monitoring-helper:

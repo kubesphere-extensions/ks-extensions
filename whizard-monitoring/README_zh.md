@@ -27,7 +27,7 @@
 
 2. 修改 **扩展组件配置**，包含以下部分，保存并更新配置后，开始安装
 
-    将 `whizard-monitoring-helper.enabledEtcdMonitoring.enabled` 设置为 `true`
+    将 `whizard-monitoring-helper.etcdMonitoringHelper.enabled` 设置为 `true`
 
     ```yaml
     whizard-monitoring-helper:
