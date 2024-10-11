@@ -59,7 +59,7 @@ Many pages under clusters, workspaces, and projects, such as the Overview page, 
 >
 > 2. If you are using the built-in `dcgm-exporter` on top of the `gpu-operator` deployment, please use `helm` to update or redeploy `gpu-operator` and add the `--set dcgmExporter.enabled=false` parameter. Set the `dcgmExporter.enabled` configuration in the `extension components` to `true` to enable the built-in installation.
 
-Modify the `Extension Config` and set `whizard-monitoring-helper.enabledGPUMonitoring.enabled` and `dcgmExporter.enabled` to `true`. Save and update the configuration, then start the installation.
+Modify the `Extension Config` and set `whizard-monitoring-helper.gpuMonitoringHelper.enabled` and `dcgmExporter.enabled` to `true`. Save and update the configuration, then start the installation.
 
 ```yaml
 whizard-monitoring-helper:
