@@ -60,7 +60,7 @@
 >
 > 2. 如果您计划使用本扩展组件内置的`dcgm-exporter`，需设置`扩展组件配置`的`dcgmExporter.enabled` 为 `true`。如果您已经安装了 `gpu-operator` ，请在启用本扩展组件内置的`dcgm-exporter` 之前，使用 `helm` 更新 `gpu-operator` 并增加 `--set dcgmExporter.enabled=false` 参数以确保不启动 `gpu-operator` 自带的`dcgm-exporter`
 
-修改 `扩展组件配置`，将 `whizard-monitoring-helper.enabledGPUMonitoring.enabled` 及 `dcgmExporter.enabled` 设置为 `true`，保存并更新配置，开始安装。
+修改 `扩展组件配置`，将 `whizard-monitoring-helper.gpuMonitoringHelper.enabled` 及 `dcgmExporter.enabled` 设置为 `true`，保存并更新配置，开始安装。
 
 ```yaml
 whizard-monitoring-helper:
