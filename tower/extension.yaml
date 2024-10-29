@@ -36,6 +36,6 @@ dependencies:
   - name: backend
     condition: backend.enabled
 images:
-  - kubesphere/tower:v0.2.1
-  - kubesphere/tower-extension:v1.0.0
+  - docker.io/kubesphere/tower:v0.2.1
+  - docker.io/kubesphere/tower-extension:v1.0.0
 docs: https://docs.kubesphere.com.cn/

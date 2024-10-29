@@ -65,10 +65,10 @@ images:
   - quay.io/prometheus/node-exporter:v1.8.1
   - quay.io/prometheus/prometheus:v2.51.2
   - docker.io/kubesphere/dcgm-exporter:3.3.5-3.4.0-ubuntu22.04
-  - kubesphere/process-exporter:0.5.0
-  - nginxinc/nginx-unprivileged:1.24
-  - kubesphere/calico-exporter:v0.3.0
-  - kubesphere/whizard-monitoring-helm-init:v0.1.0
+  - docker.io/kubesphere/process-exporter:0.5.0
+  - docker.io/nginxinc/nginx-unprivileged:1.24
+  - docker.io/kubesphere/calico-exporter:v0.3.0
+  - docker.io/kubesphere/whizard-monitoring-helm-init:v0.1.0
 maintainers:
   - name: KubeSphere
     email: kubesphere@yunify.com

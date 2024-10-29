@@ -38,7 +38,7 @@ dependencies:
   - name: backend
     condition: backend.enabled
 images:
-  - kubesphere/kubefed-extension:v1.0.0
-  - kubesphere/kubefed:v0.8.1
-  - kubesphere/kubectl:v1.27.4
+  - docker.io/kubesphere/kubefed-extension:v1.0.0
+  - docker.io/kubesphere/kubefed:v0.8.1
+  - docker.io/kubesphere/kubectl:v1.27.4
 docs: https://docs.kubesphere.com.cn/
