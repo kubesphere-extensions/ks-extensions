@@ -34,6 +34,8 @@ opensearch-data:
 
 opensearch-dashboards:
   enabled: false
+  image:
+    tag: "2.8.0"
 opensearch-curator:
   enabled: true
 #  configMaps:
