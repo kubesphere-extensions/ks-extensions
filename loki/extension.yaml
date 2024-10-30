@@ -43,6 +43,8 @@ images:
   - docker.io/library/memcached:1.6.23-alpine
   - docker.io/prom/memcached-exporter:v0.14.2
   - docker.io/kiwigrid/k8s-sidecar:1.24.3
+  - docker.io/minio/minio:RELEASE.2022-09-17T00-09-45Z
+  - docker.io/minio/mc:RELEASE.2022-09-16T09-16-47Z
 maintainers:
   - name: KubeSphere
     email: kubesphere@yunify.com

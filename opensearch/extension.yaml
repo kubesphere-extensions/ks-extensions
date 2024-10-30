@@ -46,10 +46,10 @@ dependencies:
       - agent
 installationMode: Multicluster
 images:
-  - docker.io/opensearchproject/opensearch:2.11.1
+  - docker.io/opensearchproject/opensearch:2.8.0
   - docker.io/library/busybox:1.35.0
   - docker.io/kubesphere/opensearch-curator:v0.0.5
-  - docker.io/opensearchproject/opensearch-dashboards:2.11.1
+  - docker.io/opensearchproject/opensearch-dashboards:2.8.0
 maintainers:
   - name: KubeSphere
     email: kubesphere@yunify.com
