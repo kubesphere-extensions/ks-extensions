@@ -3,7 +3,7 @@
 - Multi-level network configuration: Utilizing Nginx Ingress, it provides management for cluster gateways, enterprise space gateways, and project gateways.
 - Flexible governance: Integrated with KubeSphere's permission system, it supports granular control and management at the tenant level.
 - Flexible access: Supports multiple gateway access modes, such as NodePort, LoadBalancer, and ClusterIP.
-- Day-2 operations: Based on WhizardTelemetry's monitoring and logging components, it enables operational capabilities such as gateway monitoring and gateway log searching.
+- Day-2 operations: Based on WizTelemetry's monitoring and logging components, it enables operational capabilities such as gateway monitoring and gateway log searching.
 
 ## Installation
 

@@ -1,4 +1,20 @@
 <!---
+TODO: add v4.1.3 RELEASE_MARK
+--->
+
+## v1.0.3-alpha.0
+
+### 优化
+
+- 升级 ingress-nginx 版本到 4.10.3
+
+### 缺陷修复
+
+- 修复了网关输出异常日志的问题
+- 修复了网关监控无法显示平均延迟
+
+
+<!---
 Please do not delete this line of version tag
 RELEASE_MARK v4.1.2 RELEASE_MARK
 Please do not delete this line of version tag

@@ -3,7 +3,7 @@
 - 多层级网络配置：使用 Nginx Ingress，提供了集群网关、企业空间网关与项目网关的管理。
 - 灵活管控：集成 KubeSphere 的权限体系，支持租户级的权限下方与控制。
 - 灵活访问：支持多种网关访问模式，如 NodePort、LoadBalancer 与 ClusterIP。
-- Day-2 运维：基于 WhizardTelemetry 的监控与日志组件，实现网关监控和网关日志搜索等运维能力。
+- Day-2 运维：基于 WizTelemetry 的监控与日志组件，实现网关监控和网关日志搜索等运维能力。
 
 ## 安装
 
