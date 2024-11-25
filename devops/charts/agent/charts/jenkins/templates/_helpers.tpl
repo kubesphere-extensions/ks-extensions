@@ -80,7 +80,7 @@ https://github.com/helm/charts/issues/5167#issuecomment-619137759
 {{- end -}}
 
 {{- define "jenkins.agent.privileged" -}}
-    {{ if eq (include "jenkins.agent.variant" .) "podman" }}
+    {{ if eq (include "jenkins.agent.variant" .) "-podman" }}
     {{- print "true" -}}
     {{- else -}}
     {{- print "false" -}}
