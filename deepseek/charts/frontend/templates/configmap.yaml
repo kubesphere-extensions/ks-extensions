@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: deepseek-jsbundle
+data:
+  index.js: | 
+{{ (.Files.Glob "dist/index.js").AsConfig | indent 4 }}

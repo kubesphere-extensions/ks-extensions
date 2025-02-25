@@ -34,7 +34,10 @@ icon: ./static/favicon.png
 #screenshots:
 #  - ./static/screenshots/screenshot.png
 dependencies:
-  - name: deepseek
+  - name: backend
+    tags:
+      - agent
+  - name: frontend
     tags:
       - agent
 # installationMode describes how to install subcharts, it can be HostOnly or Multicluster.

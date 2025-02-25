@@ -1,0 +1,13 @@
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: JSBundle
+metadata:
+  name: deepseek
+spec:
+  rawFrom:
+    configMapKeyRef:
+      key: index.js
+      name: deepseek-jsbundle
+      namespace: "{{ .Release.Namespace }}"
+status:
+  link: /dist/deepseek/index.js
+  state: Availablea
