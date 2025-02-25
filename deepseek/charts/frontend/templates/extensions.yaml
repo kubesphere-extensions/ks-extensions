@@ -1,0 +1,13 @@
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: JSBundle
+metadata:
+  name: {{ include "frontend.fullname" . }}-js-bundle
+spec:
+  rawFrom:
+    configMapKeyRef:
+      namespace: {{ .Release.Namespace }}
+      name: {{ include "frontend.fullname" . }}
+      key: index.js
+status:
+  state: Available
+  link: /dist/{{ include "frontend.fullname" . }}/index.js

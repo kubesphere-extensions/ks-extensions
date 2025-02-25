@@ -45,7 +45,7 @@
 支持模型列表：deepseek-r1:1.5b, deepseek-r1:3b, deepseek-r1:7b, deepseek-r1:8b, deepseek-r1:14b, deepseek-r1:32b, deepseek-r1:70b, deepseek-r1:671b
 ```yaml
 # config.yaml
-deepseek:
+backend:
   model:
     # registry: "registry.ollama.ai/library"
     # repository: deepseek-r1
@@ -55,12 +55,12 @@ deepseek:
 ### 资源配置示例
 部署该扩展组件时，如无指定配置，会根据待安装的模型，自动设置默认的资源请求和限制。
 ```yaml
-deepseek:
+backend:
   enableNvidia: true
 ```
 扩展配置：可通过以下参数覆盖默认资源请求和限制
 ```yaml
-deepseek:
+backend:
   server:
     nodeSelector:
       accelerator: nvidia

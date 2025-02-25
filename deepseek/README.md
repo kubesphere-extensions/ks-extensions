@@ -46,7 +46,7 @@ By default, the 1.5b model is installed. If you need to install other models, pl
 Supported model list: deepseek-r1:1.5b, deepseek-r1:3b, deepseek-r1:7b, deepseek-r1:8b, deepseek-r1:14b, deepseek-r1:32b, deepseek-r1:70b, deepseek-r1:671b
 ```yaml
 # config.yaml
-deepseek:
+backend:
   model:
     # registry: "registry.ollama.ai/library"
     # repository: deepseek-r1
@@ -56,14 +56,14 @@ deepseek:
 ### Resource Configuration Example
 When deploying this extension component, if no configuration is specified, the default resources will be automatically set according to the model to be installed.
 ```yaml
-deepseek:
+backend:
   enableNvidia: true
 ```
 
 ### Extended Configuration
 The following parameters can be configured to override the default resource requests and limits.
 ```yaml
-deepseek:
+backend:
   server:
     nodeSelector:
       accelerator: nvidia
