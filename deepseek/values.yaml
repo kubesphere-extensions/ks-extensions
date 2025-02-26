@@ -1,0 +1,121 @@
+global:
+  imageRegistry: docker.io
+  ## Optional array of imagePullSecrets containing private registry credentials
+  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  imagePullSecrets: []
+  tag: ""
+  nodeSelector: {}
+  ingress:
+    enabled: false
+    ingressClassName: ""
+    domain: "deepseek.local"
+    tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+backend:
+  # download model from ollama library
+  # support value: deepseek-r1:7b, deepseek-r1:8b, deepseek-r1:14b, deepseek-r1:32b, deepseek-r1:70b, deepseek-r1:671b, deepseek-v3
+  model:
+    registry: "registry.ollama.ai/library"
+    repository: deepseek-r1
+    tag: 1.5b
+  enableNvidia: false
+  enableAMD: false
+
+  server:
+    replicas: 1
+    image:
+      # empty registry means using the global images.registry
+      registry: ""
+      repository: ollama/ollama
+      # empty tag means using the global images.tag
+      tag: "0.5.7"
+      digest: ""
+      pullPolicy: IfNotPresent
+      ## Optionally, specify an array of imagePullSecrets.
+      ## Secrets must be manually created in the namespace.
+      ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+      ## e.g.:
+      ## pullSecrets:
+      ##   - myRegistryKeySecretName
+      ##
+      pullSecrets: []
+    # resources:
+    #   requests:
+    #     cpu: 4
+    #     memory: 8Gi
+    #     # if use amd gpu, add this line
+    #     amd.com/gpu: 1
+    #     # if use nvidia gpu, add this line
+    #     nvidia.com/gpu: 1
+    #   limits:
+    #     cpu: 4
+    #     memory: 8Gi
+    #     # if use amd gpu, add this line
+    #     amd.com/gpu: 1
+    #     # if use nvidia gpu, add this line
+    #     nvidia.com/gpu: 1
+    nodeSelector: {}
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app: deepseek-server
+            topologyKey: "kubernetes.io/hostname"
+    autoscaling:
+      # -- Enable Horizontal Pod Autoscaler ([HPA])
+      enabled: false
+      # -- Minimum number of replicas
+      minReplicas: 1
+      # -- Maximum number of replicas
+      maxReplicas: 5
+      # -- Average CPU utilization percentage
+      targetCPUUtilizationPercentage: 50
+      # -- Average memory utilization percentage
+      targetMemoryUtilizationPercentage: 50
+  chat:
+    replicas: 1
+    image:
+      # empty registry means using the global images.registry
+      registry: ""
+      repository: yidadaa/chatgpt-next-web
+      # empty tag means using the global images.tag
+      tag: "v2.16.0"
+      digest: ""
+      pullPolicy: IfNotPresent
+      ## Optionally, specify an array of imagePullSecrets.
+      ## Secrets must be manually created in the namespace.
+      ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+      ## e.g.:
+      ## pullSecrets:
+      ##   - myRegistryKeySecretName
+      ##
+      pullSecrets: []
+    resources:
+      requests:
+        cpu: 1
+        memory: 1Gi
+      limits:
+        cpu: 1
+        memory: 1Gi
+    nodeSelector: {}
+    autoscaling:
+      # -- Enable Horizontal Pod Autoscaler ([HPA])
+      enabled: false
+      # -- Minimum number of replicas
+      minReplicas: 1
+      # -- Maximum number of replicas
+      maxReplicas: 5
+      # -- Average CPU utilization percentage
+      targetCPUUtilizationPercentage: 50
+      # -- Average memory utilization percentage
+      targetMemoryUtilizationPercentage: 50
+  # to store model
+  persistence:
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 50Gi
