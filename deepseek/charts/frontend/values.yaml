@@ -1,6 +1,8 @@
 global:
-  ingress:
+  extension:
     enabled: false
-    ingressClassName: ""
-    domain: "deepseek.local"
-    tls: []
+    ingress:
+      ingressClassName: ""
+      domainSuffix: ""
+      # httpPort: 80
+      # httpsPort: 443

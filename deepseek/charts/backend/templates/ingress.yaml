@@ -1,4 +1,4 @@
-{{- if .Values.global.ingress.enabled }}
+{{- if .Values.global.extension.enabled }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -7,11 +7,9 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: {{ .Values.global.ingress.ingressClassName }}
-  tls:
-  {{- toYaml .Values.global.ingress.tls | nindent 4 }}
+  ingressClassName: {{ .Values.global.extension.ingress.ingressClassName }}
   rules:
-    - host: "{{ .Values.global.ingress.domain }}"
+    - host: "deepseek.{{ .Values.global.extension.ingress.domainSuffix }}"
       http:
         paths:
           - path: /
