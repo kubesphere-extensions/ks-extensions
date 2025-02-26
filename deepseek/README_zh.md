@@ -76,7 +76,17 @@ backend:
 ```
 
 ### 模型访问
-该扩展组件内置 NextChat，可用于UI化模型访问。NextChat 的服务为：deepseek-chat-service，端口为：3000。
+该扩展组件内置 NextChat，可用于UI化模型访问。外部访问是需配置ingress并开启ingress-controller(推荐使用gateway扩展组件进行设置)
+```yaml
+global:
+  ingress:
+    enabled: true # 是否开启ingress   
+    ingressClassName: "" # 指定ingressClassName
+    domain: "example.com" # 指定域名
+    port: 3000 # 指定端口
+    tls: [] # 指定tls
+```
+
 
 ### 模型缓存
 默认情况下，ollama 模型的缓存路径：`$HOME/.ollama/models`

@@ -1,3 +1,4 @@
+{{- if .Values.global.ingress.enabled }}
 apiVersion: extensions.kubesphere.io/v1alpha1
 kind: JSBundle
 metadata:
@@ -11,3 +12,4 @@ spec:
 status:
   state: Available
   link: /dist/{{ include "frontend.fullname" . }}/index.js
+{{- end }}

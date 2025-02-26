@@ -79,7 +79,16 @@ backend:
 ```
 
 ### Model Access
-The extension component includes NextChat, which can be used for UI-based model access. The NextChat service is: deepseek-chat-service, port: 3000.
+The extension component includes NextChat, which can be used for UI-based model access. External access requires configuration of ingress (default enabled)
+```yaml
+global:
+  ingress:
+    enabled: true # if ingress is enabled
+    ingressClassName: "" # specify ingressClassName
+    domain: "example.com" # specify domain
+    tls: [] # specify tls 
+    port: 3000 # specify port
+```
 
 ### Model Cache
 By default, the ollama model cache path is: `$HOME/.ollama/models`

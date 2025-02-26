@@ -5,6 +5,14 @@ global:
   imagePullSecrets: []
   tag: ""
   nodeSelector: {}
+  ingress:
+    enabled: false
+    ingressClassName: ""
+    domain: "deepseek.local"
+    tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
 
 backend:
   # download model from ollama library

@@ -15,7 +15,7 @@ keywords:
   - deepseek
 home: https://ollama.com/library/deepseek-r1
 sources:
-  - https://github.com/kubesphere
+  - https://github.com/kubesphere-extensions/ks-extensions
 kubeVersion: ">=1.22.0-0"
 ksVersion: ">=4.0.0-0"
 maintainers:
@@ -36,15 +36,25 @@ icon: ./static/favicon.png
 dependencies:
   - name: backend
     tags:
-      - agent
+      - extension
   - name: frontend
     tags:
-      - agent
+      - extension
 # installationMode describes how to install subcharts, it can be HostOnly or Multicluster.
 # In Multicluster mode, the subchart with tag `extension` will only be deployed to the host cluster,
 # and the subchart with tag `agent` will be deployed to all selected clusters.
-installationMode: Multicluster
+externalDependencies:
+  - name: gateway
+    type: extension
+    version: '>= 1.0.2'
+    required: false
+  - name: nvidia-gpu-operator
+    type: extension
+    version: '>= 23.9.2'
+    required: false
+installationMode: HostOnly
 images:
   - docker.io/ollama/ollama:0.5.7
   - docker.io/ollama/ollama:rocm
   - docker.io/yidadaa/chatgpt-next-web:v2.16.0
+docs: https://docs.kubesphere.com.cn/
