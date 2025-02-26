@@ -82,13 +82,7 @@ backend:
 The extension component includes NextChat, which can be used for UI-based model access. The NextChat service is: deepseek-chat-service, port: 3000.
 
 ### Model Cache
-By default, the ollama model cache path is as follows:
-
-macOS: `~/.ollama/models`
-
-Linux: `/usr/share/ollama/.ollama/models`
-
-Windows: `C:\Users\<username>\.ollama\models`
+By default, the ollama model cache path is: `$HOME/.ollama/models`
 
 For offline environment deployment, you need to pull the model using ollama in an environment with internet access, back up the models directory and copy it to the offline environment. At the same time, create a PVC named deepseek-models and import the backed up models directory into the PV.
 

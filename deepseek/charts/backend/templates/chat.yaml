@@ -2,18 +2,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deepseek-chat
+  name: {{ include "backend.fullname" . }}-chat
   labels:
-    app: deepseek-chat
+    app: {{ include "backend.fullname" . }}-chat
 spec:
   replicas: {{ .Values.chat.replicas }}
   selector:
     matchLabels:
-      app: deepseek-chat
+      app: {{ include "backend.fullname" . }}-chat
   template:
     metadata:
       labels:
-        app: deepseek-chat
+        app: {{ include "backend.fullname" . }}-chat
     spec:
       nodeSelector:
         {{- include "common.nodeSelector" (dict "global" .Values.global "value" .Values.chat) | nindent 8 }}
@@ -25,7 +25,7 @@ spec:
           imagePullPolicy: {{ include "common.images.pullPolicy" (dict "value" .Values.chat.image "global" .Values.global) }}
           env:
             - name: BASE_URL
-              value: http://deepseek-server-service:11434
+              value: http://{{ include "backend.fullname" . }}-server-service:11434
             - name: CUSTOM_MODELS
               value: -all,+{{ include "model.name" .Values.model }}
             - name: DEFAULT_MODEL
@@ -43,12 +43,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: deepseek-chat-service
+  name: {{ include "backend.fullname" . }}-chat-service
   labels:
-    app: deepseek-chat-service
+    app: {{ include "backend.fullname" . }}-chat-service
 spec:
   selector:
-    app: deepseek-chat
+    app: {{ include "backend.fullname" . }}-chat
   ports:
     - port: 3000
       targetPort: http

@@ -79,13 +79,7 @@ backend:
 该扩展组件内置 NextChat，可用于UI化模型访问。NextChat 的服务为：deepseek-chat-service，端口为：3000。
 
 ### 模型缓存
-默认情况下，ollama 模型的缓存路径如下：
-
-macOS: `~/.ollama/models`
-
-Linux: `/usr/share/ollama/.ollama/models`
-
-Windows: `C:\Users\<username>\.ollama\models`
+默认情况下，ollama 模型的缓存路径：`$HOME/.ollama/models`
 
 离线环境部署时，需在可联网环境利用 ollama 拉取模型并备份 models 目录拷贝至离线环境中，同时创建名为 deepseek-models 的 PVC，并将备份的 models 目录导入 PV 中。
 

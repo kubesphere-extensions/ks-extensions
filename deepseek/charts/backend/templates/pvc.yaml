@@ -1,4 +1,4 @@
-{{- if lookup "v1" "PersistentVolumeClaim" "extension-deepseek" "deepseek-models" | len | eq 0 }}
+{{- if lookup "v1" "PersistentVolumeClaim" .Release.Namespace "deepseek-models" | len | eq 0 }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

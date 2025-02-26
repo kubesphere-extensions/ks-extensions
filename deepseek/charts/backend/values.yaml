@@ -52,10 +52,7 @@ server:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
-            matchLabels:
-              app: deepseek-server
-          topologyKey: "kubernetes.io/hostname"
+        - topologyKey: "kubernetes.io/hostname"
   autoscaling:
     # -- Enable Horizontal Pod Autoscaler ([HPA])
     enabled: false

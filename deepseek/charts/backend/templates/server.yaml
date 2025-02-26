@@ -2,18 +2,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deepseek-server
+  name: {{ include "backend.fullname" . }}-server
   labels:
-    app: deepseek-server
+    app: {{ include "backend.fullname" . }}-server
 spec:
   replicas: {{ .Values.server.replicas }}
   selector:
     matchLabels:
-      app: deepseek-server
+      app: {{ include "backend.fullname" . }}-server
   template:
     metadata:
       labels:
-        app: deepseek-server
+        app: {{ include "backend.fullname" . }}-server
     spec:
       nodeSelector:
         {{- include "common.nodeSelector" (dict "global" .Values.global "value" .Values.server) | nindent 8 }}
@@ -74,12 +74,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: deepseek-server-service
+  name: {{ include "backend.fullname" . }}-server-service
   labels:
-    app: deepseek-server-service
+    app: {{ include "backend.fullname" . }}-server-service
 spec:
   selector:
-    app: deepseek-server
+    app: {{ include "backend.fullname" . }}-server
   ports:
     - port: 11434
       targetPort: http
