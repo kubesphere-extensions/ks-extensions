@@ -1,0 +1,87 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "backend.fullname" . }}-server
+  labels:
+    app: {{ include "backend.fullname" . }}-server
+spec:
+  replicas: {{ .Values.server.replicas }}
+  selector:
+    matchLabels:
+      app: {{ include "backend.fullname" . }}-server
+  template:
+    metadata:
+      labels:
+        app: {{ include "backend.fullname" . }}-server
+    spec:
+      nodeSelector:
+        {{- include "common.nodeSelector" (dict "global" .Values.global "value" .Values.server) | nindent 8 }}
+      imagePullSecrets:
+        {{- include "common.images.pullSecrets" (dict "value" .Values.server.image "global" .Values.global) | nindent 8 }}
+      containers:
+        - name: ollama
+          image: {{template "ollama.image" . }}
+          imagePullPolicy: {{ include "common.images.pullPolicy" (dict "value" .Values.server.image "global" .Values.global) }}
+          ports:
+            - containerPort: 11434
+              name: http
+          resources:
+            {{- include "deepseek.resources" . | nindent 12 }}
+          readinessProbe:
+            exec:
+              command: ["ollama", "list"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - name: deepseek-models
+              mountPath: /root/.ollama/models
+          securityContext:
+            privileged: true
+        - name: run-model
+          image: {{ template "ollama.image" . }}
+          imagePullPolicy: {{ include "common.images.pullPolicy" (dict "value" .Values.server.image "global" .Values.global) }}
+          command: 
+            - "/bin/sh"
+            - "-c"
+            - ollama run {{ include "model.fullname" .Values.model }} && echo "success" > /tmp/ready && tail -f /dev/null
+          resources:
+            requests:
+              cpu: 10m
+              memory: 100Mi
+            limits:
+              cpu: 10m
+              memory: 100Mi
+          livenessProbe:
+            exec:
+              command: ["ollama", "list"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 10
+          readinessProbe:
+            exec:
+              command: ["cat", "/tmp/ready"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 99999
+      affinity:
+        {{- toYaml .Values.server.affinity | nindent 8 }}
+      volumes:
+      - name: deepseek-models
+        persistentVolumeClaim:
+          claimName: deepseek-models
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "backend.fullname" . }}-server-service
+  labels:
+    app: {{ include "backend.fullname" . }}-server-service
+spec:
+  selector:
+    app: {{ include "backend.fullname" . }}-server
+  ports:
+    - port: 11434
+      targetPort: http
+      protocol: TCP
+      name: http

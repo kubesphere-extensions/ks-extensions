@@ -1,0 +1,5 @@
+apiVersion: v2
+name: backend
+description: Ollama server to running deepseek models.
+version: 0.1.0
+appVersion: 0.5.7

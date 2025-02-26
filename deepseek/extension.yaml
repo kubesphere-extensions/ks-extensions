@@ -1,0 +1,60 @@
+apiVersion: kubesphere.io/v1alpha1
+name: deepseek
+version: 0.1.0
+displayName:
+  zh: DeepSeek
+  en: DeepSeek
+description:
+  zh: "用于在集群中部署 DeepSeek 大语言模型服务"
+  en: "Used to deploy DeepSeek large language model service in the cluster"
+category: deepseek
+keywords:
+  - ollama
+  - AI
+  - LLM
+  - deepseek
+home: https://ollama.com/library/deepseek-r1
+sources:
+  - https://github.com/kubesphere-extensions/ks-extensions
+kubeVersion: ">=1.22.0-0"
+ksVersion: ">=4.0.0-0"
+maintainers:
+  - name: KubeSphere
+    email: kubesphere@yunify.com
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+icon: ./static/favicon.png
+#screenshots:
+#  - ./static/screenshots/screenshot.png
+dependencies:
+  - name: backend
+    tags:
+      - extension
+  - name: frontend
+    tags:
+      - extension
+# installationMode describes how to install subcharts, it can be HostOnly or Multicluster.
+# In Multicluster mode, the subchart with tag `extension` will only be deployed to the host cluster,
+# and the subchart with tag `agent` will be deployed to all selected clusters.
+externalDependencies:
+  - name: gateway
+    type: extension
+    version: '>= 1.0.2'
+    required: false
+  - name: nvidia-gpu-operator
+    type: extension
+    version: '>= 23.9.2'
+    required: false
+installationMode: HostOnly
+images:
+  - docker.io/ollama/ollama:0.5.7
+  - docker.io/ollama/ollama:rocm
+  - docker.io/yidadaa/chatgpt-next-web:v2.16.0
+docs: https://docs.kubesphere.com.cn/

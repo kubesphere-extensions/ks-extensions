@@ -1,0 +1,6 @@
+global:
+  ingress:
+    enabled: false
+    ingressClassName: ""
+    domain: "deepseek.local"
+    tls: []

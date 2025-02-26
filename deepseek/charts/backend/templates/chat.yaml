@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "backend.fullname" . }}-chat
+  labels:
+    app: {{ include "backend.fullname" . }}-chat
+spec:
+  replicas: {{ .Values.chat.replicas }}
+  selector:
+    matchLabels:
+      app: {{ include "backend.fullname" . }}-chat
+  template:
+    metadata:
+      labels:
+        app: {{ include "backend.fullname" . }}-chat
+    spec:
+      nodeSelector:
+        {{- include "common.nodeSelector" (dict "global" .Values.global "value" .Values.chat) | nindent 8 }}
+      imagePullSecrets:
+        {{- include "common.images.pullSecrets" (dict "value" .Values.chat.image "global" .Values.global) | nindent 8 }}
+      containers:
+        - name: nextchat
+          image: {{template "nextchat.image" . }}
+          imagePullPolicy: {{ include "common.images.pullPolicy" (dict "value" .Values.chat.image "global" .Values.global) }}
+          env:
+            - name: BASE_URL
+              value: http://{{ include "backend.fullname" . }}-server-service:11434
+            - name: CUSTOM_MODELS
+              value: -all,+{{ include "model.name" .Values.model }}
+            - name: DEFAULT_MODEL
+              value: {{ include "model.name" .Values.model }}
+          ports:
+            - containerPort: 3000
+              name: http
+          resources:
+            {{- toYaml .Values.chat.resources | nindent 12 }}
+      {{- with .Values.chat.affinity }}
+      affinity:
+        {{- toYaml .Values.chat.affinity | nindent 8 }}
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "backend.fullname" . }}-chat-service
+  labels:
+    app: {{ include "backend.fullname" . }}-chat-service
+spec:
+  selector:
+    app: {{ include "backend.fullname" . }}-chat
+  ports:
+    - port: 3000
+      targetPort: http
+      protocol: TCP
+      name: http

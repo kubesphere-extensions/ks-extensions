@@ -1,0 +1,24 @@
+{{- if .Values.global.ingress.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "backend.fullname" . }}-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: {{ .Values.global.ingress.ingressClassName }}
+  tls:
+  {{- toYaml .Values.global.ingress.tls | nindent 4 }}
+  rules:
+    - host: "{{ .Values.global.ingress.domain }}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "backend.fullname" . }}-chat-service
+                port:
+                  number: 3000
+{{- end }}
