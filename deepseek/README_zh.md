@@ -82,11 +82,10 @@ global:
   ingress:
     enabled: true # 是否开启ingress   
     ingressClassName: "" # 指定ingressClassName
-    domain: "example.com" # 指定域名
-    port: 3000 # 指定端口
-    tls: [] # 指定tls
+    domainSuffix: "172.1.1.1.nip.io" # 指定域名后缀
+    httpsPort: 443 # 指定https端口, 会覆盖httpPort
+    #httpPort: 80 # 指定http端口
 ```
-
 
 ### 模型缓存
 默认情况下，ollama 模型的缓存路径：`$HOME/.ollama/models`

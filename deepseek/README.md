@@ -85,9 +85,9 @@ global:
   ingress:
     enabled: true # if ingress is enabled
     ingressClassName: "" # specify ingressClassName
-    domain: "example.com" # specify domain
-    tls: [] # specify tls 
-    port: 3000 # specify port
+    domainSuffix: "172.1.1.1.nip.io" # specify domain suffix
+    httpsPort: 443 # specify https port, will override httpPort
+    #httpPort: 80 # specify http port
 ```
 
 ### Model Cache
