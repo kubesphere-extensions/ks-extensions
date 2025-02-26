@@ -1,4 +1,10 @@
-{{- if .Values.global.ingress.enabled }}
+{{- if .Values.global.extension.enabled }}
+{{ $destURL := "" }}
+{{- if .Values.global.extension.ingress.httpsPort -}}
+{{- $destURL = printf "https://deepseek.%s:%s" .Values.global.extension.ingress.domainSuffix (toString .Values.global.extension.ingress.httpsPort) -}}
+{{- else if .Values.global.extension.ingress.httpPort -}}
+{{- $destURL = printf "http://deepseek.%s:%s" .Values.global.extension.ingress.domainSuffix (toString .Values.global.extension.ingress.httpPort) -}}
+{{- end -}}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -8,392 +14,349 @@ metadata:
     {{- include "frontend.labels" . | nindent 4 }}
 data:
   index.js: |
-    System.register(["react", "styled-components"], function (e, t) {
-    var r = {},
-      n = {};
-    return {
-      setters: [
-        function (e) {
-          r.default = e.default;
-        },
-        function (e) {
-          n.default = e.default;
-        },
-      ],
-      execute: function () {
-        e(
-          (function () {
-            var e = {
-                264: function (e, t, r) {
-                  var n = { "./base.json": 464 };
-                  function o(e) {
-                    var t = i(e);
-                    return r(t);
-                  }
-                  function i(e) {
-                    if (!r.o(n, e)) {
-                      var t = new Error("Cannot find module '" + e + "'");
-                      throw ((t.code = "MODULE_NOT_FOUND"), t);
+    System.register(['react', 'styled-components'], function (e, t) {
+      var r = {},
+        n = {};
+      return {
+        setters: [
+          function (e) {
+            r.default = e.default;
+          },
+          function (e) {
+            n.default = e.default;
+          },
+        ],
+        execute: function () {
+          e(
+            (function () {
+              var e = {
+                  264: function (e, t, r) {
+                    var n = { './base.json': 464 };
+                    function o(e) {
+                      var t = i(e);
+                      return r(t);
                     }
-                    return n[e];
-                  }
-                  (o.keys = function () {
-                    return Object.keys(n);
-                  }),
-                    (o.resolve = i),
-                    (e.exports = o),
-                    (o.id = 264);
-                },
-                443: function (e) {
-                  "use strict";
-                  e.exports = { name: "名称" };
-                },
-                464: function (e) {
-                  "use strict";
-                  e.exports = { name: "Name" };
-                },
-                683: function (e, t, r) {
-                  var n = { "./base.json": 443 };
-                  function o(e) {
-                    var t = i(e);
-                    return r(t);
-                  }
-                  function i(e) {
-                    if (!r.o(n, e)) {
-                      var t = new Error("Cannot find module '" + e + "'");
-                      throw ((t.code = "MODULE_NOT_FOUND"), t);
+                    function i(e) {
+                      if (!r.o(n, e)) {
+                        var t = new Error("Cannot find module '" + e + "'");
+                        throw ((t.code = 'MODULE_NOT_FOUND'), t);
+                      }
+                      return n[e];
                     }
-                    return n[e];
-                  }
-                  (o.keys = function () {
-                    return Object.keys(n);
-                  }),
-                    (o.resolve = i),
-                    (e.exports = o),
-                    (o.id = 683);
-                },
-                725: function (e, t, r) {
-                  var n = r(825).y;
-                  t.w = function (e) {
-                    if ((e || (e = 1), !r.y.meta || !r.y.meta.url))
-                      throw (
-                        (console.error("__system_context__", r.y),
-                        Error(
-                          "systemjs-webpack-interop was provided an unknown SystemJS context. Expected context.meta.url, but none was provided"
-                        ))
-                      );
-                    r.p = n(r.y.meta.url, e);
-                  };
-                },
-                726: function (e) {
-                  "use strict";
-                  e.exports = r;
-                },
-                815: function (e) {
-                  "use strict";
-                  e.exports = n;
-                },
-                825: function (e, t, r) {
-                  function n(e, t) {
-                    var r = document.createElement("a");
-                    r.href = e;
-                    for (
-                      var n =
-                          "/" === r.pathname[0] ? r.pathname : "/" + r.pathname,
-                        o = 0,
-                        i = n.length;
-                      o !== t && i >= 0;
-  
-                    ) {
-                      "/" === n[--i] && o++;
+                    (o.keys = function () {
+                      return Object.keys(n);
+                    }),
+                      (o.resolve = i),
+                      (e.exports = o),
+                      (o.id = 264);
+                  },
+                  443: function (e) {
+                    'use strict';
+                    e.exports = { name: '名称' };
+                  },
+                  464: function (e) {
+                    'use strict';
+                    e.exports = { name: 'Name' };
+                  },
+                  683: function (e, t, r) {
+                    var n = { './base.json': 443 };
+                    function o(e) {
+                      var t = i(e);
+                      return r(t);
                     }
-                    if (o !== t)
-                      throw Error(
-                        "systemjs-webpack-interop: rootDirectoryLevel (" +
-                          t +
-                          ") is greater than the number of directories (" +
-                          o +
-                          ") in the URL path " +
-                          e
-                      );
-                    var c = n.slice(0, i + 1);
-                    return r.protocol + "//" + r.host + c;
-                  }
-                  t.y = n;
-                  var o =
-                    Number.isInteger ||
-                    function (e) {
-                      return (
-                        "number" == typeof e && isFinite(e) && Math.floor(e) === e
-                      );
+                    function i(e) {
+                      if (!r.o(n, e)) {
+                        var t = new Error("Cannot find module '" + e + "'");
+                        throw ((t.code = 'MODULE_NOT_FOUND'), t);
+                      }
+                      return n[e];
+                    }
+                    (o.keys = function () {
+                      return Object.keys(n);
+                    }),
+                      (o.resolve = i),
+                      (e.exports = o),
+                      (o.id = 683);
+                  },
+                  725: function (e, t, r) {
+                    var n = r(825).y;
+                    t.w = function (e) {
+                      if ((e || (e = 1), !r.y.meta || !r.y.meta.url))
+                        throw (
+                          (console.error('__system_context__', r.y),
+                          Error(
+                            'systemjs-webpack-interop was provided an unknown SystemJS context. Expected context.meta.url, but none was provided',
+                          ))
+                        );
+                      r.p = n(r.y.meta.url, e);
                     };
+                  },
+                  726: function (e) {
+                    'use strict';
+                    e.exports = r;
+                  },
+                  815: function (e) {
+                    'use strict';
+                    e.exports = n;
+                  },
+                  825: function (e, t, r) {
+                    function n(e, t) {
+                      var r = document.createElement('a');
+                      r.href = e;
+                      for (
+                        var n = '/' === r.pathname[0] ? r.pathname : '/' + r.pathname,
+                          o = 0,
+                          i = n.length;
+                        o !== t && i >= 0;
+                    
+                      ) {
+                        '/' === n[--i] && o++;
+                      }
+                      if (o !== t)
+                        throw Error(
+                          'systemjs-webpack-interop: rootDirectoryLevel (' +
+                            t +
+                            ') is greater than the number of directories (' +
+                            o +
+                            ') in the URL path ' +
+                            e,
+                        );
+                      var c = n.slice(0, i + 1);
+                      return r.protocol + '//' + r.host + c;
+                    }
+                    t.y = n;
+                    var o =
+                      Number.isInteger ||
+                      function (e) {
+                        return 'number' == typeof e && isFinite(e) && Math.floor(e) === e;
+                      };
+                  },
                 },
-              },
-              o = {};
-            function i(t) {
-              var r = o[t];
-              if (void 0 !== r) return r.exports;
-              var n = (o[t] = { exports: {} });
-              return e[t](n, n.exports, i), n.exports;
-            }
-            (i.y = t),
-              (i.d = function (e, t) {
-                for (var r in t)
-                  i.o(t, r) &&
-                    !i.o(e, r) &&
-                    Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
-              }),
-              (i.g = (function () {
-                if ("object" == typeof globalThis) return globalThis;
-                try {
-                  return this || new Function("return this")();
-                } catch (e) {
-                  if ("object" == typeof window) return window;
-                }
-              })()),
-              (i.o = function (e, t) {
-                return Object.prototype.hasOwnProperty.call(e, t);
-              }),
-              (i.r = function (e) {
-                "undefined" != typeof Symbol &&
-                  Symbol.toStringTag &&
-                  Object.defineProperty(e, Symbol.toStringTag, {
-                    value: "Module",
-                  }),
-                  Object.defineProperty(e, "__esModule", { value: !0 });
-              }),
-              (function () {
-                var e;
-                i.g.importScripts && (e = i.g.location + "");
-                var t = i.g.document;
-                if (
-                  !e &&
-                  t &&
-                  (t.currentScript &&
-                    "SCRIPT" === t.currentScript.tagName.toUpperCase() &&
-                    (e = t.currentScript.src),
-                  !e)
-                ) {
-                  var r = t.getElementsByTagName("script");
-                  if (r.length)
-                    for (
-                      var n = r.length - 1;
-                      n > -1 && (!e || !/^http(s?):/.test(e));
-  
-                    )
-                      e = r[n--].src;
-                }
-                if (!e)
-                  throw new Error(
-                    "Automatic publicPath is not supported in this browser"
-                  );
-                (e = e
-                  .replace(/^blob:/, "")
-                  .replace(/#.*$/, "")
-                  .replace(/\?.*$/, "")
-                  .replace(/\/[^\/]+$/, "/")),
-                  (i.p = e);
-              })();
-            var c = {};
-            return (
-              (0, i(725).w)(1),
-              (function () {
-                "use strict";
-                i.r(c),
-                  i.d(c, {
-                    default: function () {
-                      return k;
-                    },
-                  });
-                var e = i(726),
-                  t = i(815);
-                const r = t.default.div`width: ${(e) => e.width};height: ${(e) => e.height};overflow: scroll;`;
-                const n = t.default.iframe`width: 100%;height: 100%;border: none;`;
-                var o = ({
-                    src: t,
-                    width: o = "100%",
-                    height: i = "100%",
-                    title: c = "",
-                  }) =>
+                o = {};
+              function i(t) {
+                var r = o[t];
+                if (void 0 !== r) return r.exports;
+                var n = (o[t] = { exports: {} });
+                return e[t](n, n.exports, i), n.exports;
+              }
+              (i.y = t),
+                (i.d = function (e, t) {
+                  for (var r in t)
+                    i.o(t, r) &&
+                      !i.o(e, r) &&
+                      Object.defineProperty(e, r, { enumerable: !0, get: t[r] });
+                }),
+                (i.g = (function () {
+                  if ('object' == typeof globalThis) return globalThis;
+                  try {
+                    return this || new Function('return this')();
+                  } catch (e) {
+                    if ('object' == typeof window) return window;
+                  }
+                })()),
+                (i.o = function (e, t) {
+                  return Object.prototype.hasOwnProperty.call(e, t);
+                }),
+                (i.r = function (e) {
+                  'undefined' != typeof Symbol &&
+                    Symbol.toStringTag &&
+                    Object.defineProperty(e, Symbol.toStringTag, { value: 'Module' }),
+                    Object.defineProperty(e, '__esModule', { value: !0 });
+                }),
+                (function () {
+                  var e;
+                  i.g.importScripts && (e = i.g.location + '');
+                  var t = i.g.document;
+                  if (
+                    !e &&
+                    t &&
+                    (t.currentScript &&
+                      'SCRIPT' === t.currentScript.tagName.toUpperCase() &&
+                      (e = t.currentScript.src),
+                    !e)
+                  ) {
+                    var r = t.getElementsByTagName('script');
+                    if (r.length)
+                      for (var n = r.length - 1; n > -1 && (!e || !/^http(s?):/.test(e)); )
+                        e = r[n--].src;
+                  }
+                  if (!e) throw new Error('Automatic publicPath is not supported in this browser');
+                  (e = e
+                    .replace(/^blob:/, '')
+                    .replace(/#.*$/, '')
+                    .replace(/\?.*$/, '')
+                    .replace(/\/[^\/]+$/, '/')),
+                    (i.p = e);
+                })();
+              var c = {};
+              return (
+                (0, i(725).w)(1),
+                (function () {
+                  'use strict';
+                  i.r(c),
+                    i.d(c, {
+                      default: function () {
+                        return E;
+                      },
+                    });
+                  var e = i(726),
+                    t = i(815);
+                  const r = t.default.div`width: ${e => e.width};height: ${e => e.height};overflow: scroll;`,
+                    n = t.default.iframe`width: 100%;height: 100%;border: none;`;
+                  var o = ({ src: t, width: o = '100%', height: i = '100%', title: c = '' }) =>
                     t
                       ? e.default.createElement(
                           r,
                           { width: o, height: i },
-                          e.default.createElement(n, { src: t, title: c })
+                          e.default.createElement(n, { src: t, title: c }),
                         )
-                      : e.default.createElement("div", null, "Invalid URL"),
-                  u = !1;
-                var a = function () {
-                    const t = "{{- if .Values.global.ingress.tls | len | eq 0 }}http://{{- else -}}https://{{- end -}}{{ .Values.global.ingress.domain }}{{- if .Values.global.ingress.port }}:{{ .Values.global.ingress.port }}{{- end }}";
+                      : e.default.createElement('div', null, 'Invalid URL');
+                  var u = function () {
+                      return e.default.createElement(o, { src: '{{ $destURL }}' });
+                    },
+                    a = [{ path: '/deepseek', element: e.default.createElement(u, null) }];
+                  function s(e) {
                     return (
-                      e.default.createElement(o, { src: t })
+                      (s =
+                        'function' == typeof Symbol && 'symbol' == typeof Symbol.iterator
+                          ? function (e) {
+                              return typeof e;
+                            }
+                          : function (e) {
+                              return e &&
+                                'function' == typeof Symbol &&
+                                e.constructor === Symbol &&
+                                e !== Symbol.prototype
+                                ? 'symbol'
+                                : typeof e;
+                            }),
+                      s(e)
                     );
-                  },
-                  s = [
-                    {
-                      path: "/deepseek",
-                      element: e.default.createElement(a, null),
-                    },
-                  ];
-                function f(e) {
-                  return (
-                    (f =
-                      "function" == typeof Symbol &&
-                      "symbol" == typeof Symbol.iterator
-                        ? function (e) {
-                            return typeof e;
-                          }
-                        : function (e) {
-                            return e &&
-                              "function" == typeof Symbol &&
-                              e.constructor === Symbol &&
-                              e !== Symbol.prototype
-                              ? "symbol"
-                              : typeof e;
-                          }),
-                    f(e)
-                  );
-                }
-                function l(e) {
-                  var t = (function (e, t) {
-                    if ("object" != f(e) || !e) return e;
-                    var r = e[Symbol.toPrimitive];
-                    if (void 0 !== r) {
-                      var n = r.call(e, t || "default");
-                      if ("object" != f(n)) return n;
-                      throw new TypeError(
-                        "@@toPrimitive must return a primitive value."
-                      );
+                  }
+                  function f(e) {
+                    var t = (function (e, t) {
+                      if ('object' != s(e) || !e) return e;
+                      var r = e[Symbol.toPrimitive];
+                      if (void 0 !== r) {
+                        var n = r.call(e, t || 'default');
+                        if ('object' != s(n)) return n;
+                        throw new TypeError('@@toPrimitive must return a primitive value.');
+                      }
+                      return ('string' === t ? String : Number)(e);
+                    })(e, 'string');
+                    return 'symbol' == s(t) ? t : t + '';
+                  }
+                  function l(e, t, r) {
+                    return (
+                      (t = f(t)) in e
+                        ? Object.defineProperty(e, t, {
+                            value: r,
+                            enumerable: !0,
+                            configurable: !0,
+                            writable: !0,
+                          })
+                        : (e[t] = r),
+                      e
+                    );
+                  }
+                  function p(e, t) {
+                    var r = Object.keys(e);
+                    if (Object.getOwnPropertySymbols) {
+                      var n = Object.getOwnPropertySymbols(e);
+                      t &&
+                        (n = n.filter(function (t) {
+                          return Object.getOwnPropertyDescriptor(e, t).enumerable;
+                        })),
+                        r.push.apply(r, n);
                     }
-                    return ("string" === t ? String : Number)(e);
-                  })(e, "string");
-                  return "symbol" == f(t) ? t : t + "";
-                }
-                function p(e, t, r) {
-                  return (
-                    (t = l(t)) in e
-                      ? Object.defineProperty(e, t, {
-                          value: r,
-                          enumerable: !0,
-                          configurable: !0,
-                          writable: !0,
-                        })
-                      : (e[t] = r),
-                    e
-                  );
-                }
-                function b(e, t) {
-                  var r = Object.keys(e);
-                  if (Object.getOwnPropertySymbols) {
-                    var n = Object.getOwnPropertySymbols(e);
-                    t &&
-                      (n = n.filter(function (t) {
-                        return Object.getOwnPropertyDescriptor(e, t).enumerable;
-                      })),
-                      r.push.apply(r, n);
+                    return r;
                   }
-                  return r;
-                }
-                function y(e) {
-                  for (var t = 1; t < arguments.length; t++) {
-                    var r = null != arguments[t] ? arguments[t] : {};
-                    t % 2
-                      ? b(Object(r), !0).forEach(function (t) {
-                          p(e, t, r[t]);
-                        })
-                      : Object.getOwnPropertyDescriptors
-                      ? Object.defineProperties(
-                          e,
-                          Object.getOwnPropertyDescriptors(r)
-                        )
-                      : b(Object(r)).forEach(function (t) {
-                          Object.defineProperty(
-                            e,
-                            t,
-                            Object.getOwnPropertyDescriptor(r, t)
-                          );
-                        });
+                  function y(e) {
+                    for (var t = 1; t < arguments.length; t++) {
+                      var r = null != arguments[t] ? arguments[t] : {};
+                      t % 2
+                        ? p(Object(r), !0).forEach(function (t) {
+                            l(e, t, r[t]);
+                          })
+                        : Object.getOwnPropertyDescriptors
+                        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(r))
+                        : p(Object(r)).forEach(function (t) {
+                            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(r, t));
+                          });
+                    }
+                    return e;
                   }
-                  return e;
-                }
-                for (
-                  var d = i(683),
-                    m = d.keys().filter(function (e) {
-                      return "./index.ts" !== e;
-                    }),
-                    h = {},
-                    v = 0;
-                  v < m.length;
-                  v += 1
-                )
-                  m[v].startsWith(".") && (h = y(y({}, h), d(m[v])));
-                var g = h;
-                function O(e, t) {
-                  var r = Object.keys(e);
-                  if (Object.getOwnPropertySymbols) {
-                    var n = Object.getOwnPropertySymbols(e);
-                    t &&
-                      (n = n.filter(function (t) {
-                        return Object.getOwnPropertyDescriptor(e, t).enumerable;
-                      })),
-                      r.push.apply(r, n);
+                  for (
+                    var b = i(683),
+                      d = b.keys().filter(function (e) {
+                        return './index.ts' !== e;
+                      }),
+                      m = {},
+                      h = 0;
+                    h < d.length;
+                    h += 1
+                  )
+                    d[h].startsWith('.') && (m = y(y({}, m), b(d[h])));
+                  var v = m;
+                  function g(e, t) {
+                    var r = Object.keys(e);
+                    if (Object.getOwnPropertySymbols) {
+                      var n = Object.getOwnPropertySymbols(e);
+                      t &&
+                        (n = n.filter(function (t) {
+                          return Object.getOwnPropertyDescriptor(e, t).enumerable;
+                        })),
+                        r.push.apply(r, n);
+                    }
+                    return r;
                   }
-                  return r;
-                }
-                function w(e) {
-                  for (var t = 1; t < arguments.length; t++) {
-                    var r = null != arguments[t] ? arguments[t] : {};
-                    t % 2
-                      ? O(Object(r), !0).forEach(function (t) {
-                          p(e, t, r[t]);
-                        })
-                      : Object.getOwnPropertyDescriptors
-                      ? Object.defineProperties(
-                          e,
-                          Object.getOwnPropertyDescriptors(r)
-                        )
-                      : O(Object(r)).forEach(function (t) {
-                          Object.defineProperty(
-                            e,
-                            t,
-                            Object.getOwnPropertyDescriptor(r, t)
-                          );
-                        });
+                  function O(e) {
+                    for (var t = 1; t < arguments.length; t++) {
+                      var r = null != arguments[t] ? arguments[t] : {};
+                      t % 2
+                        ? g(Object(r), !0).forEach(function (t) {
+                            l(e, t, r[t]);
+                          })
+                        : Object.getOwnPropertyDescriptors
+                        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(r))
+                        : g(Object(r)).forEach(function (t) {
+                            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(r, t));
+                          });
+                    }
+                    return e;
                   }
-                  return e;
-                }
-                for (
-                  var j = i(264),
-                    P = j.keys().filter(function (e) {
-                      return "./index.ts" !== e;
-                    }),
-                    S = {},
-                    E = 0;
-                  E < P.length;
-                  E += 1
-                )
-                  P[E].startsWith(".") && (S = w(w({}, S), j(P[E])));
-                var k = {
-                  routes: s,
-                  menus: [
-                    {
-                      parent: "global",
-                      name: "deepseek",
-                      title: "deepseek",
-                      img: "https://i.postimg.cc/FzX0c1G0/deepseek.png",
-                      order: 0,
-                      desc: "deepseek",
-                      skipAuth: !0,
-                    },
-                  ],
-                  locales: { zh: g, en: S },
-                };
-              })(),
-              c
-            );
-          })()
-        );
-      },
-    };
+                  for (
+                    var w = i(264),
+                      j = w.keys().filter(function (e) {
+                        return './index.ts' !== e;
+                      }),
+                      P = {},
+                      S = 0;
+                    S < j.length;
+                    S += 1
+                  )
+                    j[S].startsWith('.') && (P = O(O({}, P), w(j[S])));
+                  var E = {
+                    routes: a,
+                    menus: [
+                      {
+                        parent: 'global',
+                        name: 'deepseek',
+                        title: 'deepseek',
+                        img: 'https://i.postimg.cc/FzX0c1G0/deepseek.png',
+                        order: 0,
+                        desc: 'deepseek',
+                        skipAuth: !0,
+                      },
+                    ],
+                    locales: { zh: v, en: P },
+                  };
+                })(),
+                c
+              );
+            })(),
+          );
+        },
+      };
     });
-{{- end }}
+{{- end }}  

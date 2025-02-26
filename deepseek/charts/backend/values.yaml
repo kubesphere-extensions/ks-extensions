@@ -5,14 +5,17 @@ global:
   imagePullSecrets: [ ]
   tag: ""
   nodeSelector: {}
-  ingress:
+  extension:
     enabled: false
-    ingressClassName: ""
-    domain: "deepseek.local"
-    tls: []
-# download model from ollama library
+    ingress:
+      ingressClassName: ""
+      domainSuffix: ""
+      # httpPort: 80
+      # httpsPort: 443
+      
 # support value: deepseek-r1:7b, deepseek-r1:8b, deepseek-r1:14b, deepseek-r1:32b, deepseek-r1:70b, deepseek-r1:671b, deepseek-v3
 model: 
+  # download model from ollama library
   registry: "registry.ollama.ai/library"
   repository: deepseek-r1
   tag: 1.5b

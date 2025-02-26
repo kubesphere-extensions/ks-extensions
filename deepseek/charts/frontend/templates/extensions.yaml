@@ -1,4 +1,4 @@
-{{- if .Values.global.ingress.enabled }}
+{{- if .Values.global.extension.enabled }}
 apiVersion: extensions.kubesphere.io/v1alpha1
 kind: JSBundle
 metadata:
