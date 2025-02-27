@@ -79,12 +79,13 @@ backend:
 该扩展组件内置 NextChat，可用于UI化模型访问。外部访问是需配置ingress并开启ingress-controller(推荐使用gateway扩展组件进行设置)
 ```yaml
 global:
-  ingress:
+  extension:
     enabled: true # 是否开启ingress   
-    ingressClassName: "" # 指定ingressClassName
-    domainSuffix: "172.1.1.1.nip.io" # 指定域名后缀
-    httpsPort: 443 # 指定https端口, 会覆盖httpPort
-    #httpPort: 80 # 指定http端口
+    ingress:
+      ingressClassName: "" # 指定ingressClassName
+      domainSuffix: "172.1.1.1.nip.io" # 指定域名后缀
+      httpsPort: 443 # 指定https端口, 会覆盖httpPort
+      #httpPort: 80 # 指定http端口
 ```
 
 ### 模型缓存
