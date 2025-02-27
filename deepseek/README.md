@@ -82,12 +82,13 @@ backend:
 The extension component includes NextChat, which can be used for UI-based model access. External access requires configuration of ingress (default enabled)
 ```yaml
 global:
-  ingress:
+  extension:
     enabled: true # if ingress is enabled
-    ingressClassName: "" # specify ingressClassName
-    domainSuffix: "172.1.1.1.nip.io" # specify domain suffix
-    httpsPort: 443 # specify https port, will override httpPort
-    #httpPort: 80 # specify http port
+    ingress:
+      ingressClassName: "" # specify ingressClassName
+      domainSuffix: "172.1.1.1.nip.io" # specify domain suffix
+      httpsPort: 443 # specify https port, will override httpPort
+      #httpPort: 80 # specify http port
 ```
 
 ### Model Cache
