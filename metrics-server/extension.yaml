@@ -1,6 +1,6 @@
 apiVersion: kubesphere.io/v1alpha1
 name: metrics-server
-version: 0.7.0
+version: 0.7.1
 displayName:
   zh: Metrics Server
   en: Metrics Server
@@ -35,6 +35,7 @@ dependencies:
   - name: metrics-server
     tags:
       - agent
+    condition: metricsServer.enabled
 # installationMode describes how to install subcharts, it can be HostOnly or Multicluster.
 # In Multicluster mode, the subchart with tag `extension` will only be deployed to the host cluster,
 # and the subchart with tag `agent` will be deployed to all selected clusters.
