@@ -7,7 +7,7 @@ Please do not delete this line of version tag
 
 ### 优化
 
-- 支持不启用部署内置的 metrics-server Helm charts 在扩展组件安装时
+- 支持在扩展组件安装时不启用部署内置的 metrics-server Helm charts 
 
 ## v0.7.0
 
