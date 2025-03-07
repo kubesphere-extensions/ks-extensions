@@ -2,6 +2,9 @@ global:
   imageRegistry: ""
   imagePullSecrets: []
 
+metricsServer:
+  enabled: true
+
 metrics-server:
   fullnameOverride: "metrics-server"
 
