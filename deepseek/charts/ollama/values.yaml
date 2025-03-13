@@ -4,24 +4,28 @@ global:
   ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   imagePullSecrets: [ ]
   tag: ""
-  nodeSelector: {}
+  nodeSelector: {}  
   extension:
-    enabled: false
+    enabled: true
     ingress:
       ingressClassName: ""
       domainSuffix: ""
       # httpPort: 80
       # httpsPort: 443
-      
-# support value: deepseek-r1:7b, deepseek-r1:8b, deepseek-r1:14b, deepseek-r1:32b, deepseek-r1:70b, deepseek-r1:671b, deepseek-v3
-model: 
-  # download model from ollama library
-  registry: "registry.ollama.ai/library"
-  repository: deepseek-r1
-  tag: 1.5b
+  model: 
+    # the full path in models directory
+    # in ollama
+    id: "registry.ollama.ai/library/deepseek-r1:1.5b"
+    # in vllm
+    # id: "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
+    # the serve name to access.
+    # in ollama
+    name: "deepseek-r1:1.5b"
+    # in vllm
+    # name: "DeepSeek-R1-Distill-Qwen-1.5B"
+
 enableNvidia: false
 enableAMD: false
-
 server:
   replicas: 1
   image:
@@ -94,8 +98,8 @@ chat:
       cpu: 1
       memory: 1Gi
     limits:
-      cpu: 1
-      memory: 1Gi
+      cpu: 2
+      memory: 4Gi
   nodeSelector: {}
   autoscaling:
     # -- Enable Horizontal Pod Autoscaler ([HPA])

@@ -1,6 +1,6 @@
 apiVersion: kubesphere.io/v1alpha1
 name: deepseek
-version: 0.1.0
+version: 0.1.1
 displayName:
   zh: DeepSeek
   en: DeepSeek
@@ -13,7 +13,7 @@ keywords:
   - AI
   - LLM
   - deepseek
-home: https://ollama.com/library/deepseek-r1
+home: https://www.deepseek.com
 sources:
   - https://github.com/kubesphere-extensions/ks-extensions
 kubeVersion: ">=1.22.0-0"
@@ -34,7 +34,12 @@ icon: ./static/favicon.png
 #screenshots:
 #  - ./static/screenshots/screenshot.png
 dependencies:
-  - name: backend
+  - name: ollama
+    condition: ollama.enabled
+    tags:
+      - extension
+  - name: ipex-llm
+    condition: ipex-llm.enabled
     tags:
       - extension
   - name: frontend
@@ -57,4 +62,6 @@ images:
   - docker.io/ollama/ollama:0.5.7
   - docker.io/ollama/ollama:rocm
   - docker.io/yidadaa/chatgpt-next-web:v2.16.0
+  - kubesphere/ipex-llm-serving-cpu:v1
+  - rayproject/ray:latest-cpu
 docs: https://docs.kubesphere.com.cn/

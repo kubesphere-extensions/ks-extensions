@@ -1,0 +1,5 @@
+apiVersion: v2
+name: ipex-llm
+description: intel vllm server to running deepseek models.
+version: 0.1.1
+appVersion: 0.1.0

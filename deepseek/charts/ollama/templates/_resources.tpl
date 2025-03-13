@@ -1,23 +1,25 @@
 {{/* Core Resource Configuration Template */}}
 {{- define "deepseek.resources" -}}
-{{- if .Values.server.resources }}
-{{ toYaml .Values.server.resources }}
-{{- else if eq .Values.model.repository "deepseek-r1" }}
+{{- $repo := .Values.global.model.name | splitList ":" | first }}
+{{- $tag := .Values.global.model.name | splitList ":" | last }}
+{{- if .Values.resources }}
+{{ toYaml .Values.resources }}
+{{- else if eq $repo "deepseek-r1" }}
 requests:
-  cpu: {{ include "deepseek.request.cpu" .Values.model.tag }}
-  memory: {{ include "deepseek.request.memory" .Values.model.tag }}
+  cpu: {{ include "deepseek.request.cpu" $tag }}
+  memory: {{ include "deepseek.request.memory" $tag }}
   {{- if .Values.enableAMD }}
-  amd.com/gpu: {{ include "deepseek.amd.gpu" .Values.model.tag }}
+  amd.com/gpu: {{ include "deepseek.amd.gpu" $tag }}
   {{- else if .Values.enableNvidia }}
-  nvidia.com/gpu: {{ include "deepseek.nvidia.gpu" .Values.model.tag }}
+  nvidia.com/gpu: {{ include "deepseek.nvidia.gpu" $tag }}
   {{- end }}
 limits:
-  cpu: {{ include "deepseek.limit.cpu" .Values.model.tag }}
-  memory: {{ include "deepseek.limit.memory" .Values.model.tag }}
+  cpu: {{ include "deepseek.limit.cpu" $tag }}
+  memory: {{ include "deepseek.limit.memory" $tag }}
   {{- if .Values.enableAMD }}
-  amd.com/gpu: {{ include "deepseek.amd.gpu" .Values.model.tag }}
+  amd.com/gpu: {{ include "deepseek.amd.gpu" $tag }}
   {{- else if .Values.enableNvidia }}
-  nvidia.com/gpu: {{ include "deepseek.nvidia.gpu" .Values.model.tag }}
+  nvidia.com/gpu: {{ include "deepseek.nvidia.gpu" $tag }}
   {{- end }}
 {{- end }}
 {{- end }}

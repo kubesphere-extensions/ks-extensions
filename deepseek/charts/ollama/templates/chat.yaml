@@ -27,9 +27,9 @@ spec:
             - name: BASE_URL
               value: http://{{ include "backend.fullname" . }}-server-service:11434
             - name: CUSTOM_MODELS
-              value: -all,+{{ include "model.name" .Values.model }}
+              value: -all,+{{ .Values.global.model.name }}
             - name: DEFAULT_MODEL
-              value: {{ include "model.name" .Values.model }}
+              value: {{ .Values.global.model.name }}
           ports:
             - containerPort: 3000
               name: http
@@ -50,7 +50,7 @@ spec:
   selector:
     app: {{ include "backend.fullname" . }}-chat
   ports:
-    - port: 3000
+    - port: 80
       targetPort: http
       protocol: TCP
       name: http

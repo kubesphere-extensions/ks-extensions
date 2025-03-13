@@ -9,7 +9,7 @@ spec:
   minReplicas: {{ .Values.server.autoscaling.minReplicas }}
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: Deployment
+    kind: StatefulSet
     name: {{ include "backend.fullname" . }}-server
   metrics:
   - type: Resource 
