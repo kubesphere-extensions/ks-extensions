@@ -1,0 +1,78 @@
+name: Check Extensions
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  extensions_check:
+    runs-on: self-runner-extensions
+    if: github.repository == 'kubesphere-extensions/ks-extensions'
+    steps:
+      - name: Get Architecture
+        id: get-architectures
+        run: |
+          ARCH=$(uname -m)
+          if [ "$ARCH" == "x86_64" ]; then
+            ARCH="amd64"
+          elif [ "$ARCH" == "aarch64" ]; then
+            ARCH="arm64"
+          fi
+          echo "arch=$ARCH" >> $GITHUB_OUTPUT
+
+      - name: Install KSBuilder
+        run: |
+          LATEST_RELEASE=$(curl -sH "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/kubesphere/ksbuilder/releases/latest" | jq -r '.tag_name')
+          curl -L -O https://github.com/kubesphere/ksbuilder/releases/download/$LATEST_RELEASE/ksbuilder_${LATEST_RELEASE#v}_linux_${{ steps.get-architectures.outputs.arch }}.tar.gz
+          sudo tar -zxf ksbuilder_${LATEST_RELEASE#v}_linux_${{ steps.get-architectures.outputs.arch }}.tar.gz -C /usr/local/bin/ ksbuilder
+          rm -rf ksbuilder_${LATEST_RELEASE#v}_linux_${{ steps.get-architectures.outputs.arch }}.tar.gz
+
+      - name: Install ORAS
+        run: |
+          VERSION="1.2.0"
+          curl -LO "https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_${{ steps.get-architectures.outputs.arch }}.tar.gz"
+          mkdir -p oras-install/
+          tar -zxf oras_${VERSION}_*.tar.gz -C oras-install/
+          sudo mv oras-install/oras /usr/local/bin/
+          rm -rf oras_${VERSION}_*.tar.gz oras-install/
+
+      - name: Install yq
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${{ steps.get-architectures.outputs.arch }} -O /usr/bin/yq 
+          sudo chmod +x /usr/bin/yq
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+  
+      - name: Extension Check
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          changed_files=(${ALL_CHANGED_FILES})
+
+          for path in ${changed_files[@]}; do
+            chart=$(dirname "$path")
+            if [[ $chart != '.' ]] && [ -f "$chart/extension.yaml" ] && [ -f "$chart/values.yaml" ]; then
+              # lint charts
+              ksbuilder lint $chart
+              for image in $(yq eval '.images[]' $chart/extension.yaml); do
+                # check if image exist.
+                dstImage=''
+                if [[ ${image%%/*} =~ '.' ]]; then
+                  image=$image
+                elif [[ $image != */* ]]; then
+                  image="docker.io/library/"$image
+                else
+                  image="docker.io/"$image
+                fi
+                oras manifest fetch $image
+              done
+            fi
+          done
