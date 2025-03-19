@@ -1,0 +1,56 @@
+name: BuildExtensionsCharts
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+  build-charts:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.merged == true && github.repository == 'kubesphere-extensions/ks-extensions' }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+
+      - name: Setup SSH
+        uses: MrSquaare/ssh-setup-action@v2
+        with:
+          host: github.com
+          private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Package latest charts
+        run: |
+          ARCH=$(uname -m)
+          if [ "$ARCH" == "x86_64" ]; then
+            ARCH="amd64"
+          elif [ "$ARCH" == "aarch64" ]; then
+            ARCH="arm64"
+          fi
+          LATEST_RELEASE=$(curl -sH "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/kubesphere/ksbuilder/releases/latest" | jq -r '.tag_name')
+          KSBUILDER_VERSION=$LATEST_RELEASE;ARCH=$ARCH make package-all-charts
+
+      - name: Commit changes
+        id: commit_step
+        run: |
+          git config --local user.email "ci-bot@kubesphere.io"
+          git config --local user.name "ks-ci-bot"
+          git add .extensions-museum
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            echo "has_changes=false" >> $GITHUB_ENV
+          else
+            git commit -m "sync charts by action"
+            echo "has_changes=true" >> $GITHUB_ENV
+          fi
+
+      - name: Push changes
+        if: ${{ env.has_changes == 'true' }}
+        run: |
+          git remote set-url origin git@github.com:kubesphere-extensions/kse-extensions.git
+          git push origin main
