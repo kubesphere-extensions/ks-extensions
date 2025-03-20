@@ -1,6 +1,6 @@
 apiVersion: kubesphere.io/v1alpha1
 name: gatekeeper
-version: 1.0.1
+version: 1.0.2
 displayName:
   en: Gatekeeper
   zh: Gatekeeper
@@ -21,7 +21,7 @@ sources:
 - https://github.com/kubesphere-extensions/gatekeeper
 - https://github.com/open-policy-agent/gatekeeper
 kubeVersion: '>=1.19.0-0'
-ksVersion: '>=4.1.0-0'
+ksVersion: '>=4.1.2-0'
 maintainers:
 - name: KubeSphere
   email: kubesphere@yunify.com
@@ -50,7 +50,7 @@ dependencies:
 # and the subchart with tag `agent` will be deployed to all selected clusters.
 installationMode: Multicluster
 images:
-- docker.io/kubesphere/gatekeeper-extension-apiserver:v1.0.1
+- docker.io/kubesphere/gatekeeper-extension-apiserver:v1.0.2
 - docker.io/kubesphere/kubectl:v1.27.12
 - docker.io/openpolicyagent/gatekeeper:v3.14.0
 - docker.io/openpolicyagent/gatekeeper-crds:v3.14.0
