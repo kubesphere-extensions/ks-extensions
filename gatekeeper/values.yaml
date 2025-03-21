@@ -270,11 +270,13 @@ agent:
   apiserver:
     image:
       repository: kubesphere/gatekeeper-extension-apiserver
-      tag: "v1.0.1"
+      tag: "v1.0.2"
       pullPolicy: IfNotPresent
   kubectl:
     image:
       repository: kubesphere/kubectl
       tag: "v1.27.12"
       pullPolicy: IfNotPresent
-
+  templates:
+    fullInstall: false  # install all templates.
+    customInstall: []   # templates need to install. Default: [].
