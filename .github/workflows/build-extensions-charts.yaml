@@ -11,12 +11,9 @@ on:
 jobs:
   build-charts:
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.merged == true && github.repository == 'kubesphere-extensions/ks-extensions' }}
 
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: main
 
       - name: Setup SSH
         uses: MrSquaare/ssh-setup-action@v2
