@@ -14,6 +14,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        
 
       - name: Setup SSH
         uses: MrSquaare/ssh-setup-action@v2
@@ -49,5 +50,5 @@ jobs:
       - name: Push changes
         if: ${{ env.has_changes == 'true' }}
         run: |
-          git remote set-url origin git@github.com:kubesphere-extensions/kse-extensions.git
+          git remote set-url origin git@github.com:kubesphere-extensions/ks-extensions.git
           git push origin main
