@@ -19,8 +19,8 @@ ksbuilder: ## install ksbuilder in "bin/"
 
 .PHONY: package-all-charts
 package-all-charts: ksbuilder  ## package all extensions to helm charts
-	if [ ! -d bin/_output  ]; then \
-	    mkdir .extensions-museum; \
+	if [ ! -d .extensions-museum ]; then \
+		mkdir .extensions-museum; \
 	fi
 	for chart in $$(find . -mindepth 1 -maxdepth 1 -type d); do \
 		if [ -f $${chart}/extension.yaml ] && grep -q "name" $${chart}/extension.yaml; then \
