@@ -58,7 +58,7 @@ jobs:
       - name: Set up Docker buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push ks-controller-manager dev images
+      - name: Build and push ks-extensions-museum images
         uses: docker/build-push-action@v6
         with:
           context: ${{ github.workspace }}
