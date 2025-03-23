@@ -1,7 +1,5 @@
 KSBUILDER_VERSION?=v0.3.11
 ARCH?=amd64
-IMAGE?=registry.cn-beijing.aliyuncs.com/kubespheredev/ks-extensions-museum
-IMAGE_TAG?=dev
 
 
 help:
@@ -22,11 +20,11 @@ ksbuilder: ## install ksbuilder in "bin/"
 .PHONY: package-all-charts
 package-all-charts: ksbuilder  ## package all extensions to helm charts
 	if [ ! -d bin/_output  ]; then \
-	    mkdir bin/_output; \
+	    mkdir .extensions-museum; \
 	fi
 	for chart in $$(find . -mindepth 1 -maxdepth 1 -type d); do \
 		if [ -f $${chart}/extension.yaml ] && grep -q "name" $${chart}/extension.yaml; then \
 			bin/ksbuilder package $${chart}; \
-			mv $${chart}-*.tgz bin/_output; \
+			mv $${chart}-*.tgz .extensions-museum; \
 		fi \
 	done
