@@ -1,9 +1,0 @@
-apiVersion: v1
-name: backend
-description: Backend of kubesphere gateway extension.
-type: application
-version: 0.1.0
-appVersion: "0.1.0"
-home: https://kubesphere.io
-sources:
-  - https://github.com/kubesphere-extensions/gateway
