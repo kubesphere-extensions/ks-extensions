@@ -42,8 +42,9 @@ devops.kubesphere.io/component: devops-apiserver
 {{/*
 Returns the admin password
 https://github.com/helm/charts/issues/5167#issuecomment-619137759
+Add "the." prefix to avoid helm template failure 
 */}}
-{{- define "jenkins.password" -}}
+{{- define "the.jenkins.password" -}}
   {{- if .Values.jenkins.Master.AdminPassword -}}
     {{- .Values.jenkins.Master.AdminPassword | b64enc | quote }}
   {{- else -}}
@@ -65,8 +66,9 @@ https://github.com/helm/charts/issues/5167#issuecomment-619137759
 {{/*
 Returns the admin default api token
 https://github.com/helm/charts/issues/5167#issuecomment-619137759
+Add "the." prefix to avoid helm template failure 
 */}}
-{{- define "jenkins.adminToken" -}}
+{{- define "the.jenkins.adminToken" -}}
   {{- if .Values.jenkins.Master.AdminToken -}}
     {{- .Values.jenkins.Master.AdminToken | b64enc | quote }}
   {{- else -}}

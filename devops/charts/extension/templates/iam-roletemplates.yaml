@@ -293,10 +293,6 @@ items:
             - templates/render
           verbs:
             - '*'
-        - nonResourceURLs:
-            - jenkins/labelsdashboard/labelsData
-          verbs:
-            - get
 
   - apiVersion: iam.kubesphere.io/v1beta1
     kind: RoleTemplate

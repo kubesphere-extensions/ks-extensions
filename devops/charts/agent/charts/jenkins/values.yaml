@@ -432,7 +432,7 @@ Agent:
       pullSecrets: []
     base:
       repository: kubesphere/builder-base
-      tag: v3.2.2
+      tag: v4.1.3
     nodejs:
       repository: kubesphere/builder-nodejs
       tag: v3.2.0
@@ -491,21 +491,11 @@ rbac:
   # Role kind (RoleBinding or ClusterRoleBinding)
   roleBindingKind: ClusterRoleBinding
 
-securityRealm:
-  type: openIdConnect # support values include local, ldap, openIdConnect
-  ldap:
-    host: openldap.kubesphere-system.svc:389
-  openIdConnect:
-    clientId: "jenkins"
-    clientSecret: "jenkins"
-    scopes:
-      - openid
-      - profile
-      - email
-    fullNameFieldName: url
-    userNameField: preferred_username
-    kubesphereCoreApi: "http://ks-apiserver.kubesphere-system.svc:30880"
-    jenkinsURL: "http://devops-jenkins:30180"
+# exactSecurityRealm must exactly match one security realm jenkins supports, default to local.
+exactSecurityRealm: {}
+
+# must specify the jenkins redirect URIs when using OIDC in securityRealm
+redirectURIs: []
 
 ksAuth:
   enabled: false
@@ -528,7 +518,7 @@ prometheus:
   alertRuleGroup:
     disabled: false
 
-casc:
-  annotations:
-    devops.kubesphere.io/jenkins-config-customized: 'true'
-    devops.kubesphere.io/jenkins-config-formula: custom
+unclassified:
+  gitLabServers:
+    - name: "https://gitlab.com"
+      serverUrl: "https://gitlab.com"

@@ -1,3 +1,7 @@
+global:
+  imageRegistry:
+  imagePullSecrets: []
+  
 extension:
   apiserver:
     replicas: 1
@@ -29,15 +33,6 @@ agent:
         cpu: 100m
         memory: 128Mi
   jenkins:
-    securityRealm:
-      openIdConnect:
-        # The kubesphere-core api used for jenkins OIDC
-        # If you want to access to jenkinsWebUI, the kubesphereCoreApi must be specified and browser-accessible
-        # Modifying this configuration will take effect only during installation
-        # If you wish for changes to take effect after installation, you need to update the jenkins-casc-config ConfigMap, copy the securityRealm configuration from jenkins.yaml to jenkins_user.yaml, save, and wait for approximately 70 seconds for the changes to take effect.
-        kubesphereCoreApi: "http://ks-apiserver:30880"
-        # The jenkins web URL used for OIDC redirect
-        jenkinsURL: "http://devops-jenkins:30180"
     Master:
       resources:
         requests:
@@ -64,3 +59,7 @@ agent:
       accessMode: ReadWriteOnce
     kubeconfigEnabled: true
 
+    unclassified:
+      gitLabServers:
+        - name: "https://gitlab.com"
+          serverUrl: "https://gitlab.com"

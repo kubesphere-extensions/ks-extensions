@@ -1,4 +1,4 @@
-{{- if eq .Values.securityRealm.type "openIdConnect" }}
+{{- if .Values.exactSecurityRealm.oic }}
 apiVersion: v1
 kind: Secret
 metadata:
@@ -9,15 +9,19 @@ metadata:
 type: config.kubesphere.io/oauthclient
 stringData:
   configuration.yaml: |
-    name: {{ .Values.securityRealm.openIdConnect.clientId }}
-    secret: {{ .Values.securityRealm.openIdConnect.clientSecret }}
+    name: {{ .Values.exactSecurityRealm.oic.clientId }}
+    secret: {{ .Values.exactSecurityRealm.oic.clientSecret }}
     grantMethod: auto
     trusted: true
     accessTokenInactivityTimeoutSeconds: 3600
+    {{- with .Values.redirectURIs }}
     redirectURIs:
-      - {{ .Values.securityRealm.openIdConnect.jenkinsURL }}/securityRealm/finishLogin
-    {{- with .Values.securityRealm.openIdConnect.scopes }}
-    scopeRestrictions:
     {{- toYaml . | nindent 6 }}
     {{- end }}
-{{- end }}
+    {{- $scopes := .Values.exactSecurityRealm.oic.scopes }}
+    {{- $scopeList := split " " $scopes }}
+    scopeRestrictions:
+    {{- range $index, $item := $scopeList }}
+      - {{ $item }}
+    {{- end }}
+    {{- end }}
