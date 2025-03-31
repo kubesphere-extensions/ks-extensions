@@ -37,10 +37,7 @@ spec:
                 - ks
                 - pip
                 - gc
-              args:
-                - "--max-count={{ .Values.tools.maxCount }}"
-                - "--max-age={{ .Values.tools.maxAge }}"
-                - "--condition=ignoreTime"
+              args: {{ .Values.tools.args | toYaml | nindent 16 }}
           restartPolicy: Never
           terminationGracePeriodSeconds: 30
           serviceAccountName: {{ .Values.serviceAccount.name }}

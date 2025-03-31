@@ -1,8 +1,34 @@
 <!---
 Please do not delete this line of version tag
+RELEASE_MARK v4.1.3 RELEASE_MARK
+Please do not delete this line of version tag
+-->
+## v1.1.2
+
+### 优化
+
+- Jenkins 控制台默认登录方式修改为本地数据库，简化登录流程
+- DevOps GC CronJob 中添加了终止长久未结束的流水线的功能
+- DevOps agent pod 的 activeDeadlineSeconds 默认配置为6小时，防止 pod 长久占用资源
+
+### 缺陷修复
+
+- 修复图形化编辑 Groovy 脚本失败的问题
+- 修复更新扩展组件 agent 配置不生效的问题
+- 修复 pipelinerun 的标签或注解更新失败的问题
+- 修复流水线 CD 步骤运行失败的问题
+- 修复添加 Gitlab 仓库失败的问题
+- 修复升级时删除 Jenkins plugin 失败的问题
+- 修复升级时 kubesphere-devops-worker 项目下用户 PVC 被误删除的问题
+
+
+
+<!---
+Please do not delete this line of version tag
 RELEASE_MARK v4.1.2 RELEASE_MARK
 Please do not delete this line of version tag
 -->
+
 ## v1.1.1
 
 ### 新特性

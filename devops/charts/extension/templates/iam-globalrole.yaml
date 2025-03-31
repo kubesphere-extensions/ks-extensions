@@ -6,6 +6,7 @@ rules:
   - apiGroups:
       - devops.kubesphere.io
     resources:
+      - ci
       - namespaces
       - clustersteptemplates
       - clustertemplates
@@ -22,6 +23,8 @@ rules:
       - clustersteptemplates/render
       - scms/servers
       - scms/verify
+      - jenkins/serverList
+      - jenkins/projectList
     verbs:
       - create
   - apiGroups:
@@ -40,7 +43,6 @@ rules:
       - webhooks/scm
       - jenkins
       - jenkins/*
-      - ci/nodelabels
       - oauth/authenticate
     verbs:
       - get
@@ -59,3 +61,30 @@ subjects:
   - apiGroup: iam.kubesphere.io
     kind: Group
     name: system:authenticated
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: GlobalRole
+metadata:
+  name: devops-anonymous
+rules:
+- apiGroups:
+  - devops.kubesphere.io
+  resources:
+  - webhook
+  - webhooks
+  verbs:
+  - get
+  - create
+---
+apiVersion: iam.kubesphere.io/v1beta1
+kind: GlobalRoleBinding
+metadata:
+  name: devops-anonymous
+roleRef:
+  apiGroup: iam.kubesphere.io
+  kind: GlobalRole
+  name: devops-anonymous
+subjects:
+- apiGroup: iam.kubesphere.io
+  kind: Group
+  name: system:unauthenticated
