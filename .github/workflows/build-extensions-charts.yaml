@@ -2,9 +2,9 @@ name: BuildExtensionsCharts
 
 on:
   workflow_dispatch:
-  pull_request: # use pull_request to avoid Push changes step trigger it again
-    types:
-      - closed
+  push:
+    paths-ignore:
+      - '.extensions-museum/**'
 
 jobs:
   build-charts:
