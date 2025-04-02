@@ -6,7 +6,8 @@ on:
     paths-ignore:
       - '.extensions-museum/**'
       - '.github'
-
+    branches:
+      - "main"
 jobs:
   build-charts:
     runs-on: ubuntu-latest
