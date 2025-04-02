@@ -1,6 +1,6 @@
 apiVersion: v1
 name: devops
-version: 1.1.1
+version: 1.1.2
 namespace: kubesphere-devops-system
 displayName:
   zh: DevOps
@@ -18,7 +18,7 @@ home: https://kubesphere.com.cn/
 category: integration-delivery
 sources: []
 kubeVersion: '>=1.19.0-0'
-ksVersion: '>=4.1.1-0'
+ksVersion: '>=4.1.2-0'
 provider:
   zh:
     name: 北京青云科技股份有限公司
@@ -42,12 +42,12 @@ dependencies:
     tags:
       - agent
 images:
-  - docker.io/kubesphere/devops-apiserver:v4.1.2
-  - docker.io/kubesphere/devops-controller:v4.1.2
-  - docker.io/kubesphere/devops-tools:v4.1.2
+  - docker.io/kubesphere/devops-apiserver:v4.1.3
+  - docker.io/kubesphere/devops-controller:v4.1.3
+  - docker.io/kubesphere/devops-tools:v4.1.3
   - docker.io/kubesphere/devops-jenkins:v4.1.2-2.346.3
   - docker.io/jenkins/inbound-agent:4.10-2
-  - docker.io/kubesphere/builder-base:v3.2.2
+  - docker.io/kubesphere/builder-base:v4.1.3
   - docker.io/kubesphere/builder-nodejs:v3.2.0
   - docker.io/kubesphere/builder-maven:v3.2.0
   - docker.io/kubesphere/builder-maven:v3.2.1-jdk11
@@ -56,7 +56,7 @@ images:
   - docker.io/kubesphere/builder-go:v3.2.2-1.16
   - docker.io/kubesphere/builder-go:v3.2.2-1.17
   - docker.io/kubesphere/builder-go:v3.2.2-1.18
-  - docker.io/kubesphere/builder-base:v3.2.2-podman
+  - docker.io/kubesphere/builder-base:v4.1.3-podman
   - docker.io/kubesphere/builder-nodejs:v3.2.0-podman
   - docker.io/kubesphere/builder-maven:v3.2.0-podman
   - docker.io/kubesphere/builder-maven:v3.2.1-jdk11-podman

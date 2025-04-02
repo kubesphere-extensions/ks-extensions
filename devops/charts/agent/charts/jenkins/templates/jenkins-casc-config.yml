@@ -3,10 +3,6 @@ kind: ConfigMap
 metadata:
   name: jenkins-casc-config
   namespace: {{ default .Release.Namespace .Values.global.namespace }}
-  {{- if .Values.casc.annotations }}
-  annotations:
-  {{- toYaml .Values.casc.annotations | nindent 4 }}
-  {{- end }}
 data:
   jenkins.yaml: |
     jenkins:
@@ -64,6 +60,7 @@ data:
                     mountPath: "/root/.sonar/cache"
                 yaml: |
                   spec:
+                    activeDeadlineSeconds: 21600
                     affinity:
                       nodeAffinity:
                         preferredDuringSchedulingIgnoredDuringExecution:
@@ -132,6 +129,7 @@ data:
                     mountPath: "/root/.sonar/cache"
                 yaml: |
                   spec:
+                    activeDeadlineSeconds: 21600
                     affinity:
                       nodeAffinity:
                         preferredDuringSchedulingIgnoredDuringExecution:
@@ -197,6 +195,7 @@ data:
                     mountPath: "/root/.sonar/cache"
                 yaml: |
                   spec:
+                    activeDeadlineSeconds: 21600
                     affinity:
                       nodeAffinity:
                         preferredDuringSchedulingIgnoredDuringExecution:
@@ -280,6 +279,7 @@ data:
                     mountPath: "/root/.sonar/cache"
                 yaml: |
                   spec:
+                    activeDeadlineSeconds: 21600
                     affinity:
                       nodeAffinity:
                         preferredDuringSchedulingIgnoredDuringExecution:
@@ -367,6 +367,7 @@ data:
                     mountPath: "/root/.sonar/cache"
                 yaml: |
                   spec:
+                    activeDeadlineSeconds: 21600
                     affinity:
                       nodeAffinity:
                         preferredDuringSchedulingIgnoredDuringExecution:
@@ -393,44 +394,18 @@ data:
                           ephemeral-storage: "10Gi"
                     securityContext:
                       fsGroup: 1000
-
+ 
       securityRealm:
-    {{- if eq .Values.securityRealm.type "ldap" }}
-        ldap:
-          configurations:
-          - displayNameAttributeName: "uid"
-            mailAddressAttributeName: "mail"
-            inhibitInferRootDN: false
-            managerDN: "cn=admin,dc=kubesphere,dc=io"
-            managerPasswordSecret: "admin"
-            rootDN: "dc=kubesphere,dc=io"
-            userSearchBase: "ou=Users"
-            userSearch: "(&(objectClass=inetOrgPerson)(|(uid={0})(mail={0})))"
-            groupSearchBase: "ou=Groups"
-            groupSearchFilter: "(&(objectClass=posixGroup)(cn={0}))"
-            server: "ldap://{{.Values.securityRealm.ldap.host }}"
-          disableMailAddressResolver: false
-          disableRolePrefixing: true
-    {{- else if eq .Values.securityRealm.type "openIdConnect" }}
-        oic:
-          clientId: "{{ .Values.securityRealm.openIdConnect.clientId }}"
-          clientSecret: "{{ .Values.securityRealm.openIdConnect.clientSecret }}"
-          tokenServerUrl: "{{ .Values.securityRealm.openIdConnect.kubesphereCoreApi }}/oauth/token"
-          authorizationServerUrl: "{{ .Values.securityRealm.openIdConnect.kubesphereCoreApi }}/oauth/authorize"
-          userInfoServerUrl: "{{ .Values.securityRealm.openIdConnect.kubesphereCoreApi }}/oauth/userinfo"
-          endSessionEndpoint: "{{ .Values.securityRealm.openIdConnect.kubesphereCoreApi }}/oauth/logout"
-          logoutFromOpenidProvider: true
-          scopes: {{ join " " .Values.securityRealm.openIdConnect.scopes }}
-          fullNameFieldName: {{ default "name" .Values.securityRealm.openIdConnect.fullNameFieldName }}
-          userNameField: {{ default "name" .Values.securityRealm.openIdConnect.userNameField }}
-    {{- else }}
-        authorizationStrategy: loggedInUsersCanDoAnything
-    {{- end }}
+{{- if .Values.exactSecurityRealm }}
+{{- toYaml .Values.exactSecurityRealm | nindent 8 }}
+{{- else }}
+        local:
+          allowsSignup: false
+{{- end }}
 
     unclassified:
       eventDispatcher:
         receiver: "http://devops-apiserver.{{ default .Release.Namespace .Values.global.namespace }}:9090/v1alpha3/webhooks/jenkins"
       gitLabServers:
         servers:
-        - name: "https://gitlab.com"
-          serverUrl: "https://gitlab.com"
+{{- toYaml .Values.unclassified.gitLabServers | nindent 8 }}

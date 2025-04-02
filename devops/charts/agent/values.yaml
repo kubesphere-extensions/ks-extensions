@@ -27,7 +27,7 @@ apiserver:
   image:
     registry: docker.io
     repository: kubesphere/devops-apiserver
-    tag: v4.1.2
+    tag: v4.1.3
     pullPolicy: IfNotPresent
     pullSecrets: []
   resources:
@@ -50,13 +50,18 @@ apiserver:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+  service:
+    type: ClusterIP
+    port: 9090
+    targetPort: 9090
+    nodePort: 30181
 
 controller:
   replicas: 1
   image:
     registry: docker.io
     repository: kubesphere/devops-controller
-    tag: v4.1.2
+    tag: v4.1.3
     pullPolicy: IfNotPresent
     pullSecrets: []
   podAnnotations: {}
@@ -84,14 +89,16 @@ tools:
   image:
     registry: docker.io
     repository: kubesphere/devops-tools
-    tag: v4.1.2
+    tag: v4.1.3
     pullPolicy: IfNotPresent
     pullSecrets: []
-  # gcJobs.maxAge -- Max age from which `PipelineRun`s will be deleted
-  maxAge: 168h
-  # gcJobs.maxCount -- Max count from which `PipelineRun`s will be deleted
-  maxCount: 30
-  # gcJobs.schedule -- Cron expression to periodically delete `PipelineRun`s
+  args:
+    # Max count from which `PipelineRun`s will be deleted
+    - --max-count=30
+    # Max age from which `PipelineRun`s will be deleted
+    - --max-age=168h
+    - --condition=ignoreTime
+    - --abort-pipelinerun
   schedule: "0/30 * * * *"
   # gcJobs.failedJobsHistoryLimit -- Drives the failed jobs history limit
   failedJobsHistoryLimit: 1
@@ -145,12 +152,6 @@ jenkins:
     storageClass: ""
     accessMode: ReadWriteOnce
     # existingClaim: ""
-  securityRealm:
-    openIdConnect:
-      # the kubesphere-core api used for jenkins OIDC
-      # if want to access to jenkinsUI, the ksCoreApi must be specified and browser-accessible
-      kubesphereCoreApi: "http://ks-apiserver:30880"
-      jenkinsURL: "http://devops-jenkins:30180"
 
 argocd:
   enabled: true

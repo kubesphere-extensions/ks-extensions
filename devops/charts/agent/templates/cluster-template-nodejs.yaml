@@ -20,7 +20,7 @@ spec:
       default: master
     - name: NodeDockerImage
       description: Docker image of node. Refer to https://hub.docker.com/_/node.
-      default: "node:14.19.0"
+      default: {{ default "docker.io" .Values.global.imageRegistry }}/node:14.19.0
       required: true
     - name: InstallScript
       description: Shell script to install dependencies.

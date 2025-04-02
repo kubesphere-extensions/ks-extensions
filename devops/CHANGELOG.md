@@ -1,5 +1,28 @@
 <!---
 Please do not delete this line of version tag
+RELEASE_MARK v4.1.3 RELEASE_MARK
+Please do not delete this line of version tag
+-->
+## v1.1.2
+
+### Enhancements
+
+- Change the default login method of the Jenkins console to the local database to simplify the login process.
+- Add the function to terminate long-running pipelines in the DevOps GC CronJob.
+- Set the default activeDeadlineSeconds of DevOps agent pods to 6 hours to prevent pods from occupying resources for too long.
+
+### Bug Fixes
+
+- Fix the issue of failing to edit Groovy scripts on the UI.
+- Fix the issue where updating the extension agent configuration does not take effect.
+- Fix the issue of failing to update labels or annotations of pipelinerun.
+- Fix the issue of failing to run the CD (Continuous Deployment) steps in pipelines.
+- Fix the issue of failing to add GitLab repositories.
+- Fix the issue of failing to delete Jenkins plugins during upgrades.
+- Fix the issue of mistakenly deleting user's PVCs under the `kubesphere-devops-worker` project during upgrades.
+
+<!---
+Please do not delete this line of version tag
 RELEASE_MARK v4.1.2 RELEASE_MARK
 Please do not delete this line of version tag
 -->

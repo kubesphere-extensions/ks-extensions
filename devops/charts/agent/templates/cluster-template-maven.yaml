@@ -20,7 +20,7 @@ spec:
       default: master
     - name: MavenDockerImage
       description: Docker image of Maven. Refer to https://hub.docker.com/_/maven
-      default: "maven:3.8.4-jdk-11"
+      default: {{ default "docker.io" .Values.global.imageRegistry }}/maven:3.8.4-jdk-11
       required: true
     - name: CompileScript
       description: Shell script for depedency download and compile.

@@ -22,51 +22,84 @@ KubeSphere DevOps 系统为您提供以下功能：
 
 ## 配置
 
-### 访问 jenkins
+### 访问 jenkins console
+1. 获取 jenkins 管理员用户名和密码
+```shell
+kubectl -n kubesphere-devops-system get secret devops-jenkins -o yaml
+```
 
-1. 请检查扩展组件配置里 `jenkins.securityRealm.openIdConnect.kubesphereCoreApi` 和 `jenkins.securityRealm.openIdConnect.jenkinsURL` ，确保已经分别修改为 ks-console 和 devops-jenkins 服务实际可访问的地址，如果不是，请修改并等待组件更新完成。
+输出示例：
+```yaml
+data:
+  jenkins-admin-password: aXMxZno1Z3lnQWFTaGRIU2EwUDZkbg==
+  jenkins-admin-token: MTE5NTQ4NDY3MTE4MDQ4ODAzMDI1MTc3MDk1OTUwNTM2MQ==
+  jenkins-admin-user: YWRtaW4=
+```
 
-    ```yaml
-    jenkins:
-      securityRealm:
-        openIdConnect:
-          # The kubesphere-core api used for jenkins OIDC
-          # If you want to access to jenkinsWebUI, the kubesphereCoreApi must be specified and browser-accessible
-          # Modifying this configuration will take effect only during installation
-          # If you wish for changes to take effect after installation, you need to update the jenkins-casc-config ConfigMap, copy the securityRealm configuration from jenkins.yaml to jenkins_user.yaml, save, and wait for approximately 70 seconds for the changes to take effect.
-          kubesphereCoreApi: "http://192.168.1.1:30880"
-          # The jenkins web URL used for OIDC redirect
-          jenkinsURL: "http://192.168.1.1:30180"
-    ```
+将 `jenkins-admin-user` 和 `jenkins-admin-password` 对应的内容 base64 解码后，即得到 jenkins 管理员的用户名和密码。
 
-2. 请检查配置字典 `jenkins-casc-config` 中 `jenkins_user.yaml` 下 `securityRealm.oic` 的所有地址，确保已经改为与 `jenkins.yaml` 下 `securityRealm.oic` 里一样的，都改成 kubesphere-console 实际可访问的地址，如果不一样，请修改并等待 70s 左右使其生效。
+2. 访问 jenkins console 
 
-    ```yaml
-        securityRealm:
-          oic:
-            clientId: "jenkins"
-            clientSecret: "jenkins"
-            tokenServerUrl: "http://192.168.1.1:30880/oauth/token"
-            authorizationServerUrl: "http://192.168.1.1:30880/oauth/authorize"
-            userInfoServerUrl: "http://192.168.1.1:30880/oauth/userinfo"
-            endSessionEndpoint: "http://192.168.1.1:30880/oauth/logout"
-            logoutFromOpenidProvider: true
-            scopes: openid profile email
-            fullNameFieldName: url
-            userNameField: preferred_username
-    ```
+通过以下命令获取 jenkins 服务的节点端口， devops 默认使用 30180 作为节点端口。
+```shell
+kubectl -n kubesphere-devops-system get svc devops-jenkins
+```
 
-3. 请检查配置字典 `kubesphere-config` 中的 `authentication.issuer.url` ，确保已经修改为 kubesphere-console 实际可访问的地址，如果不是，请修改并重启 Deployment ks-apiserver 使其生效。
+输出示例：
+```
+NAME             TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+devops-jenkins   NodePort   10.233.27.225   <none>        80:30180/TCP   42d
+```
 
-    ```yaml
-    authentication:
-      issuer:
-        url: "http://192.168.1.1:30880"
-    ```
+浏览器打开 <master-node-ip:30180>，然后使用第一步获取的用户名和密码登录即可。
 
-    ```shell
-    kubectl -n kubesphere-system rollout restart deploy ks-apiserver
-    ```
+#### LDAP
+如果你想以 LDAP 的方式登录 jenkins console, 请参考 https://plugins.jenkins.io/ldap/ 。
+
+配置示例（对接 KubeSphere LDAP) : 
+```yaml
+agent:
+  jenkins:
+    exactSecurityRealm:
+      ldap:
+        configurations:
+        - displayNameAttributeName: "uid"
+          mailAddressAttributeName: "mail"
+          inhibitInferRootDN: false
+          managerDN: "cn=admin,dc=kubesphere,dc=io"
+          managerPasswordSecret: "admin"
+          rootDN: "dc=kubesphere,dc=io"
+          userSearchBase: "ou=Users"
+          userSearch: "(&(objectClass=inetOrgPerson)(|(uid={0})(mail={0})))"
+          groupSearchBase: "ou=Groups"
+          groupSearchFilter: "(&(objectClass=posixGroup)(cn={0}))"
+          server: "ldap://openldap.kubesphere-system.svc:389"
+        disableMailAddressResolver: false
+        disableRolePrefixing: true
+```
+
+#### OpenId Connect
+如果你想以 OpenId Connect 的方式登录 jenkins console, 请参考 https://plugins.jenkins.io/oic-auth/ 。
+
+配置示例（对接 KubeSphere OpenId Connect）:
+```yaml
+agent:
+  jenkins:
+    exactSecurityRealm:
+      oic:
+        clientId: "jenkins"
+        clientSecret: "jenkins"
+        tokenServerUrl: "http://192.168.1.20:30880/oauth/token"
+        authorizationServerUrl: "http://192.168.1.20:30880/oauth/authorize"
+        userInfoServerUrl: "http://192.168.1.20:30880/oauth/userinfo"
+        endSessionEndpoint: "http://192.168.1.20:30880/oauth/logout"
+        logoutFromOpenidProvider: true
+        scopes: openid profile email
+        fullNameFieldName: url
+        userNameField: preferred_username
+    redirectURIs:
+    - http://192.168.1.20:30180/securityRealm/finishLogin
+```
 
 ## 快速开始
 
