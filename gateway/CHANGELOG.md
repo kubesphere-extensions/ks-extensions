@@ -1,5 +1,28 @@
 <!---
 Please do not delete this line of version tag
+RELEASE_MARK v4.1.3 RELEASE_MARK
+Please do not delete this line of version tag
+-->
+
+## v1.0.4
+
+### Enhancements
+
+- Upgrade `ingress-nginx` to v4.12.1.
+
+## v1.0.3
+
+### Enhancements
+
+- Upgrade `ingress-nginx` to v4.10.3.
+
+### Bug Fixes
+
+- Fix the abnormal log output by the gateway.
+- Fix the issue where the gateway monitoring could not display the average latency.
+
+<!---
+Please do not delete this line of version tag
 RELEASE_MARK v4.1.2 RELEASE_MARK
 Please do not delete this line of version tag
 -->
@@ -24,32 +47,30 @@ Please do not delete this line of version tag
 -->
 
 ## v1.0.0
-- 基于全新的微内核架构 KubeSphere LuBan 重构
-- 屏蔽底层配置细节，支持一键启用网关
-- 集成 WhizardTelemetry 监控模块
-- 集成 WhizardTelemetry 日志模块
-- 支持更细粒度的权限配置，包含网关管理与查看
 
-### 新特性
-- 支持通过全新微内核架构 KubeSphere LuBan 热插拔
-- 调整了 KubeSphere 网关的架构，便于解耦不同厂商的网关
-- 整合了 KubeSphere 网关创建、编辑时的配置步骤
-- 通过编辑网关 YAML 管理网关 values 中所有配置项
-- 可配置通过 NodePort 对外暴露时展示网关地址
-- 支持更细粒度的权限配置
+The `Gateway` is an extension that aggregates services and manages external access to the KubeSphere platform. It has been refactored based on the new microkernel architecture KubeSphere LuBan. It supports one-click enabling and management of cluster gateways, workspace gateways, and project gateways, facilitating comprehensive network configuration at different levels.
 
-### 弃用
-- 移除了 Gateway v1alpha1 CRD
-- 移除了 Nginx v1alpha1 CRD
+### Features
 
-### API 更新
-- 新增了 Gateway v2alpha1 CRD
+- Adjust the architecture of the gateway to facilitate decoupling from different vendors' gateways.
+- Integrate the configuration steps for creating and editing gateways.
+- Manage all configuration items in the gateway values through editing the gateway YAML.
+- Configurable display of gateway address when exposed through NodePort.
+- Support for more granular permission configuration, including gateway management and viewing.
 
-### 优化
-- 简化了 KubeSphere 网关扩展组件的安装操作
+### Bug Fixes
 
-### 缺陷修复
-- 修复了网关日志导出异常的 bug
+- Fix the exceptions when exporting gateway logs.
 
-### 其他
-- nginx-ingress 版本：v1.3.1 -> v1.4.0
+### Deprecations
+
+- Remove Gateway v1alpha1 CRD.
+- Remove Nginx v1alpha1 CRD.
+
+### API Changes
+
+- Add Gateway v2alpha1 CRD.
+
+### Misc
+
+- Upgrade nginx-ingress from v1.3.1 to v1.4.0.
