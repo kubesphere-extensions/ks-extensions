@@ -7,7 +7,7 @@ on:
 
 jobs:
   extensions_check:
-    runs-on: self-runner-extensions
+    runs-on: ubuntu-latest
     if: github.repository == 'kubesphere-extensions/ks-extensions'
     steps:
       - name: Get Architecture
