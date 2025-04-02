@@ -15,12 +15,12 @@ backend:
         controller:
           image:
             registry: ""
-            image: kubesphere/nginx-ingress-controller
-            tag: "v1.4.0"
+            image: kubesphere/ingress-nginx-controller
+            tag: "v1.12.1"
             pullPolicy: IfNotPresent
             digest: ""
       exposeNodeLabelKey: "node-role.kubernetes.io/control-plane"
-      versionConstraint: ">= 4.3.0, < 4.5.0"
+      versionConstraint: ">= 4.3.0, <= 4.12.1"
       logSearchEndpoint: "http://whizard-telemetry-apiserver.extension-whizard-telemetry.svc:9090"
 
   apiserver:
