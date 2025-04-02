@@ -25,51 +25,85 @@ For further details, refer to the [KubeSphere DevOps official website](https://w
 
 ## Configuration
 
-### Access jenkins
+### Access jenkins console
 
-1. Please check `jenkins.securityRealm.openIdConnect.kubesphereCoreApi` and `jenkins.securityRealm.openIdConnect.jenkinsURL` in the extension configuration to ensure that they have been modified to the actual accessible addresses of the ks-console and devops-jenkins services respectively. If not, please modify them and wait for the extension updated.
+1. **Retrieve Jenkins Administrator Username and Password**
+   ```shell
+   kubectl -n kubesphere-devops-system get secret devops-jenkins -o yaml
+   ```
 
-    ```yaml
-    jenkins:
-      securityRealm:
-        openIdConnect:
-          # The kubesphere-core api used for jenkins OIDC
-          # If you want to access to jenkinsWebUI, the kubesphereCoreApi must be specified and browser-accessible
-          # Modifying this configuration will take effect only during installation
-          # If you wish for changes to take effect after installation, you need to update the jenkins-casc-config ConfigMap, copy the securityRealm configuration from jenkins.yaml to jenkins_user.yaml, save, and wait for approximately 70 seconds for the changes to take effect.
-          kubesphereCoreApi: "http://192.168.1.1:30880"
-          # The jenkins web URL used for OIDC redirect
-          jenkinsURL: "http://192.168.1.1:30180"
-    ```
+   Example output:
+   ```
+   data:
+     jenkins-admin-password: aXMxZno1Z3lnQWFTaGRIU2EwUDZkbg==
+     jenkins-admin-token: MTE5NTQ4NDY3MTE4MDQ4ODAzMDI1MTc3MDk1OTUwNTM2MQ==
+     jenkins-admin-user: YWRtaW4=
+   ```
 
-2. Please check all addresses of `securityRealm.oic` under `jenkins_user.yaml` in the configmap `jenkins-casc-config` and make sure they have been modified to the same as `securityRealm.oic` under `jenkins.yaml`, to actual accessible address of kubesphere-console. If not, please modify them and wait for about 70s to take effect..
- 
-    ```yaml
-        securityRealm:
-          oic:
-            clientId: "jenkins"
-            clientSecret: "jenkins"
-            tokenServerUrl: "http://192.168.1.1:30880/oauth/token"
-            authorizationServerUrl: "http://192.168.1.1:30880/oauth/authorize"
-            userInfoServerUrl: "http://192.168.1.1:30880/oauth/userinfo"
-            endSessionEndpoint: "http://192.168.1.1:30880/oauth/logout"
-            logoutFromOpenidProvider: true
-            scopes: openid profile email
-            fullNameFieldName: url
-            userNameField: preferred_username
-    ```
+   Decode the values corresponding to `jenkins-admin-user` and `jenkins-admin-password` using Base64 to obtain the Jenkins administrator username and password.
 
-3. Please check `authentication.issuer.url` in the configuration dictionary `kubesphere-config` to make sure it has been modified to the address that is actually accessible to kubesphere-console. If not, please modify and restart Deployment ks-apiserver to make it take effect.
+2. **Access Jenkins Console**
 
-    ```yaml
-    authentication:
-      issuer:
-        url: "http://192.168.1.1:30880"
-    ```
+   Use the following command to retrieve the NodePort of the Jenkins service. By default, DevOps uses 30180 as the NodePort.
+   ```shell
+   kubectl -n kubesphere-devops-system get svc devops-jenkins
+   ```
 
-    ```shell
-    kubectl -n kubesphere-system rollout restart deploy ks-apiserver
-    ```
+   Example output:
+   ```
+   NAME             TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+   devops-jenkins   NodePort   10.233.27.225   <none>        80:30180/TCP   42d
+   ```
+
+   Open a browser and navigate to `<master-node-ip:30180>`. Then log in using the username and password obtained in step 1.
+
+### LDAP  
+If you want to log in to the Jenkins console using LDAP, please refer to https://plugins.jenkins.io/ldap/ .
+
+Example configuration (integrating with KubeSphere LDAP):  
+```yaml
+agent:
+  jenkins:
+    exactSecurityRealm:
+      ldap:
+        configurations:
+        - displayNameAttributeName: "uid"
+          mailAddressAttributeName: "mail"
+          inhibitInferRootDN: false
+          managerDN: "cn=admin,dc=kubesphere,dc=io"
+          managerPasswordSecret: "admin"
+          rootDN: "dc=kubesphere,dc=io"
+          userSearchBase: "ou=Users"
+          userSearch: "(&(objectClass=inetOrgPerson)(|(uid={0})(mail={0})))"
+          groupSearchBase: "ou=Groups"
+          groupSearchFilter: "(&(objectClass=posixGroup)(cn={0}))"
+          server: "ldap://openldap.kubesphere-system.svc:389"
+        disableMailAddressResolver: false
+        disableRolePrefixing: true
+```
+
+### OpenId Connect  
+If you want to log in to the Jenkins console using OpenId Connect, please refer to https://plugins.jenkins.io/oic-auth/ .
+
+Example configuration (integrating with KubeSphere OpenId Connect):  
+```yaml
+agent:
+  jenkins:
+    exactSecurityRealm:
+      oic:
+        clientId: "jenkins"
+        clientSecret: "jenkins"
+        tokenServerUrl: "http://192.168.1.20:30880/oauth/token"
+        authorizationServerUrl: "http://192.168.1.20:30880/oauth/authorize"
+        userInfoServerUrl: "http://192.168.1.20:30880/oauth/userinfo"
+        endSessionEndpoint: "http://192.168.1.20:30880/oauth/logout"
+        logoutFromOpenidProvider: true
+        scopes: openid profile email
+        fullNameFieldName: url
+        userNameField: preferred_username
+    redirectURIs:
+    - http://192.168.1.20:30180/securityRealm/finishLogin
+```
 
 ## Quick Start
 

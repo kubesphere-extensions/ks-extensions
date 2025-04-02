@@ -63,8 +63,13 @@ https://github.com/helm/charts/issues/5167#issuecomment-619137759
 {{- end -}}
 
 {{- define "ContainerRuntime" -}}
-  {{- $containerRuntimeVersion := trim (mustFirst (lookup "v1" "Node" "" "").items).status.nodeInfo.containerRuntimeVersion -}}
-  {{- trimAll "://" (mustRegexFind "^([a-zA-Z]+)://" $containerRuntimeVersion) }}
+  {{- $nodes := lookup "v1" "Node" "" "" -}}
+  {{- if $nodes.items -}}
+    {{- $containerRuntimeVersion := trim (mustFirst $nodes.items).status.nodeInfo.containerRuntimeVersion -}}
+    {{- trimAll "://" (mustRegexFind "^([a-zA-Z]+)://" $containerRuntimeVersion) }}
+  {{- else -}}
+    "containerd"
+  {{- end -}}
 {{- end -}}
 
 {{- define "jenkins.agent.variant" -}}
