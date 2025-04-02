@@ -1,5 +1,29 @@
 <!---
 Please do not delete this line of version tag
+RELEASE_MARK v4.1.3 RELEASE_MARK
+Please do not delete this line of version tag
+-->
+
+## v1.0.4
+
+### 优化
+
+- 升级 ingress-nginx 版本到 4.12.1
+
+## v1.0.3
+
+### 优化
+
+- 升级 ingress-nginx 版本到 4.10.3
+
+### 缺陷修复
+
+- 修复网关输出异常日志的问题
+- 修复网关监控无法显示平均延迟的问题
+
+
+<!---
+Please do not delete this line of version tag
 RELEASE_MARK v4.1.2 RELEASE_MARK
 Please do not delete this line of version tag
 -->
