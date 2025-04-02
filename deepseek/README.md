@@ -1,8 +1,36 @@
+- [Introduction](#introduction)
+- [Deploy with Ollama](#deploy-with-ollama)
+  - [Requirements and Recommendations](#requirements-and-recommendations)
+  - [Basic Installation](#basic-installation)
+  - [Resource Configuration Example](#resource-configuration-example)
+  - [Distributed Deployment](#distributed-deployment)
+- [Using ipex-llm Deployment](#using-ipex-llm-deployment)
+  - [Requirements and Recommendations](#requirements-and-recommendations-1)
+  - [Basic Installation](#basic-installation-1)
+  - [Distributed Deployment](#distributed-deployment-1)
+- [Other Notes](#other-notes)
+  - [Model Access](#model-access)
+  - [Model Cache](#model-cache)
+
 ## Introduction
 
-This extension component runs the deepseek-r1 model based on ollama, provides API services through Service, and includes next-chat as a web chat UI.
+This extension component runs the DeepSeek-R1 model in KubeSphere, provides API services through Service, and includes NextChat as a web chat UI.
 
-## Requirements and Recommendations
+The component supports two deployment modes:
+- IPEX-LLM: Optimized for Intel CPUs with AMX support
+- Ollama: For general CPU environments
+
+## Deploy with Ollama
+
+Set the following when installing:
+```yaml
+ollama:
+  enabled: true
+ipex-llm:
+  enabled: false
+```
+
+### Requirements and Recommendations
 
 * Minimum Resource Requirements
 
@@ -39,29 +67,36 @@ This extension component runs the deepseek-r1 model based on ollama, provides AP
 
   For offline environments without a local private model repository, you can create a PVC containing model cache in advance. Reference: [Cache Models](#model-cache)
 
-## Deployment Configuration Guide
-
 ### Basic Installation
-By default, the 1.5b model is installed. If you need to install other models, please modify the `deepseek.model` field. (Limited by resource requirements, currently only tested up to 14b model)    
+
+By default, the deepseek-r1:1.5b model is installed. If you need to install other models, please modify the `global.model` field. (Limited by resource requirements, currently only tested up to 14b model)    
 Supported model list: deepseek-r1:1.5b, deepseek-r1:3b, deepseek-r1:7b, deepseek-r1:8b, deepseek-r1:14b, deepseek-r1:32b, deepseek-r1:70b, deepseek-r1:671b
 ```yaml
-# config.yaml
-backend:
+global:
   model:
-    # registry: "registry.ollama.ai/library"
-    # repository: deepseek-r1
-    tag:1.5b  # replace with the model version you need
+    # the full path in models directory
+    # in ollama
+    id: "registry.ollama.ai/library/deepseek-r1:1.5b"
+    # in vllm
+    # id: "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
+    # the serve name to access.
+    # in ollama
+    name: "deepseek-r1:1.5b"
+    # in vllm
+    # name: "DeepSeek-R1-Distill-Qwen-1.5B"
 ```
 
 ### Resource Configuration Example
+
 When deploying this extension component, if no configuration is specified, the default resources will be automatically set according to the model to be installed.
+
+* Extended Configuration: Enable Nvidia GPU as needed:
 ```yaml
-backend:
+ollama:
   enableNvidia: true
 ```
 
-### Extended Configuration
-The following parameters can be configured to override the default resource requests and limits.
+* Extended Configuration: The following parameters can be configured to override the default resource requests and limits.
 ```yaml
 backend:
   server:
@@ -78,8 +113,100 @@ backend:
         nvidia.com/gpu: 1
 ```
 
+### Distributed Deployment
+
+Ollama does not support model sharding. Each replica shard runs a complete model, using service to route request data to different shards.
+Modify replica shard configuration:
+```yaml
+ollama:
+  server:
+    replicas: 2
+```
+
+## Using ipex-llm Deployment
+
+ipex-llm is a vllm framework optimized for intel@Advanced Matrix Extensions CPUs.
+When installing, you need to set:
+```yaml
+ollama:
+  enabled: false
+ipex-llm:
+  enabled: true
+```
+
+### Requirements and Recommendations
+
+* Minimum Resource Requirements    
+  > For the DeepSeek-R1-Distill-Qwen-1.5B model, the following are the minimum resource requirements for a single pod. Models with larger parameters should reserve more resources.
+  - 2 CPU cores (intel@Advanced Matrix Extensions with AMX support enabled)    
+  - 8GB memory 
+  
+  Check if AMX is enabled:
+  ```bash
+  grep enable_cpu_host_passthrough /pitrix/conf/global/server.yaml 
+  enable_cpu_host_passthrough: 0
+  ```
+
+* Storage Requirements    
+  The cluster should have an available StorageClass configured, mainly used to create PVCs for persistent storage of model data. Storage that supports ReadWriteMany mode is recommended to support multi-replica operation.  
+  
+* GPU Requirements    
+  Not recommended for deployment on GPU
+
+### Basic Installation
+By default, the DeepSeek-R1-Distill-Qwen-1.5B model is installed. If you need to install other models, please modify the `global.model` field. (Due to resource requirements, currently only tested up to 14b models)    
+Supported model list: DeepSeek-R1-Distill-Qwen-1.5B, DeepSeek-R1-Distill-Qwen-3B, DeepSeek-R1-Distill-Qwen-7B, DeepSeek-R1-Distill-Qwen-8B, DeepSeek-R1-Distill-Qwen-14B, DeepSeek-R1-Distill-Qwen-32B, DeepSeek-R1-Distill-Qwen-70B, DeepSeek-R1-Distill-Qwen-671B
+```yaml
+global:
+  model:
+    # the full path in models directory
+    # in ollama
+    # id: "registry.ollama.ai/library/deepseek-r1:1.5b"
+    # in vllm
+    id: "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
+    # the serve name to access.
+    # in ollama
+    # name: "deepseek-r1:1.5b"
+    # in vllm
+    name: "DeepSeek-R1-Distill-Qwen-1.5B"
+```
+You can override default resource requests and limits with the following parameters:
+```yaml
+ipex-llm:
+  server:
+    ray:
+      resources:
+        requests:
+          cpu: 1
+          memory: 2Gi
+        limits:
+          cpu: 2
+          memory: 4Gi  
+    llm:
+      resources:
+        requests:
+          cpu: 4
+          memory: 8Gi
+        limits:
+          cpu: 8
+          memory: 16Gi     
+```
+
+### Distributed Deployment
+
+ipex-llm splits the model by enabling the ray cluster.    
+Modify replica shard configuration:
+```yaml
+ipex-llm:
+  server:
+    replicas: 2
+```
+
+## Other Notes
+
 ### Model Access
-The extension component includes NextChat, which can be used for UI-based model access. External access requires configuration of ingress (default enabled)
+
+This extension component includes NextChat, which can be used for UI-based model access. External access requires configuring ingress and enabling ingress-controller (it is recommended to use the [KubeSphere Gateway](https://github.com/kubesphere-extensions/ks-extensions/tree/main/gateway) extension component for setup)
 ```yaml
 global:
   extension:
@@ -92,9 +219,10 @@ global:
 ```
 
 ### Model Cache
-By default, the ollama model cache path is: `$HOME/.ollama/models`
 
-For offline environment deployment, you need to pull the model using ollama in an environment with internet access, back up the models directory and copy it to the offline environment. At the same time, create a PVC named deepseek-models and import the backed up models directory into the PV.
+You need to create a PVC named deepseek-models and import the backed up models directory into the PV.
+ollama: In an environment with internet access, pull the model from ollama and back up the models directory to the `ollama` subdirectory in the PV
+ipex-llm: In an environment with internet access, pull the model from Hugging Face and back up the models directory to the `ipex-llm` subdirectory in the PV
 
 Create a PVC for model data persistent storage:
 ```bash
