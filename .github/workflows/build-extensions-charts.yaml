@@ -5,6 +5,7 @@ on:
   push:
     paths-ignore:
       - '.extensions-museum/**'
+      - '.github'
 
 jobs:
   build-charts:
@@ -12,12 +13,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Setup SSH
-        uses: MrSquaare/ssh-setup-action@v2
-        with:
-          host: github.com
-          private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Package latest charts
         run: |
@@ -40,13 +35,9 @@ jobs:
             echo "No changes to commit"
             echo "has_changes=false" >> $GITHUB_ENV
           else
-            git commit -m "sync charts by action"
+            git commit -m "sync charts by action" -s
             echo "has_changes=true" >> $GITHUB_ENV
-          fi
 
-      - name: Push changes
-        if: ${{ env.has_changes == 'true' }}
-        run: |
-          git remote set-url origin git@github.com:kubesphere-extensions/ks-extensions.git
-          TARGET_BRANCH=${{ github.event.pull_request.base.ref }}
-          git push origin HEAD:$TARGET_BRANCH
+            git push origin
+          fi
+          
