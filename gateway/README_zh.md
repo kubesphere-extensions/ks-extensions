@@ -35,10 +35,12 @@ backend:
       logSearchEndpoint: "http://whizard-telemetry-apiserver.extension-whizard-telemetry.svc:9090"
 ```
 
-1. 查看 `backend.config.gateway.versionConstraint` 参数，versionConstraint 参数用来限制可安装的 ingress-nginx 的版本范围（helm chart version）。 
+1. 查看 `backend.config.gateway.versionConstraint` 参数，versionConstraint 参数用来限制可安装的 ingress-nginx 的版本范围（helm chart version）。
+   
    当前版本默认配置的 ingress-nginx 版本为 1.12.1，helm chart version 版本为 4.12.1。需要将版本范围修改为 `versionConstraint: ">= 4.3.0, <= 4.12.1"`。
 
 2. 查看 `backend.config.gateway.controller.image` 参数。controller.image 用来定义要安装的 ingress-nginx 的镜像。此处要修改成 ingress-nginx 1.12.1 版本的镜像地址，
+   
    将 image.tag 修改为 `tag: "v1.12.1"`, 将 image.image 修改为 `kubesphere/ingress-nginx-controller`。
 
 

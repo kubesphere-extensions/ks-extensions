@@ -4,6 +4,12 @@ RELEASE_MARK v4.1.3 RELEASE_MARK
 Please do not delete this line of version tag
 -->
 
+## v1.0.5
+
+### 优化
+
+- 更改配置时自动重启系统组件
+
 ## v1.0.4
 
 ### 优化
