@@ -20,7 +20,7 @@ spec:
       default: master
     - name: GolangDockerImage
       description: Docker image of Golang. Refer to https://hub.docker.com/_/golang
-      default: "golang:1.17"
+      default: {{ default "docker.io" .Values.global.imageRegistry }}/golang:1.17
       required: true
     - name: DependencyDownloadScript
       description: Shell script for depedency download.

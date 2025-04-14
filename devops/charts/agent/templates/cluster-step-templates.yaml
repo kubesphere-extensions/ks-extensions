@@ -846,8 +846,8 @@ metadata:
     step.devops.kubesphere.io/category: "Container"
   annotations:
     devops.kubesphere.io/displayNameEN: "CD"
-    devops.kubesphere.io/descriptionEN: "Update image information using continuous deployment"
-    devops.kubesphere.io/descriptionZH: "通过持续部署更新镜像信息"
+    devops.kubesphere.io/descriptionEN: "Update image information using continuous deployment(supports kustomize app only)"
+    devops.kubesphere.io/descriptionZH: "通过持续部署更新镜像信息(仅支持 kustomize 应用)"
     devops.kubesphere.io/displayNameZH: "CD"
     step.devops.kubesphere.io/icon: "rocket"
 spec:
@@ -872,6 +872,7 @@ spec:
     - name: newImageTag
       type: string
       display: 'New Image Tag'
+      required: true
     - name: secret
       type: secret
       display: 'Credential'
@@ -895,7 +896,7 @@ spec:
                   "key": "script",
                   "value": {
                     "isLiteral": true,
-                    "value": "ks app update --app-name {{.param.application.name}} \\\n --app-namespace {{.param.application.namespace}} \\\n --name {{.param.originalName}} \\\n --newName {{.param.newName}} \\\n --git-password $PASS --git-username=$USER \\\n --git-target-branch {{.param.branch}}"
+                    "value": "ks app update --app-name {{.param.application.name}} \\\n --app-namespace {{.param.application.namespace}} \\\n --name {{.param.originalName}} \\\n --newName {{.param.newImageName}} \\\n --newTag {{.param.newImageTag}} \\\n --git-password $PASS --git-username=$USER \\\n --git-target-branch {{.param.branch}}"
                   }
                 }
               ],
