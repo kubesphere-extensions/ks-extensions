@@ -3,6 +3,12 @@ Please do not delete this line of version tag
 RELEASE_MARK v4.1.3 RELEASE_MARK
 Please do not delete this line of version tag
 -->
+## v1.1.3
+
+### 缺陷修复
+
+- 修复从 KubeSphere 3.x 版本升级数据迁移失败的问题
+
 ## v1.1.2
 
 ### 优化
