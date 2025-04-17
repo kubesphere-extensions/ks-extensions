@@ -28,6 +28,21 @@ rules:
       - configmaps
     verbs:
       - "*"
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - "patch"
+      - "update"
+      - "list"
+      - "get"
+  - apiGroups:
+      - "devops.kubesphere.io"
+    resources:
+      - "*"
+    verbs:
+      - "*"
 {{- end }}
 
 {{- if empty (lookup "rbac.authorization.k8s.io/v1" "ClusterRoleBinding" "" "devops-post-install") }}
@@ -53,7 +68,7 @@ roleRef:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Release.Name }}-post-install
+  name: {{ .Release.Name }}-post-install-restore-configmap
   annotations:
     helm.sh/hook: post-install
     helm.sh/hook-weight: "2"
@@ -74,3 +89,31 @@ spec:
           command:
             - devops-tools
             - restore-configmap
+
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-restore-resources
+  annotations:
+    helm.sh/hook: post-install
+    helm.sh/hook-weight: "3"
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: devops-post-install
+      {{- with (default .Values.global.imagePullSecrets .Values.kubectl.image.pullSecrets) }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: post-install-job
+          image: "{{ default .Values.kubectl.image.registry .Values.global.imageRegistry }}/{{ .Values.kubectl.image.repository }}:{{ .Values.kubectl.image.tag }}"
+          command:
+            - /bin/bash
+            - -c
+            - |
+              kubectl get ns -l kubesphere.io/devopsproject -o name | xargs -I {} kubectl patch {} -p '{"metadata":{"finalizers":null}}' --type=merge

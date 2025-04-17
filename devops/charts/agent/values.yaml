@@ -107,6 +107,15 @@ tools:
   # gcJobs.concurrencyPolicy -- Drives the job's concurrency policy
   concurrencyPolicy: Forbid
 
+
+kubectl:
+  image:
+    registry: "docker.io"
+    repository: kubesphere/kubectl
+    tag: "v1.27.16"
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+
 ingress:
   enabled: false
   annotations: {}
