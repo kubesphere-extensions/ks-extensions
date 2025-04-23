@@ -3,6 +3,12 @@ Please do not delete this line of version tag
 RELEASE_MARK v4.1.3 RELEASE_MARK
 Please do not delete this line of version tag
 -->
+## v1.1.3
+
+### Bug Fixes
+
+- Fix the issue of data migration failure when upgrading from KubeSphere version 3.x.
+
 ## v1.1.2
 
 ### Enhancements
