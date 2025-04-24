@@ -17,6 +17,12 @@ Please do not delete this line of version tag
 - 修复应用详情中资源状态展示不完整的问题
 - 修复上传 chart 应用时重复发送请求的问题
 
+<!---
+Please do not delete this line of version tag
+RELEASE_MARK v4.1.2 RELEASE_MARK
+Please do not delete this line of version tag
+-->
+
 ## v2.0.1
 
 ### 缺陷修复
