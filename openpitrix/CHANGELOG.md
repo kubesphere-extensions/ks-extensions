@@ -1,6 +1,6 @@
 <!---
 Please do not delete this line of version tag
-RELEASE_MARK v4.1.2 RELEASE_MARK
+RELEASE_MARK v4.1.3 RELEASE_MARK
 Please do not delete this line of version tag
 -->
 
@@ -16,6 +16,12 @@ Please do not delete this line of version tag
 - Fix incomplete category display in App Store Management
 - Fix incomplete resource status display in App Details
 - Fix duplicate requests when uploading chart applications
+
+<!---
+Please do not delete this line of version tag
+RELEASE_MARK v4.1.2 RELEASE_MARK
+Please do not delete this line of version tag
+-->
 
 ## v2.0.1
 
