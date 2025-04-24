@@ -1,9 +1,0 @@
-apiVersion: v1
-name: apps
-description: Frontend of apps extension.
-type: application
-version: 0.0.1
-appVersion: "0.0.1"
-home: https://kubesphere.io
-sources:
-  - https://github.com/kubesphere
