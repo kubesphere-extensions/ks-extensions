@@ -1,8 +1,28 @@
 <!---
 Please do not delete this line of version tag
+RELEASE_MARK v4.1.3 RELEASE_MARK
+Please do not delete this line of version tag
+-->
+
+## v2.0.2
+
+### 优化
+
+- 应用商店页面新增使用说明
+
+### 缺陷修复
+
+- 修复应用管理功能中无法上传新版本应用的问题
+- 修复应用商店管理，分类展示不完整的问题
+- 修复应用详情中资源状态展示不完整的问题
+- 修复上传 chart 应用时重复发送请求的问题
+
+<!---
+Please do not delete this line of version tag
 RELEASE_MARK v4.1.2 RELEASE_MARK
 Please do not delete this line of version tag
 -->
+
 ## v2.0.1
 
 ### 缺陷修复
