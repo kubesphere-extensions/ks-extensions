@@ -1,0 +1,36 @@
+apiVersion: kubesphere.io/v1alpha1
+name: ob-operator
+version: 2.3.1
+displayName:
+  zh: ob-operator
+  en: ob-operator
+description:
+  zh: Kubernetes operator for OceanBase
+  en: Kubernetes operator for OceanBase
+category: database
+keywords:
+  - database
+  - oceanbase
+home: https://open.oceanbase.com
+sources:
+  - https://github.com/oceanbase/ob-operator
+kubeVersion: ">=1.22.15-0"
+ksVersion: ">=4.0.0-0"
+maintainers:
+  - name: "Chris Sun"
+    email: "hongxin.sun.vip@gmail.com"
+    url: "https://github.com/chris-sun-star"
+provider:
+  zh:
+    name: "OceanBase"
+    url: "https://www.oceanbase.com"
+  en:
+    name: "OceanBase"
+    url: "https://en.oceanbase.com"
+icon: ./static/oceanbase.svg
+dependencies:
+  - name: ob-operator
+    tags:
+    - extension
+installationMode: HostOnly
+namespace: "oceanbase-system"
