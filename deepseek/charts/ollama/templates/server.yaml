@@ -23,6 +23,9 @@ spec:
         - name: ollama
           image: {{template "ollama.image" . }}
           imagePullPolicy: {{ include "common.images.pullPolicy" (dict "value" .Values.server.image "global" .Values.global) }}
+          env:
+            - name: OLLAMA_MODELS
+              value: /models
           ports:
             - containerPort: 11434
               name: http
@@ -35,7 +38,8 @@ spec:
             periodSeconds: 10
           volumeMounts:
             - name: deepseek-models
-              mountPath: /root/.ollama/models
+              subPath: ollama
+              mountPath: /models
           securityContext:
             privileged: true
         - name: run-model
@@ -44,7 +48,7 @@ spec:
           command: 
             - "/bin/sh"
             - "-c"
-            - ollama run {{ include "model.fullname" .Values.model }} && echo "success" > /tmp/ready && tail -f /dev/null
+            - ollama run {{ .Values.global.model.id }} && echo "success" > /tmp/ready && tail -f /dev/null
           resources:
             requests:
               cpu: 10m

@@ -1,0 +1,94 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "backend.fullname" . }}-server
+  labels:
+    app: {{ include "backend.fullname" . }}-server
+spec:
+  serviceName: "{{ include "backend.fullname" . }}-server-service"
+  replicas: {{ .Values.server.replicas }}
+  selector:
+    matchLabels:
+      app: {{ include "backend.fullname" . }}-server
+  template:
+    metadata:
+      labels:
+        app: {{ include "backend.fullname" . }}-server
+    spec:
+      nodeSelector:
+        {{- include "common.nodeSelector" (dict "global" .Values.global "value" .Values.server) | nindent 8 }}
+      imagePullSecrets:
+        {{- include "common.images.pullSecrets" (dict "value" (dict "pullSecrets" (concat .Values.server.ray.image.pullSecrets .Values.server.llm.image.pullSecrets)) "global" .Values.global) | nindent 8 }}
+      containers:
+        - name: ray
+          image: {{template "ray.image" . }}
+          imagePullPolicy: {{ include "common.images.pullPolicy" (dict "value" .Values.server.llm.image "global" .Values.global) }}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              if [[ "$(hostname)" == "{{ include "backend.fullname" . }}-server-0" ]]; then
+                ray start --block --head --port=6379 --dashboard-host=0.0.0.0 --include-dashboard=false
+              else
+                ray start --block --address={{ include "backend.fullname" . }}-server-0.{{ include "backend.fullname" . }}-server-service:6379
+              fi
+          ports:
+            - containerPort: 6379
+              name: ray
+          resources:
+            {{- toYaml .Values.server.ray.resources | nindent 12 }}
+        - name: ipex-llm
+          image: {{template "llm.image" . }}
+          imagePullPolicy: {{ include "common.images.pullPolicy" (dict "value" .Values.server.llm.image "global" .Values.global) }}
+          command:
+            - python
+            - -m 
+            - ipex_llm.vllm.cpu.entrypoints.openai.api_server
+            - --served-model-name={{ .Values.global.model.name }}
+            - --port=8003
+            - --model={{ .Values.global.model.id }}
+            - --download-dir=/models/
+            - --trust-remote-code
+            - --device=cpu
+            - --dtype=bfloat16
+            - --enforce-eager
+            - --load-in-low-bit=bf16
+            - --max-model-len=4096
+            - --max-num-batched-tokens=10240
+            - --max-num-seqs=12
+            - --tensor-parallel-size={{ .Values.server.replicas }}
+          env:
+            {{- toYaml .Values.server.llm.env | nindent 12 }}
+          ports:
+            - containerPort: 8003
+              name: http
+          resources:
+            {{- toYaml .Values.server.llm.resources | nindent 12 }}
+          volumeMounts:
+            - name: deepseek-models
+              subPath: ipex-llm
+              mountPath: /models
+          securityContext:
+            privileged: true
+      affinity:
+        {{- toYaml .Values.server.affinity | nindent 8 }}
+      volumes:
+        - name: deepseek-models
+          persistentVolumeClaim:
+            claimName: deepseek-models
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "backend.fullname" . }}-server-service
+spec:
+  selector:
+    app: {{ include "backend.fullname" . }}-server
+  ports:
+  - port: 8003
+    targetPort: http
+    name: http
+  - port: 6379
+    targetPort: ray
+    name: ray

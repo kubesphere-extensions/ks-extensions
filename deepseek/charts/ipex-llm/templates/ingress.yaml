@@ -18,5 +18,5 @@ spec:
               service:
                 name: {{ include "backend.fullname" . }}-chat-service
                 port:
-                  number: 3000
+                  number: 80
 {{- end }}
