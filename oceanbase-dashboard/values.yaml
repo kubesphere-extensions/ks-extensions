@@ -1,0 +1,11 @@
+oceanbase-dashboard.initCredentials: true
+# admin's password. If not set, the chart will generate it randomly
+oceanbaes-dashboard.adminPassword: admin
+
+oceanbase-dashboard.userCredentials:
+oceanbase-dashboard.userNamespace:
+oceanbase-dashboard.configNamespace:
+
+oceanbase-dashboard.service:
+  type: NodePort
+  port: 80
