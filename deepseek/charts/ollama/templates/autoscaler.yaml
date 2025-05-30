@@ -1,0 +1,46 @@
+{{- if .Values.server.autoscaling.enabled -}}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "backend.fullname" . }}-server-hpa
+spec:
+  maxReplicas: {{ .Values.server.autoscaling.maxReplicas }}
+  minReplicas: {{ .Values.server.autoscaling.minReplicas }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "backend.fullname" . }}-server
+  metrics:
+  - type: Resource 
+    resource:
+      name: cpu
+      targetAverageUtilization: {{ .Values.server.autoscaling.targetCPUUtilizationPercentage }}
+  - type: Resource
+    resource:
+      name: memory
+      targetAverageUtilization: {{ .Values.server.autoscaling.targetMemoryUtilizationPercentage }}
+{{- end }}
+{{- if .Values.chat.autoscaling.enabled -}}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "backend.fullname" . }}-chat-hpa
+spec:
+  maxReplicas: {{ .Values.chat.autoscaling.maxReplicas }}
+  minReplicas: {{ .Values.chat.autoscaling.minReplicas }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "backend.fullname" . }}-chat
+  metrics:
+  - type: Resource 
+    resource:
+      name: cpu
+      targetAverageUtilization: {{ .Values.chat.autoscaling.targetCPUUtilizationPercentage }}
+  - type: Resource
+    resource:
+      name: memory
+      targetAverageUtilization: {{ .Values.chat.autoscaling.targetMemoryUtilizationPercentage }}
+{{- end }}
