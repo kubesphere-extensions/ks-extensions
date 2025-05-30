@@ -1,0 +1,36 @@
+apiVersion: kubesphere.io/v1alpha1
+name: oceanbase-dashboard
+version: 0.4.0
+displayName:
+  zh: oceanbase-dashboard
+  en: oceanbase-dashboard
+description:
+  zh: A dashboard for managing OceanBase resources in Kubernetes
+  en: A dashboard for managing OceanBase resources in Kubernetes
+category: database
+keywords:
+  - database
+  - oceanbase
+home: https://open.oceanbase.com
+sources:
+  - https://github.com/oceanbase/ob-operator#oceanbase-dashboard
+kubeVersion: ">=1.22.15-0"
+ksVersion: ">=4.0.0-0"
+maintainers:
+  - name: "Chris Sun"
+    email: "hongxin.sun.vip@gmail.com"
+    url: "https://github.com/chris-sun-star"
+provider:
+  zh:
+    name: "OceanBase"
+    url: "https://www.oceanbase.com"
+  en:
+    name: "OceanBase"
+    url: "https://en.oceanbase.com"
+icon: ./static/oceanbase.svg
+dependencies:
+  - name: oceanbase-dashboard
+    tags:
+    - extension
+installationMode: HostOnly
+namespace: "oceanbase-system"
