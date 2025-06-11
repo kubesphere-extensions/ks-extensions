@@ -9,17 +9,17 @@ description:
   en: Kubernetes operator for OceanBase
 category: database
 keywords:
-  - database
-  - oceanbase
+- database
+- oceanbase
 home: https://open.oceanbase.com
 sources:
-  - https://github.com/oceanbase/ob-operator
+- https://github.com/oceanbase/ob-operator
 kubeVersion: ">=1.22.15-0"
 ksVersion: ">=4.0.0-0"
 maintainers:
-  - name: "Chris Sun"
-    email: "hongxin.sun.vip@gmail.com"
-    url: "https://github.com/chris-sun-star"
+- name: "Chris Sun"
+  email: "hongxin.sun.vip@gmail.com"
+  url: "https://github.com/chris-sun-star"
 provider:
   zh:
     name: "OceanBase"
@@ -29,8 +29,16 @@ provider:
     url: "https://en.oceanbase.com"
 icon: ./static/oceanbase.svg
 dependencies:
-  - name: ob-operator
-    tags:
-    - extension
-installationMode: HostOnly
+- name: ob-operator
+  tags:
+  - agent
+installationMode: Multicluster
 namespace: "oceanbase-system"
+externalDependencies:
+- name: cert-manager
+  type: extension
+  version: '>= 1.0.0-0'
+  required: true
+images:
+- quay.io/oceanbase/ob-operator:2.3.1
+- docker.io/oceanbase/kube-rbac-proxy:v0.13.1

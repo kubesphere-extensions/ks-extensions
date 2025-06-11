@@ -1,0 +1,14 @@
+global:
+  imageRegistry: ""
+
+ob-operator:
+  controller:
+    image:
+      registry: ""
+      repository: "oceanbase/ob-operator"
+      tag: "2.3.1"
+  authProxy:
+    image:
+      registry: ""
+      repository: "oceanbase/kube-rbac-proxy"
+      tag: "v0.13.1"
