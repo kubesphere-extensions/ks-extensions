@@ -1,0 +1,462 @@
+{{ if eq .Values.embed "iframe" }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oceanbase-dashboard-jsbundle-iframe
+data:
+  index.js: |-
+    System.register(["@kubed/components","react"], function(__WEBPACK_DYNAMIC_EXPORT__, __system_context__) {
+      var __WEBPACK_EXTERNAL_MODULE__761__ = {};
+      var __WEBPACK_EXTERNAL_MODULE__726__ = {};
+
+      return {
+        setters: [
+          function(module) {
+            __WEBPACK_EXTERNAL_MODULE__761__.Loading = module.Loading;
+          },
+          function(module) {
+            __WEBPACK_EXTERNAL_MODULE__726__["default"] = module["default"];
+            __WEBPACK_EXTERNAL_MODULE__726__.useRef = module.useRef;
+            __WEBPACK_EXTERNAL_MODULE__726__.useState = module.useState;
+          }
+        ],
+        execute: function() {
+          __WEBPACK_DYNAMIC_EXPORT__(
+    /******/ (function() { // webpackBootstrap
+    /******/ 	var __webpack_modules__ = ({
+
+    /***/ 422:
+    /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+    var map = {
+      "./base.json": 822
+    };
+
+
+    function webpackContext(req) {
+      var id = webpackContextResolve(req);
+      return __webpack_require__(id);
+    }
+    function webpackContextResolve(req) {
+      if(!__webpack_require__.o(map, req)) {
+        var e = new Error("Cannot find module '" + req + "'");
+        e.code = 'MODULE_NOT_FOUND';
+        throw e;
+      }
+      return map[req];
+    }
+    webpackContext.keys = function webpackContextKeys() {
+      return Object.keys(map);
+    };
+    webpackContext.resolve = webpackContextResolve;
+    module.exports = webpackContext;
+    webpackContext.id = 422;
+
+    /***/ }),
+
+    /***/ 89:
+    /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+    var map = {
+      "./base.json": 473
+    };
+
+
+    function webpackContext(req) {
+      var id = webpackContextResolve(req);
+      return __webpack_require__(id);
+    }
+    function webpackContextResolve(req) {
+      if(!__webpack_require__.o(map, req)) {
+        var e = new Error("Cannot find module '" + req + "'");
+        e.code = 'MODULE_NOT_FOUND';
+        throw e;
+      }
+      return map[req];
+    }
+    webpackContext.keys = function webpackContextKeys() {
+      return Object.keys(map);
+    };
+    webpackContext.resolve = webpackContextResolve;
+    module.exports = webpackContext;
+    webpackContext.id = 89;
+
+    /***/ }),
+
+    /***/ 725:
+    /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+    var resolveDirectory = (__webpack_require__(825)/* .resolveDirectory */ .y);
+    exports.w = function autoPublicPath(rootDirLevel) {
+      if (!rootDirLevel) {
+        rootDirLevel = 1;
+      }
+      if (true) {
+        if (false) {}
+        if (!__webpack_require__.y.meta || !__webpack_require__.y.meta.url) {
+          console.error("__system_context__", __webpack_require__.y);
+          throw Error("systemjs-webpack-interop was provided an unknown SystemJS context. Expected context.meta.url, but none was provided");
+        }
+        __webpack_require__.p = resolveDirectory(__webpack_require__.y.meta.url, rootDirLevel);
+      }
+    };
+
+    /***/ }),
+
+    /***/ 825:
+    /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+    var __webpack_unused_export__;
+    __webpack_unused_export__ = function setPublicPath(systemjsModuleName, rootDirectoryLevel) {
+      if (!rootDirectoryLevel) {
+        rootDirectoryLevel = 1;
+      }
+      if (typeof systemjsModuleName !== "string" || systemjsModuleName.trim().length === 0) {
+        throw Error("systemjs-webpack-interop: setPublicPath(systemjsModuleName) must be called with a non-empty string 'systemjsModuleName'");
+      }
+      if (typeof rootDirectoryLevel !== "number" || rootDirectoryLevel <= 0 || isNaN(rootDirectoryLevel) || !isInteger(rootDirectoryLevel)) {
+        throw Error("systemjs-webpack-interop: setPublicPath(systemjsModuleName, rootDirectoryLevel) must be called with a positive integer 'rootDirectoryLevel'");
+      }
+      var moduleUrl;
+      try {
+        moduleUrl = window.System.resolve(systemjsModuleName);
+        if (!moduleUrl) {
+          throw Error();
+        }
+      } catch (err) {
+        throw Error("systemjs-webpack-interop: There is no such module '" + systemjsModuleName + "' in the SystemJS registry. Did you misspell the name of your module?");
+      }
+      __webpack_require__.p = resolveDirectory(moduleUrl, rootDirectoryLevel);
+    };
+    function resolveDirectory(urlString, rootDirectoryLevel) {
+      // Our friend IE11 doesn't support new URL()
+      // https://github.com/single-spa/single-spa/issues/612
+      // https://gist.github.com/jlong/2428561
+
+      var a = document.createElement("a");
+      a.href = urlString;
+      var pathname = a.pathname[0] === "/" ? a.pathname : "/" + a.pathname;
+      var numDirsProcessed = 0,
+        index = pathname.length;
+      while (numDirsProcessed !== rootDirectoryLevel && index >= 0) {
+        var char = pathname[--index];
+        if (char === "/") {
+          numDirsProcessed++;
+        }
+      }
+      if (numDirsProcessed !== rootDirectoryLevel) {
+        throw Error("systemjs-webpack-interop: rootDirectoryLevel (" + rootDirectoryLevel + ") is greater than the number of directories (" + numDirsProcessed + ") in the URL path " + urlString);
+      }
+      var finalPath = pathname.slice(0, index + 1);
+      return a.protocol + "//" + a.host + finalPath;
+    }
+    exports.y = resolveDirectory;
+
+    // borrowed from https://github.com/parshap/js-is-integer/blob/master/index.js
+    var isInteger = Number.isInteger || function isInteger(val) {
+      return typeof val === "number" && isFinite(val) && Math.floor(val) === val;
+    };
+
+    /***/ }),
+
+    /***/ 761:
+    /***/ (function(module) {
+
+    "use strict";
+    module.exports = __WEBPACK_EXTERNAL_MODULE__761__;
+
+    /***/ }),
+
+    /***/ 726:
+    /***/ (function(module) {
+
+    "use strict";
+    module.exports = __WEBPACK_EXTERNAL_MODULE__726__;
+
+    /***/ }),
+
+    /***/ 822:
+    /***/ (function(module) {
+
+    "use strict";
+    module.exports = {"name":"Name"};
+
+    /***/ }),
+
+    /***/ 473:
+    /***/ (function(module) {
+
+    "use strict";
+    module.exports = {"name":"名称"};
+
+    /***/ })
+
+    /******/ 	});
+    /************************************************************************/
+    /******/ 	// The module cache
+    /******/ 	var __webpack_module_cache__ = {};
+    /******/ 	
+    /******/ 	// The require function
+    /******/ 	function __webpack_require__(moduleId) {
+    /******/ 		// Check if module is in cache
+    /******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+    /******/ 		if (cachedModule !== undefined) {
+    /******/ 			return cachedModule.exports;
+    /******/ 		}
+    /******/ 		// Create a new module (and put it into the cache)
+    /******/ 		var module = __webpack_module_cache__[moduleId] = {
+    /******/ 			// no module.id needed
+    /******/ 			// no module.loaded needed
+    /******/ 			exports: {}
+    /******/ 		};
+    /******/ 	
+    /******/ 		// Execute the module function
+    /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+    /******/ 	
+    /******/ 		// Return the exports of the module
+    /******/ 		return module.exports;
+    /******/ 	}
+    /******/ 	
+    /************************************************************************/
+    /******/ 	/* webpack/runtime/__system_context__ */
+    /******/ 	!function() {
+    /******/ 		__webpack_require__.y = __system_context__;
+    /******/ 	}();
+    /******/ 	
+    /******/ 	/* webpack/runtime/define property getters */
+    /******/ 	!function() {
+    /******/ 		// define getter functions for harmony exports
+    /******/ 		__webpack_require__.d = function(exports, definition) {
+    /******/ 			for(var key in definition) {
+    /******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+    /******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+    /******/ 				}
+    /******/ 			}
+    /******/ 		};
+    /******/ 	}();
+    /******/ 	
+    /******/ 	/* webpack/runtime/global */
+    /******/ 	!function() {
+    /******/ 		__webpack_require__.g = (function() {
+    /******/ 			if (typeof globalThis === 'object') return globalThis;
+    /******/ 			try {
+    /******/ 				return this || new Function('return this')();
+    /******/ 			} catch (e) {
+    /******/ 				if (typeof window === 'object') return window;
+    /******/ 			}
+    /******/ 		})();
+    /******/ 	}();
+    /******/ 	
+    /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+    /******/ 	!function() {
+    /******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+    /******/ 	}();
+    /******/ 	
+    /******/ 	/* webpack/runtime/make namespace object */
+    /******/ 	!function() {
+    /******/ 		// define __esModule on exports
+    /******/ 		__webpack_require__.r = function(exports) {
+    /******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+    /******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+    /******/ 			}
+    /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+    /******/ 		};
+    /******/ 	}();
+    /******/ 	
+    /******/ 	/* webpack/runtime/publicPath */
+    /******/ 	!function() {
+    /******/ 		var scriptUrl;
+    /******/ 		if (__webpack_require__.g.importScripts) scriptUrl = __webpack_require__.g.location + "";
+    /******/ 		var document = __webpack_require__.g.document;
+    /******/ 		if (!scriptUrl && document) {
+    /******/ 			if (document.currentScript && document.currentScript.tagName.toUpperCase() === 'SCRIPT')
+    /******/ 				scriptUrl = document.currentScript.src;
+    /******/ 			if (!scriptUrl) {
+    /******/ 				var scripts = document.getElementsByTagName("script");
+    /******/ 				if(scripts.length) {
+    /******/ 					var i = scripts.length - 1;
+    /******/ 					while (i > -1 && (!scriptUrl || !/^http(s?):/.test(scriptUrl))) scriptUrl = scripts[i--].src;
+    /******/ 				}
+    /******/ 			}
+    /******/ 		}
+    /******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
+    /******/ 		// or pass an empty string ("") and set the __webpack_public_path__ variable from your code to use your own logic.
+    /******/ 		if (!scriptUrl) throw new Error("Automatic publicPath is not supported in this browser");
+    /******/ 		scriptUrl = scriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
+    /******/ 		__webpack_require__.p = scriptUrl;
+    /******/ 	}();
+    /******/ 	
+    /************************************************************************/
+    var __webpack_exports__ = {};
+    // This entry need to be wrapped in an IIFE because it need to be isolated against other entry modules.
+    !function() {
+    var autoPublicPath = (__webpack_require__(725)/* .autoPublicPath */ .w);
+    autoPublicPath(1);
+    }();
+    // This entry need to be wrapped in an IIFE because it need to be in strict mode.
+    !function() {
+    "use strict";
+    // ESM COMPAT FLAG
+    __webpack_require__.r(__webpack_exports__);
+
+    // EXPORTS
+    __webpack_require__.d(__webpack_exports__, {
+      "default": function() { return /* binding */ src; }
+    });
+
+    // EXTERNAL MODULE: external "react"
+    var external_react_ = __webpack_require__(726);
+    // EXTERNAL MODULE: external "@kubed/components"
+    var components_ = __webpack_require__(761);
+    ;// CONCATENATED MODULE: ./extensions/oceanbase-dashboard/src/utils/constants.ts
+    const serviceURL = 'http://oceanbase-dashboard.{{ .Values.global.extension.ingress.domainSuffix }}:{{ .Values.global.extension.ingress.httpPort }}';
+
+    ;// CONCATENATED MODULE: ./extensions/oceanbase-dashboard/src/App.tsx
+
+    // import styled from 'styled-components';
+
+
+    function App() {
+        const iframeRef = (0,external_react_.useRef)(null);
+        const [loading, setLoading] = (0,external_react_.useState)(true);
+        const onIframeLoad = () => {
+            setLoading(false);
+        };
+        return (external_react_["default"].createElement(external_react_["default"].Fragment, null,
+            loading && external_react_["default"].createElement(components_.Loading, { className: "page-loading" }),
+            external_react_["default"].createElement("iframe", { ref: iframeRef, src: serviceURL, width: "100%", height: "100%", style: {
+                    border: 'none',
+                    height: 'calc(100vh - 68px)',
+                    display: loading ? 'none' : 'block',
+                }, onLoad: onIframeLoad })));
+    }
+
+    ;// CONCATENATED MODULE: ./extensions/oceanbase-dashboard/src/routes/index.tsx
+
+
+    /* harmony default export */ var routes = ([
+        {
+            path: '/oceanbase-dashboard',
+            element: external_react_["default"].createElement(App, null),
+        },
+    ]);
+
+    ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
+    function _typeof(o) {
+      "@babel/helpers - typeof";
+
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+        return typeof o;
+      } : function (o) {
+        return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+      }, _typeof(o);
+    }
+
+    ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toPrimitive.js
+
+    function toPrimitive(t, r) {
+      if ("object" != _typeof(t) || !t) return t;
+      var e = t[Symbol.toPrimitive];
+      if (void 0 !== e) {
+        var i = e.call(t, r || "default");
+        if ("object" != _typeof(i)) return i;
+        throw new TypeError("@@toPrimitive must return a primitive value.");
+      }
+      return ("string" === r ? String : Number)(t);
+    }
+
+    ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toPropertyKey.js
+
+
+    function toPropertyKey(t) {
+      var i = toPrimitive(t, "string");
+      return "symbol" == _typeof(i) ? i : i + "";
+    }
+
+    ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
+
+    function _defineProperty(e, r, t) {
+      return (r = toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
+        value: t,
+        enumerable: !0,
+        configurable: !0,
+        writable: !0
+      }) : e[r] = t, e;
+    }
+
+    ;// CONCATENATED MODULE: ./extensions/oceanbase-dashboard/src/locales/zh/index.js
+
+    function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+    function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+    // Use require.context to require reducers automatically
+    // Ref: https://webpack.github.io/docs/context.html
+    var context = __webpack_require__(89);
+    var keys = context.keys().filter(function (item) {
+      return item !== './index.ts';
+    });
+
+    // let models: Record<string, string> = {};
+    var models = {};
+    for (var i = 0; i < keys.length; i += 1) {
+      if (keys[i].startsWith('.')) {
+        models = _objectSpread(_objectSpread({}, models), context(keys[i]));
+      }
+    }
+    /* harmony default export */ var zh = (models);
+    ;// CONCATENATED MODULE: ./extensions/oceanbase-dashboard/src/locales/en/index.js
+
+    function en_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+    function en_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? en_ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : en_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+    // Use require.context to require reducers automatically
+    // Ref: https://webpack.github.io/docs/context.html
+    var en_context = __webpack_require__(422);
+    var en_keys = en_context.keys().filter(function (item) {
+      return item !== './index.ts';
+    });
+
+    // let models: Record<string, string> = {};
+    var en_models = {};
+    for (var en_i = 0; en_i < en_keys.length; en_i += 1) {
+      if (en_keys[en_i].startsWith('.')) {
+        en_models = en_objectSpread(en_objectSpread({}, en_models), en_context(en_keys[en_i]));
+      }
+    }
+    /* harmony default export */ var en = (en_models);
+    ;// CONCATENATED MODULE: ./extensions/oceanbase-dashboard/src/locales/index.js
+
+
+    /* harmony default export */ var locales = ({
+      zh: zh,
+      en: en
+    });
+    ;// CONCATENATED MODULE: ./extensions/oceanbase-dashboard/src/index.ts
+
+
+    const menus = [
+        {
+          parent: "{{ .Values.parent }}",
+          name: "oceanbase-dashboard",
+          title: "{{ .Values.title  }}",
+          icon: "cluster",
+          order: 0,
+          desc: "{{ .Values.description }}",
+          skipAuth: !0
+        },
+    ];
+    const extensionConfig = {
+        routes: routes,
+        menus,
+        locales: locales,
+    };
+    /* harmony default export */ var src = (extensionConfig);
+
+    }();
+    /******/ 	return __webpack_exports__;
+    /******/ })()
+
+          );
+        }
+      };
+    });
+{{ end }}
