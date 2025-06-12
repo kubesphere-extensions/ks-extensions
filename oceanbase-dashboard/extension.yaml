@@ -9,17 +9,17 @@ description:
   en: A dashboard for managing OceanBase resources in Kubernetes
 category: database
 keywords:
-  - database
-  - oceanbase
+- database
+- oceanbase
 home: https://open.oceanbase.com
 sources:
-  - https://github.com/oceanbase/ob-operator#oceanbase-dashboard
+- https://github.com/oceanbase/ob-operator#oceanbase-dashboard
 kubeVersion: ">=1.22.15-0"
 ksVersion: ">=4.0.0-0"
 maintainers:
-  - name: "Chris Sun"
-    email: "hongxin.sun.vip@gmail.com"
-    url: "https://github.com/chris-sun-star"
+- name: "Chris Sun"
+  email: "hongxin.sun.vip@gmail.com"
+  url: "https://github.com/chris-sun-star"
 provider:
   zh:
     name: "OceanBase"
@@ -29,8 +29,11 @@ provider:
     url: "https://en.oceanbase.com"
 icon: ./static/oceanbase.svg
 dependencies:
-  - name: oceanbase-dashboard
-    tags:
-    - extension
+- name: oceanbase-dashboard
+  tags:
+  - extension
+- name: entrypoint
+  tags:
+  - extension
 installationMode: HostOnly
 namespace: "oceanbase-system"
