@@ -1,0 +1,13 @@
+apiVersion: extensions.kubesphere.io/v1alpha1
+kind: JSBundle
+metadata:
+  name: oceanbase-dashboard-jsbundle
+spec:
+  rawFrom:
+    configMapKeyRef:
+      key: index.js
+      name: oceanbase-dashboard-jsbundle-{{ .Values.embed }}
+      namespace: {{ .Release.Namespace }}
+status:
+  link: /dist/oceanbase-dashboard/index.js
+  state: Available
