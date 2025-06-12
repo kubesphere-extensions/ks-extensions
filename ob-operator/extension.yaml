@@ -32,7 +32,7 @@ dependencies:
 - name: ob-operator
   tags:
   - agent
-installationMode: Multicluster
+installationMode: HostOnly
 namespace: "oceanbase-system"
 externalDependencies:
 - name: cert-manager
