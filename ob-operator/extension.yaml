@@ -1,6 +1,6 @@
 apiVersion: kubesphere.io/v1alpha1
 name: ob-operator
-version: 2.3.1
+version: 2.3.2
 displayName:
   zh: ob-operator
   en: ob-operator
@@ -31,7 +31,7 @@ icon: ./static/oceanbase.svg
 dependencies:
 - name: ob-operator
   tags:
-  - agent
+  - extension
 installationMode: HostOnly
 namespace: "oceanbase-system"
 externalDependencies:
@@ -40,5 +40,5 @@ externalDependencies:
   version: '>= 1.0.0-0'
   required: true
 images:
-- quay.io/oceanbase/ob-operator:2.3.1
+- quay.io/oceanbase/ob-operator:2.3.2
 - docker.io/oceanbase/kube-rbac-proxy:v0.13.1
