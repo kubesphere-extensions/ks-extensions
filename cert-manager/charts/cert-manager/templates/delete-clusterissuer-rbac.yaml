@@ -1,0 +1,34 @@
+{{- if or (.Values.defaultIssuer.selfSigned.enabled) (.Values.defaultIssuer.CA.enabled) }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}:delete-default-issuer
+rules:
+  - apiGroups:
+      - 'cert-manager.io'
+    resources:
+      - 'clusterissuers'
+    verbs:
+      - 'get'
+      - 'delete'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Name }}:delete-default-issuer
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Release.Name }}-sa
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ .Release.Name }}:delete-default-issuer
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Release.Name }}-sa
+  namespace: {{ .Release.Namespace }}
+{{- end }}
