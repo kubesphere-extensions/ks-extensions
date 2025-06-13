@@ -1,0 +1,23 @@
+{{- if or (.Values.defaultIssuer.selfSigned.enabled) (.Values.defaultIssuer.CA.enabled) }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: delete-default-issuer-job
+  namespace: {{ include "cert-manager.namespace" . }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-weight": "5"
+spec:
+  template:
+    spec:
+      containers:
+        - name: kubectl
+          image: {{ default (default "docker.io" (.Values.global).imageRegistry) .Values.defaultIssuer.deleteJob.image.registry }}/{{ .Values.defaultIssuer.deleteJob.image.repository }}:{{ .Values.defaultIssuer.deleteJob.image.tag }}
+          command:
+            - /bin/sh
+            - '-c'
+            - kubectl delete clusterissuers.cert-manager.io default-issuer --ignore-not-found=true
+      serviceAccountName: {{ .Release.Name }}-sa
+      restartPolicy: Never
+{{- end }}
