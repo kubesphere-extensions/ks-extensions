@@ -1,0 +1,140 @@
+global:
+  imageRegistry: docker.io
+  ## Optional array of imagePullSecrets containing private registry credentials
+  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  imagePullSecrets: [ ]
+  tag: ""
+  nodeSelector: {}  
+  extension:
+    enabled: true
+    ingress:
+      ingressClassName: ""
+      domainSuffix: ""
+      # httpPort: 80
+      # httpsPort: 443
+  model: 
+    # the full path in models directory
+    # in ollama
+    # id: "registry.ollama.ai/library/deepseek-r1:1.5b"
+    # in vllm
+    id: "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
+    # the serve name to access.
+    # in ollama
+    # name: "deepseek-r1:1.5b"
+    # in vllm
+    name: "DeepSeek-R1-Distill-Qwen-1.5B"
+
+server:
+  replicas: 1
+  ray:
+    image:
+      # empty registry means using the global images.registry
+      registry: ""
+      repository: rayproject/ray
+      # empty tag means using the global images.tag
+      tag: "latest-cpu"
+      digest: ""
+      pullPolicy: IfNotPresent
+      ## Optionally, specify an array of imagePullSecrets.
+      ## Secrets must be manually created in the namespace.
+      ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+      ## e.g.:
+      ## pullSecrets:
+      ##   - myRegistryKeySecretName
+      ##
+      pullSecrets: [ ]
+    resources:
+      requests:
+        cpu: 1
+        memory: 2Gi
+      limits:
+        cpu: 2
+        memory: 4Gi
+  llm:
+    image:
+      # empty registry means using the global images.registry
+      registry: ""
+      repository: kubesphere/ipex-llm-serving-cpu
+      # empty tag means using the global images.tag
+      tag: "v1"
+      digest: ""
+      pullPolicy: IfNotPresent
+      ## Optionally, specify an array of imagePullSecrets.
+      ## Secrets must be manually created in the namespace.
+      ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+      ## e.g.:
+      ## pullSecrets:
+      ##   - myRegistryKeySecretName
+      ##
+      pullSecrets: [ ]
+    resources:
+      requests:
+        cpu: 4
+        memory: 8Gi
+      limits:
+        cpu: 8
+        memory: 16Gi
+    env:
+      - name: RAY_ADDRESS
+        value: ipex-llm-0.ipex-llm-service
+      - name: VLLM_USE_RAY_FOR_DISTRIBUTED
+        value: "1"
+  nodeSelector: {}
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - topologyKey: "kubernetes.io/hostname"
+  autoscaling:
+    # -- Enable Horizontal Pod Autoscaler ([HPA])
+    enabled: false
+    # -- Minimum number of replicas
+    minReplicas: 1
+    # -- Maximum number of replicas
+    maxReplicas: 5
+    # -- Average CPU utilization percentage
+    targetCPUUtilizationPercentage: 50
+    # -- Average memory utilization percentage
+    targetMemoryUtilizationPercentage: 50
+chat:
+  replicas: 1
+  image:
+    # empty registry means using the global images.registry
+    registry: ""
+    repository: yidadaa/chatgpt-next-web
+    # empty tag means using the global images.tag
+    tag: "v2.16.0"
+    digest: ""
+    pullPolicy: IfNotPresent
+    ## Optionally, specify an array of imagePullSecrets.
+    ## Secrets must be manually created in the namespace.
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ## e.g.:
+    ## pullSecrets:
+    ##   - myRegistryKeySecretName
+    ##
+    pullSecrets: [ ]
+  resources:
+    requests:
+      cpu: 1
+      memory: 1Gi
+    limits:
+      cpu: 2
+      memory: 4Gi
+  nodeSelector: {}
+  autoscaling:
+    # -- Enable Horizontal Pod Autoscaler ([HPA])
+    enabled: false
+    # -- Minimum number of replicas
+    minReplicas: 1
+    # -- Maximum number of replicas
+    maxReplicas: 5
+    # -- Average CPU utilization percentage
+    targetCPUUtilizationPercentage: 50
+    # -- Average memory utilization percentage
+    targetMemoryUtilizationPercentage: 50
+# to store model
+persistence:
+  storageClass: ""
+  accessModes:
+    - ReadWriteOnce
+  size: 50Gi
