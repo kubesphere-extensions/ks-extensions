@@ -1,0 +1,47 @@
+apiVersion: kubesphere.io/v1alpha1
+name: cert-manager
+version: 1.0.0
+displayName:
+  zh: cert-manager
+  en: cert-manager
+description:
+  zh: cert-manager 可以为您集群中的 workload 自动创建和更新证书
+  en: cert-manager creates TLS certificates for workloads in your Kubernetes and renews the certificates before they expire.
+category: security
+keywords:
+- security
+home: https://cert-manager.io/
+sources:
+- https://github.com/kubesphere
+kubeVersion: ">=1.22.0-0"
+ksVersion: ">=4.0.0-0"
+maintainers:
+- name: KubeSphere
+  email: kubesphere@yunify.com
+provider:
+  zh:
+    name: 北京青云科技股份有限公司
+    email: kubesphere@yunify.com
+    url: https://kubesphere.com.cn/
+  en:
+    name: QingCloud Technologies
+    email: kubesphere@yunify.com
+    url: https://kubesphere.co/
+icon: ./static/favicon.svg
+#screenshots:
+#  - ./static/screenshots/screenshot.png
+dependencies:
+- name: cert-manager
+  tags:
+  - agent
+# installationMode describes how to install subcharts, it can be HostOnly or Multicluster.
+# In Multicluster mode, the subchart with tag `extension` will only be deployed to the host cluster,
+# and the subchart with tag `agent` will be deployed to all selected clusters.
+installationMode: Multicluster
+images:
+- quay.io/jetstack/cert-manager-controller:v1.15.1
+- quay.io/jetstack/cert-manager-cainjector:v1.15.1
+- quay.io/jetstack/cert-manager-webhook:v1.15.1
+- quay.io/jetstack/cert-manager-startupapicheck:v1.15.1
+- quay.io/jetstack/cert-manager-acmesolver:v1.15.1
+- docker.io/kubesphere/kubectl:v1.33.1

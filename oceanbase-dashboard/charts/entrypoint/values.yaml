@@ -1,0 +1,31 @@
+global:
+  imageRegistry: "docker.io"
+  imagePullSecrets: []
+  extension:
+    ingress:
+      # Specifies the ingressClassName of the external Ingress controller to select the corresponding Ingress implementation
+      ingressClassName: ""
+      # The domain suffix used when creating Ingress routes for extensions.
+      # This should match the access method of the external Ingress and could be:
+      # 1. A load balancer hostname (e.g., xx.com),
+      # 2. A dynamically resolved IP (e.g., {node_ip}.nip.io),
+      # 3. Or an internal DNS name (e.g., ks.local).
+      domainSuffix: ""
+
+      # The port used by the Ingress controller to listen for HTTPS traffic, default is 443
+      # httpsPort: 443
+
+      # The port used by the Ingress controller to listen for HTTP traffic, default is 80
+      httpPort: 80
+
+# The port of the SVC configured as the dashboard
+servicePort: 80
+
+# Mount location e.g. topbar,global,toolbox,access,cluster,workspace,project,platformSettings
+parent: global
+# The hyperlink name of the dashboard
+title: oceanbase-dashboard
+# Extension package description
+description: "oceanbase-dashboard"
+# Open with iframe for embedding and link for new tab opening e.g. iframe,link
+embed: iframe

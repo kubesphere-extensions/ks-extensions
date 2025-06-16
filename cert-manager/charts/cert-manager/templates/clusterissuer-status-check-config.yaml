@@ -1,0 +1,9 @@
+{{- if or (.Values.defaultIssuer.selfSigned.enabled) (.Values.defaultIssuer.CA.enabled) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-check-status
+  namespace: {{ include "cert-manager.namespace" . }}
+data:
+  default-issuer-check.sh: | {{ .Files.Get "files/default-issuer-check.sh" | nindent 4 }}
+{{- end }}

@@ -1,0 +1,300 @@
+{{ if eq .Values.embed "link" }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oceanbase-dashboard-jsbundle-link
+data:
+  index.js: |-
+    System.register(["@kubed/components", "react", "react-router-dom"], (function (e, t) {
+        var r = {},
+            n = {},
+            o = {};
+        return {
+            setters: [function (e) {
+                r.Loading = e.Loading
+            }, function (e) {
+                n.default = e.default, n.useEffect = e.useEffect
+            }, function (e) {
+                o.useNavigate = e.useNavigate
+            }],
+            execute: function () {
+                e(function () {
+                    var e = {
+                            781: function (e, t, r) {
+                                var n = {
+                                    "./base.json": 717
+                                };
+
+                                function o(e) {
+                                    var t = i(e);
+                                    return r(t)
+                                }
+
+                                function i(e) {
+                                    if (!r.o(n, e)) {
+                                        var t = new Error("Cannot find module '" + e + "'");
+                                        throw t.code = "MODULE_NOT_FOUND", t
+                                    }
+                                    return n[e]
+                                }
+                                o.keys = function () {
+                                    return Object.keys(n)
+                                }, o.resolve = i, e.exports = o, o.id = 781
+                            },
+                            998: function (e, t, r) {
+                                var n = {
+                                    "./base.json": 734
+                                };
+
+                                function o(e) {
+                                    var t = i(e);
+                                    return r(t)
+                                }
+
+                                function i(e) {
+                                    if (!r.o(n, e)) {
+                                        var t = new Error("Cannot find module '" + e + "'");
+                                        throw t.code = "MODULE_NOT_FOUND", t
+                                    }
+                                    return n[e]
+                                }
+                                o.keys = function () {
+                                    return Object.keys(n)
+                                }, o.resolve = i, e.exports = o, o.id = 998
+                            },
+                            725: function (e, t, r) {
+                                var n = r(825).y;
+                                t.w = function (e) {
+                                    if (e || (e = 1), !r.y.meta || !r.y.meta.url) throw console
+                                        .error("__system_context__", r.y), Error(
+                                        "systemjs-webpack-interop was provided an unknown SystemJS context. Expected context.meta.url, but none was provided"
+                                    );
+                                    r.p = n(r.y.meta.url, e)
+                                }
+                            },
+                            825: function (e, t, r) {
+                                function n(e, t) {
+                                    var r = document.createElement("a");
+                                    r.href = e;
+                                    for (var n = "/" === r.pathname[0] ? r.pathname : "/" + r.pathname,
+                                             o = 0, i = n.length; o !== t && i >= 0;) {
+                                        "/" === n[--i] && o++
+                                    }
+                                    if (o !== t) throw Error(
+                                        "systemjs-webpack-interop: rootDirectoryLevel (" +
+                                        t +
+                                        ") is greater than the number of directories (" +
+                                        o + ") in the URL path " + e);
+                                    var c = n.slice(0, i + 1);
+                                    return r.protocol + "//" + r.host + c
+                                }
+                                t.y = n;
+                                var o = Number.isInteger || function (e) {
+                                    return "number" == typeof e && isFinite(e) && Math.floor(
+                                        e) === e
+                                }
+                            },
+                            761: function (e) {
+                                "use strict";
+                                e.exports = r
+                            },
+                            726: function (e) {
+                                "use strict";
+                                e.exports = n
+                            },
+                            965: function (e) {
+                                "use strict";
+                                e.exports = o
+                            },
+                            717: function (e) {
+                                "use strict";
+                                e.exports = {
+                                    name: "Name"
+                                }
+                            },
+                            734: function (e) {
+                                "use strict";
+                                e.exports = {
+                                    name: "名称"
+                                }
+                            }
+                        },
+                        i = {};
+
+                    function c(t) {
+                        var r = i[t];
+                        if (void 0 !== r) return r.exports;
+                        var n = i[t] = {
+                            exports: {}
+                        };
+                        return e[t](n, n.exports, c), n.exports
+                    }
+                    c.y = t, c.g = function () {
+                        if ("object" == typeof globalThis) return globalThis;
+                        try {
+                            return this || new Function("return this")()
+                        } catch (e) {
+                            if ("object" == typeof window) return window
+                        }
+                    }(), c.o = function (e, t) {
+                        return Object.prototype.hasOwnProperty.call(e, t)
+                    },
+                        function () {
+                            var e;
+                            c.g.importScripts && (e = c.g.location + "");
+                            var t = c.g.document;
+                            if (!e && t && (t.currentScript && (e = t.currentScript.src), !e)) {
+                                var r = t.getElementsByTagName("script");
+                                if (r.length)
+                                    for (var n = r.length - 1; n > -1 && (!e || !/^http(s?):/.test(
+                                        e));) e = r[n--].src
+                            }
+                            if (!e) throw new Error(
+                                "Automatic publicPath is not supported in this browser");
+                            e = e.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/"),
+                                c.p = e
+                        }();
+                    return (0, c(725).w)(1),
+                        function () {
+                            "use strict";
+                            var e = c(726),
+                                t = c(965),
+                                r = c(761);
+
+                            function n() {
+                                var n = (0, t.useNavigate)();
+                                return (0, e.useEffect)((function () {
+                                    window.open("http://oceanbase-dashboard.{{ .Values.global.extension.ingress.domainSuffix }}:{{ .Values.global.extension.ingress.httpPort }}"), n(
+                                        -1, {
+                                            replace: !0
+                                        })
+                                }), []), e.default.createElement(r.Loading, {
+                                    className: "page-loading"
+                                })
+                            }
+                            var o = [{
+                                path: "/oceanbase-dashboard",
+                                element: e.default.createElement(n, null)
+                            }];
+
+                            function i(e) {
+                                return i = "function" == typeof Symbol && "symbol" == typeof Symbol
+                                    .iterator ? function (e) {
+                                    return typeof e
+                                } : function (e) {
+                                    return e && "function" == typeof Symbol && e.constructor ===
+                                    Symbol && e !== Symbol.prototype ? "symbol" : typeof e
+                                }, i(e)
+                            }
+
+                            function u(e) {
+                                var t = function (e, t) {
+                                    if ("object" != i(e) || !e) return e;
+                                    var r = e[Symbol.toPrimitive];
+                                    if (void 0 !== r) {
+                                        var n = r.call(e, t || "default");
+                                        if ("object" != i(n)) return n;
+                                        throw new TypeError(
+                                            "@@toPrimitive must return a primitive value.")
+                                    }
+                                    return ("string" === t ? String : Number)(e)
+                                }(e, "string");
+                                return "symbol" == i(t) ? t : t + ""
+                            }
+
+                            function s(e, t, r) {
+                                return (t = u(t)) in e ? Object.defineProperty(e, t, {
+                                    value: r,
+                                    enumerable: !0,
+                                    configurable: !0,
+                                    writable: !0
+                                }) : e[t] = r, e
+                            }
+
+                            function a(e, t) {
+                                var r = Object.keys(e);
+                                if (Object.getOwnPropertySymbols) {
+                                    var n = Object.getOwnPropertySymbols(e);
+                                    t && (n = n.filter((function (t) {
+                                        return Object.getOwnPropertyDescriptor(e, t)
+                                            .enumerable
+                                    }))), r.push.apply(r, n)
+                                }
+                                return r
+                            }
+
+                            function f(e) {
+                                for (var t = 1; t < arguments.length; t++) {
+                                    var r = null != arguments[t] ? arguments[t] : {};
+                                    t % 2 ? a(Object(r), !0).forEach((function (t) {
+                                        s(e, t, r[t])
+                                    })) : Object.getOwnPropertyDescriptors ? Object.defineProperties(
+                                        e, Object.getOwnPropertyDescriptors(r)) : a(Object(r)).forEach(
+                                        (function (t) {
+                                            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(
+                                                r, t))
+                                        }))
+                                }
+                                return e
+                            }
+                            for (var p = c(998), l = p.keys().filter((function (e) {
+                                return "./index.ts" !== e
+                            })), b = {}, y = 0; y < l.length; y += 1) l[y].startsWith(".") && (
+                                b = f(f({}, b), p(l[y])));
+                            var m = b;
+
+                            function v(e, t) {
+                                var r = Object.keys(e);
+                                if (Object.getOwnPropertySymbols) {
+                                    var n = Object.getOwnPropertySymbols(e);
+                                    t && (n = n.filter((function (t) {
+                                        return Object.getOwnPropertyDescriptor(e, t)
+                                            .enumerable
+                                    }))), r.push.apply(r, n)
+                                }
+                                return r
+                            }
+
+                            function d(e) {
+                                for (var t = 1; t < arguments.length; t++) {
+                                    var r = null != arguments[t] ? arguments[t] : {};
+                                    t % 2 ? v(Object(r), !0).forEach((function (t) {
+                                        s(e, t, r[t])
+                                    })) : Object.getOwnPropertyDescriptors ? Object.defineProperties(
+                                        e, Object.getOwnPropertyDescriptors(r)) : v(Object(r)).forEach(
+                                        (function (t) {
+                                            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(
+                                                r, t))
+                                        }))
+                                }
+                                return e
+                            }
+                            for (var g = c(781), h = g.keys().filter((function (e) {
+                                return "./index.ts" !== e
+                            })), O = {}, w = 0; w < h.length; w += 1) h[w].startsWith(".") && (
+                                O = d(d({}, O), g(h[w])));
+                            var j = {
+                                routes: o,
+                                menus: [{
+                                    parent: "{{ .Values.parent }}",
+                                    name: "oceanbase-dashboard",
+                                    title: "{{ .Values.title  }}",
+                                    icon: "cluster",
+                                    order: 0,
+                                    desc: "{{ .Values.description }}",
+                                    skipAuth: !0
+                                }],
+                                locales: {
+                                    zh: m,
+                                    en: O
+                                }
+                            };
+                            globals.context.registerExtension(j)
+                        }(), {}
+                }())
+            }
+        }
+        }));
+
+{{ end }}

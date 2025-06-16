@@ -1,0 +1,20 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oceanbase-dashboard-{{ .Release.Name }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: {{ .Values.global.extension.ingress.ingressClassName }}
+  rules:
+    - host: "oceanbase-dashboard.{{ .Values.global.extension.ingress.domainSuffix }}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: oceanbase-dashboard-{{ .Release.Name }}
+                port:
+                  number: {{ .Values.servicePort }}
