@@ -1,0 +1,42 @@
+apiVersion: kubesphere.io/v1alpha1
+name: higress
+version: 2.1.4
+displayName:
+  zh: Higress
+  en: Higress
+description:
+  zh: Higress 是一款云原生 API 网关，内核基于 Istio 和 Envoy，可以用 Go/Rust/JS 等编写 Wasm 插件，提供了数十个现成的通用插件，以及开箱即用的控制台。
+  en: Higress is a cloud-native API gateway based on Istio and Envoy, which can be extended with Wasm plugins written in Go/Rust/JS. It provides dozens of ready-to-use general-purpose plugins and an out-of-the-box console.
+category: networking
+keywords:
+  - gateway
+  - llm
+  - mcp
+home: https://higress.ai
+docs: https://higress.cn/docs
+sources:
+  - https://github.com/alibaba/higress
+kubeVersion: ">=1.19.0-0"
+ksVersion: ">=4.0.0-0"
+maintainers:
+  - name: "cr7258"
+    email: "chengzw258@163.com"
+    url: https://github.com/cr7258
+provider:
+  zh:
+    name: "Higress"
+    url: https://higress.ai
+  en:
+    name: "Higress"
+    url: https://higress.ai
+icon: ./static/higress.png
+dependencies:
+  - name: higress
+    tags:
+      - agent
+installationMode: Multicluster
+images:
+  - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/console:2.1.4
+  - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/higress:2.1.4
+  - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/pilot:2.1.4
+  - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/gateway:2.1.4
