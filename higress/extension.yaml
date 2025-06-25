@@ -33,8 +33,8 @@ icon: ./static/higress.png
 dependencies:
   - name: higress
     tags:
-      - extension
-installationMode: HostOnly
+      - agent
+installationMode: Multicluster
 images:
   - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/console:2.1.4
   - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/higress:2.1.4

@@ -8,6 +8,8 @@ Higress's AI gateway capabilities support all [mainstream model providers](https
 
 1. Go to the **KubeSphere Marketplace** page and find the **Higress** extension. Click the **Install** button. Select the latest version and click the **Next** button.
 2. On the **Extension Installation** tab, click and modify the **Extension Config** according to your needs. After configuring, click the **Start Installation** button to start the installation.
+3. After the installation is complete, click the **Next** button to go to the cluster selection page. Check the clusters you want to install and click the **Next** button to go to the **Differential Configuration** page.
+4. Update the **Differential Configuration** according to your needs. After updating, start the installation and wait for the installation to complete.
 
 > By default, the Higress Gateway is exposed via a Service of type `LoadBalancer`. If the Kubernetes cluster does not support the `LoadBalancer` type, you can change the `higress.higress-core.gateway.service.type` parameter to `NodePort` or `ClusterIP`.
 
