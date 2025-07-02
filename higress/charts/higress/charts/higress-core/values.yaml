@@ -1,5 +1,5 @@
+revision: ""
 global:
-  imageRegistry: "higress-registry.cn-hangzhou.cr.aliyuncs.com"
   enableH3: false
   enableIPv6: false
   enableProxyProtocol: false
@@ -53,10 +53,10 @@ global:
     # The values aren't mutable due to a current PodDisruptionBudget limitation
     # minAvailable: 1
 
-    # -- A minimal set of requested resources to applied to all deployments so that
-    # Horizontal Pod Autoscaler will be able to function (if set).
-    # Each component can overwrite these default values by adding its own resources
-    # block in the relevant section below and setting the desired resources values.
+  # -- A minimal set of requested resources to applied to all deployments so that
+  # Horizontal Pod Autoscaler will be able to function (if set).
+  # Each component can overwrite these default values by adding its own resources
+  # block in the relevant section below and setting the desired resources values.
   defaultResources:
     requests:
       cpu: 10m
@@ -65,9 +65,10 @@ global:
     #   cpu: 100m
     #   memory: 128Mi
 
-    # -- Default hub for Istio images.
-    # Releases are published to docker hub under 'istio' project.
-    # Dev builds from prow are on gcr.io
+  # -- Default hub for Istio images.
+  # Releases are published to docker hub under 'istio' project.
+  # Dev builds from prow are on gcr.io
+  imageRegistry: higress-registry.cn-hangzhou.cr.aliyuncs.com
 
   # -- Specify image pull policy if default behavior isn't desired.
   # Default behavior: latest images will be Always else IfNotPresent.
@@ -203,7 +204,7 @@ global:
     # -- Proxy stats name regexps matcher for inclusion
     proxyStatsMatcher:
       inclusionRegexps:
-      - ".*"
+        - ".*"
 
   proxy_init:
     # -- Base name for the proxy_init container, used to configure iptables.
@@ -355,20 +356,12 @@ global:
   # -- Use the Mesh Control Protocol (MCP) for configuring Istiod. Requires an MCP source.
   useMCP: false
 
-  # -- The name of the CA for workload certificates.
-  # For example, when caName=GkeWorkloadCertificate, GKE workload certificates
-  # will be used as the certificates for workloads.
-  # The default value is "" and when caName="", the CA will be configured by other
-  # mechanisms (e.g., environmental variable CA_PROVIDER).
-  caName: ""
-
-  # Observability (o11y) configurations
+  # -- Observability (o11y) configurations
   o11y:
     enabled: false
     promtail:
       image:
-        registry: ""
-        repository: higress/promtail
+        repository: higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/promtail
         tag: 2.9.4
       port: 3101
       resources:
@@ -376,516 +369,402 @@ global:
           cpu: 500m
           memory: 2Gi
       securityContext: {}
-    grafana:
-      replicas: 1
-      image:
-        registry: ""
-        repository: higress/grafana
-        tag: 9.3.6
-      port: 3000
-      storage: 1Gi
-      pvc:
-        storageClassName: ""
-      securityContext: {}
-    prometheus:
-      replicas: 1
-      image:
-        repository: higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/prometheus
-        tag: v2.40.7
-      port: 9090
-      storage: 1Gi
-      pvc:
-        storageClassName: ""
-      resources:
-        limits:
-          cpu: 500m
-          memory: 2Gi
-      securityContext: {}
-    loki:
-      replicas: 1
-      image:
-        registry: ""
-        repository: higress/loki
-        tag: 2.9.4
-      ports:
-        http: 3100
-        grpc: 9095
-      storage: 1Gi
-      pvc:
-        storageClassName: ""
-      securityContext: {}
-  pvc:
-    rwxSupported: true
 
-higress:
-  higress-core:
-    revision: ""
-    hub: higress-registry.cn-hangzhou.cr.aliyuncs.com/higress
-
-    clusterName: ""
-    # -- meshConfig defines runtime configuration of components, including Istiod and istio-agent behavior
-    # See https://istio.io/docs/reference/config/istio.mesh.v1alpha1/ for all available options
-    meshConfig:
-      enablePrometheusMerge: true
-      # Config for the default ProxyConfig.
-      # Initially using directly the proxy metadata - can also be activated using annotations
-      # on the pod. This is an unsupported low-level API, pending review and decisions on
-      # enabling the feature. Enabling the DNS listener is safe - and allows further testing
-      # and gradual adoption by setting capture only on specific workloads. It also allows
-      # VMs to use other DNS options, like dnsmasq or unbound.
-
-      # -- The namespace to treat as the administrative root namespace for Istio configuration.
-      # When processing a leaf namespace Istio will search for declarations in that namespace first
-      # and if none are found it will search in the root namespace. Any matching declaration found in the root namespace
-      # is processed as if it were declared in the leaf namespace.
-      rootNamespace:
-
-      # -- The trust domain corresponds to the trust root of a system
-      # Refer to https://github.com/spiffe/spiffe/blob/master/standards/SPIFFE-ID.md#21-trust-domain
-      trustDomain: "cluster.local"
-      # TODO: the intent is to eventually have this enabled by default when security is used.
-      # It is not clear if user should normally need to configure - the metadata is typically
-      # used as an escape and to control testing and rollout, but it is not intended as a long-term
-      # stable API.
-
-      # What we may configure in mesh config is the ".global" - and use of other suffixes.
-      # No hurry to do this in 1.6, we're trying to prove the code.
-
-    gateway:
-      name: "higress-gateway"
-      # -- Number of Higress Gateway pods
-      replicas: 2
-      image:
-        registry: ""
-        repository: higress/gateway
-        tag: ""
-
-      # -- Use a `DaemonSet` or `Deployment`
-      kind: Deployment
-
-      # -- The number of successive failed probes before indicating readiness failure.
-      readinessFailureThreshold: 30
-
-      # -- The number of successive successed probes before indicating readiness success.
-      readinessSuccessThreshold: 1
-
-      # -- The initial delay for readiness probes in seconds.
-      readinessInitialDelaySeconds: 1
-
-      # -- The period between readiness probes.
-      readinessPeriodSeconds: 2
-
-      # -- The readiness timeout seconds
-      readinessTimeoutSeconds: 3
-
-      # -- revision declares which revision this gateway is a part of
-      revision: ""
-
-      rbac:
-        # -- If enabled, roles will be created to enable accessing certificates from Gateways. This is not needed
-        # when using http://gateway-api.org/.
-        enabled: true
-
-      serviceAccount:
-        # -- If set, a service account will be created. Otherwise, the default is used
-        create: true
-        # -- Annotations to add to the service account
-        annotations: {}
-        # -- The name of the service account to use.
-        # If not set, the release name is used
-        name: ""
-
-      # -- Pod environment variables
-      env: {}
-      httpPort: 80
-      httpsPort: 443
-      hostNetwork: false
-
-      # -- Labels to apply to all resources
-      labels: {}
-
-      # -- Annotations to apply to all resources
-      annotations: {}
-
-      podAnnotations:
-        prometheus.io/port: "15020"
-        prometheus.io/scrape: "true"
-        prometheus.io/path: "/stats/prometheus"
-        sidecar.istio.io/inject: "false"
-
-      # -- Labels to apply to the pod
-      podLabels: {}
-
-      # -- Define the security context for the pod.
-      # If unset, this will be automatically set to the minimum privileges required to bind to port 80 and 443.
-      # On Kubernetes 1.22+, this only requires the `net.ipv4.ip_unprivileged_port_start` sysctl.
-      securityContext: ~
-      containerSecurityContext: ~
-      unprivilegedPortSupported: ~
-
-      service:
-        # -- Type of service. Set to "None" to disable the service entirely
-        type: LoadBalancer
-        ports:
-        - name: http2
-          port: 80
-          protocol: TCP
-          targetPort: 80
-        - name: https
-          port: 443
-          protocol: TCP
-          targetPort: 443
-        annotations: {}
-        loadBalancerIP: ""
-        loadBalancerClass: ""
-        loadBalancerSourceRanges: []
-        externalTrafficPolicy: ""
-
-      rollingMaxSurge: 100%
-      # -- If global.local is true, the default value is 100%, otherwise it is 25%
-      rollingMaxUnavailable: 25%
-
-      resources:
-        requests:
-          cpu: 2000m
-          memory: 2048Mi
-        limits:
-          cpu: 2000m
-          memory: 2048Mi
-
-      autoscaling:
-        enabled: false
-        minReplicas: 1
-        maxReplicas: 5
-        targetCPUUtilizationPercentage: 80
-
-      nodeSelector: {}
-
-      tolerations: []
-
-      affinity: {}
-
-      # -- If specified, the gateway will act as a network gateway for the given network.
-      networkGateway: ""
-
-      metrics:
-        # -- If true, create PodMonitor or VMPodScrape for gateway
-        enabled: false
-        # -- provider group name for CustomResourceDefinition, can be monitoring.coreos.com or operator.victoriametrics.com
-        provider: monitoring.coreos.com
-        interval: ""
-        scrapeTimeout: ""
-        honorLabels: false
-        # -- for monitoring.coreos.com/v1.PodMonitor
-        metricRelabelings: []
-        relabelings: []
-        # -- for operator.victoriametrics.com/v1beta1.VMPodScrape
-        metricRelabelConfigs: []
-        relabelConfigs: []
-        # -- some more raw podMetricsEndpoints spec
-        rawSpec: {}
-
-    controller:
-      name: "higress-controller"
-      # -- Number of Higress Controller pods
-      replicas: 1
-      image:
-        registry: ""
-        repository: higress/higress
-        tag: ""
-
-      env: {}
-
-      labels: {}
-
-      probe:
-        httpGet:
-          path: /ready
-          port: 8888
-        initialDelaySeconds: 1
-        periodSeconds: 3
-        timeoutSeconds: 5
-
-      imagePullSecrets: []
-
-      rbac:
-        create: true
-
-      serviceAccount:
-        # -- Specifies whether a service account should be created
-        create: true
-        # -- Annotations to add to the service account
-        annotations: {}
-        # -- The name of the service account to use.
-        # -- If not set and create is true, a name is generated using the fullname template
-        name: ""
-
-      podAnnotations: {}
-
-      # -- Labels to apply to the pod
-      podLabels: {}
-
-      podSecurityContext: {}
-      # fsGroup: 2000
-
-      ports:
-      - name: http
-        protocol: TCP
-        port: 8888
-        targetPort: 8888
-      - name: http-solver
-        protocol: TCP
-        port: 8889
-        targetPort: 8889
-      - name: grpc
-        protocol: TCP
-        port: 15051
-        targetPort: 15051
-
-      service:
-        type: ClusterIP
-
-      securityContext: {}
-        # capabilities:
-        #   drop:
-        #   - ALL
-      # readOnlyRootFilesystem: true
-      # runAsNonRoot: true
-      # runAsUser: 1000
-
-      resources:
-        requests:
-          cpu: 500m
-          memory: 2048Mi
-        limits:
-          cpu: 1000m
-          memory: 2048Mi
-
-      nodeSelector: {}
-
-      tolerations: []
-
-      affinity: {}
-
-      autoscaling:
-        enabled: false
-        minReplicas: 1
-        maxReplicas: 5
-        targetCPUUtilizationPercentage: 80
-      automaticHttps:
-        enabled: true
-        email: ""
-
-    ## -- Discovery Settings
-    pilot:
-      autoscaleEnabled: false
-      autoscaleMin: 1
-      autoscaleMax: 5
-      replicaCount: 1
-      rollingMaxSurge: 100%
-      rollingMaxUnavailable: 25%
-      image:
-        registry: ""
-        repository: higress/pilot
-        tag: ""
-
-      traceSampling: 1.0
-
-      # -- Resources for a small pilot install
-      resources:
-        requests:
-          cpu: 500m
-          memory: 2048Mi
-
-      env:
-        PILOT_SCOPE_GATEWAY_TO_NAMESPACE: "false"
-        PILOT_ENABLE_METADATA_EXCHANGE: "false"
-        PILOT_ENABLE_CROSS_CLUSTER_WORKLOAD_ENTRY: "false"
-        VALIDATION_ENABLED: "false"
-
-      cpu:
-        targetAverageUtilization: 80
-
-      # -- if protocol sniffing is enabled for outbound
-      enableProtocolSniffingForOutbound: true
-      # -- if protocol sniffing is enabled for inbound
-      enableProtocolSniffingForInbound: true
-
-      nodeSelector: {}
-      podAnnotations: {}
-      serviceAnnotations: {}
-
-      # -- You can use jwksResolverExtraRootCA to provide a root certificate
-      # in PEM format. This will then be trusted by pilot when resolving
-      # JWKS URIs.
-      jwksResolverExtraRootCA: ""
-
-      # -- This is used to set the source of configuration for
-      # the associated address in configSource, if nothing is specified
-      # the default MCP is assumed.
-      configSource:
-        subscribedResources: []
-
-      plugins: []
-
-      # -- The following is used to limit how long a sidecar can be connected
-      # to a pilot. It balances out load across pilot instances at the cost of
-      # increasing system churn.
-      keepaliveMaxServerConnectionAge: 30m
-
-      # -- Additional labels to apply to the deployment.
-      deploymentLabels: {}
-
-      ## Mesh config settings
-
-      # -- Install the mesh config map, generated from values.yaml.
-      # If false, pilot wil use default values (by default) or user-supplied values.
-      configMap: true
-
-      # -- Additional labels to apply on the pod level for monitoring and logging configuration.
-      podLabels: {}
-
-    # Tracing config settings
-    tracing:
-      enable: false
-      sampling: 100
-      timeout: 500
-      skywalking:
-        # access_token: ""
-        service: ""
-        port: 11800
-      # zipkin:
-      # service: ""
-      # port: 9411
-
-      # -- Downstream config settings
-    downstream:
-      idleTimeout: 180
-      maxRequestHeadersKb: 60
-      connectionBufferLimits: 32768
-      http2:
-        maxConcurrentStreams: 100
-        initialStreamWindowSize: 65535
-        initialConnectionWindowSize: 1048576
-      routeTimeout: 0
-
-    # -- Upstream config settings
-    upstream:
-      idleTimeout: 10
-      connectionBufferLimits: 10485760
-
-    redis:
-      redis:
-        name: redis-stack-server
-        # -- Specify the image
-        image:
-          registry: ""
-          repository: "higress/redis-stack-server"
-          tag: "7.4.0-v3"
-        # -- Specify the number of replicas
-        replicas: 1
-        # -- Specify the password, if not set, no password is used
-        password: ""
-        # -- Service parameters
-        service:
-          # -- Exporter service type
-          type: ClusterIP
-          # -- Exporter service port
-          port: 6379
-        # -- Specify the resources
-        resources: {}
-        # -- NodeSelector Node labels for Redis
-        nodeSelector: {}
-        # -- Tolerations for Redis
-        tolerations: []
-        # -- Affinity for Redis
-        affinity: {}
-        persistence:
-          # -- Enable persistence on Redis, default is false
-          enabled: false
-          # -- If defined, storageClassName: <storageClass>
-          # -- If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner
-          storageClass: ""
-          # -- Persistent Volume access modes
-          accessModes:
-          - ReadWriteOnce
-          # -- Persistent Volume size
-          size: 1Gi
-  higress-console:
-    replicaCount: 1
-
-    image:
-      registry: ""
-      repository: "higress/console"
-      pullPolicy: IfNotPresent
-      tag: ""
-
-    imagePullSecrets: []
+  # -- The name of the CA for workload certificates.
+  # For example, when caName=GkeWorkloadCertificate, GKE workload certificates
+  # will be used as the certificates for workloads.
+  # The default value is "" and when caName="", the CA will be configured by other
+  # mechanisms (e.g., environmental variable CA_PROVIDER).
+  caName: ""
+hub: higress-registry.cn-hangzhou.cr.aliyuncs.com/higress
+
+clusterName: ""
+# -- meshConfig defines runtime configuration of components, including Istiod and istio-agent behavior
+# See https://istio.io/docs/reference/config/istio.mesh.v1alpha1/ for all available options
+meshConfig:
+  enablePrometheusMerge: true
+  # Config for the default ProxyConfig.
+  # Initially using directly the proxy metadata - can also be activated using annotations
+  # on the pod. This is an unsupported low-level API, pending review and decisions on
+  # enabling the feature. Enabling the DNS listener is safe - and allows further testing
+  # and gradual adoption by setting capture only on specific workloads. It also allows
+  # VMs to use other DNS options, like dnsmasq or unbound.
+
+  # -- The namespace to treat as the administrative root namespace for Istio configuration.
+  # When processing a leaf namespace Istio will search for declarations in that namespace first
+  # and if none are found it will search in the root namespace. Any matching declaration found in the root namespace
+  # is processed as if it were declared in the leaf namespace.
+  rootNamespace:
+
+  # -- The trust domain corresponds to the trust root of a system
+  # Refer to https://github.com/spiffe/spiffe/blob/master/standards/SPIFFE-ID.md#21-trust-domain
+  trustDomain: "cluster.local"
+
+  # TODO: the intent is to eventually have this enabled by default when security is used.
+  # It is not clear if user should normally need to configure - the metadata is typically
+  # used as an escape and to control testing and rollout, but it is not intended as a long-term
+  # stable API.
+
+  # What we may configure in mesh config is the ".global" - and use of other suffixes.
+  # No hurry to do this in 1.6, we're trying to prove the code.
+
+gateway:
+  name: "higress-gateway"
+  # -- Number of Higress Gateway pods
+  replicas: 2
+  image:
+    registry: ""
+    repository: higress/gateway
+    tag: ""
+  # -- Use a `DaemonSet` or `Deployment`
+  kind: Deployment
+
+  # -- The number of successive failed probes before indicating readiness failure.
+  readinessFailureThreshold: 30
+
+  # -- The number of successive successed probes before indicating readiness success.
+  readinessSuccessThreshold: 1
+
+  # -- The initial delay for readiness probes in seconds.
+  readinessInitialDelaySeconds: 1
+
+  # -- The period between readiness probes.
+  readinessPeriodSeconds: 2
+
+  # -- The readiness timeout seconds
+  readinessTimeoutSeconds: 3
+
+  # -- revision declares which revision this gateway is a part of
+  revision: ""
+
+  rbac:
+    # -- If enabled, roles will be created to enable accessing certificates from Gateways. This is not needed
+    # when using http://gateway-api.org/.
+    enabled: true
+
+  serviceAccount:
+    # -- If set, a service account will be created. Otherwise, the default is used
+    create: true
+    # -- Annotations to add to the service account
+    annotations: {}
+    # -- The name of the service account to use.
+    # If not set, the release name is used
     name: ""
 
-    podEnvs: {}
+  # -- Pod environment variables
+  env: {}
+  httpPort: 80
+  httpsPort: 443
+  hostNetwork: false
 
-    podAnnotations: {}
+  # -- Labels to apply to all resources
+  labels: {}
 
-    podSecurityContext: {}
+  # -- Annotations to apply to all resources
+  annotations: {}
 
-    securityContext: {}
+  podAnnotations:
+    prometheus.io/port: "15020"
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/stats/prometheus"
+    sidecar.istio.io/inject: "false"
 
-    dnsPolicy: ClusterFirst
-    restartPolicy: Always
-    schedulerName: default-scheduler
+  # -- Labels to apply to the pod
+  podLabels: {}
 
+  # -- Define the security context for the pod.
+  # If unset, this will be automatically set to the minimum privileges required to bind to port 80 and 443.
+  # On Kubernetes 1.22+, this only requires the `net.ipv4.ip_unprivileged_port_start` sysctl.
+  securityContext: ~
+  containerSecurityContext: ~
+  unprivilegedPortSupported: ~
+
+  service:
+    # -- Type of service. Set to "None" to disable the service entirely
+    type: LoadBalancer
+    ports:
+      - name: http2
+        port: 80
+        protocol: TCP
+        targetPort: 80
+      - name: https
+        port: 443
+        protocol: TCP
+        targetPort: 443
+    annotations: {}
+    loadBalancerIP: ""
+    loadBalancerClass: ""
+    loadBalancerSourceRanges: []
+    externalTrafficPolicy: ""
+
+  rollingMaxSurge: 100%
+  # -- If global.local is true, the default value is 100%, otherwise it is 25%
+  rollingMaxUnavailable: 25%
+
+  resources:
+    requests:
+      cpu: 2000m
+      memory: 2048Mi
+    limits:
+      cpu: 2000m
+      memory: 2048Mi
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  # -- If specified, the gateway will act as a network gateway for the given network.
+  networkGateway: ""
+
+  metrics:
+    # -- If true, create PodMonitor or VMPodScrape for gateway
+    enabled: false
+    # -- provider group name for CustomResourceDefinition, can be monitoring.coreos.com or operator.victoriametrics.com
+    provider: monitoring.coreos.com
+    interval: ""
+    scrapeTimeout: ""
+    honorLabels: false
+    # -- for monitoring.coreos.com/v1.PodMonitor
+    metricRelabelings: []
+    relabelings: []
+    # -- for operator.victoriametrics.com/v1beta1.VMPodScrape
+    metricRelabelConfigs: []
+    relabelConfigs: []
+    # -- some more raw podMetricsEndpoints spec
+    rawSpec: {}
+
+controller:
+  name: "higress-controller"
+  # -- Number of Higress Controller pods
+  replicas: 1
+  image:
+    registry: ""
+    repository: higress/higress
+    tag: ""
+
+  env: {}
+
+  labels: {}
+
+  probe:
+    httpGet:
+      path: /ready
+      port: 8888
+    initialDelaySeconds: 1
+    periodSeconds: 3
+    timeoutSeconds: 5
+
+  imagePullSecrets: []
+
+  rbac:
+    create: true
+
+  serviceAccount:
+    # -- Specifies whether a service account should be created
+    create: true
+    # -- Annotations to add to the service account
+    annotations: {}
+    # -- The name of the service account to use.
+    # -- If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+  podAnnotations: {}
+
+  # -- Labels to apply to the pod
+  podLabels: {}
+
+  podSecurityContext:
+    {}
+  # fsGroup: 2000
+
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8888
+      targetPort: 8888
+    - name: http-solver
+      protocol: TCP
+      port: 8889
+      targetPort: 8889
+    - name: grpc
+      protocol: TCP
+      port: 15051
+      targetPort: 15051
+
+  service:
+    type: ClusterIP
+
+  securityContext:
+    {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 2048Mi
+    limits:
+      cpu: 1000m
+      memory: 2048Mi
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+  automaticHttps:
+    enabled: true
+    email: ""
+
+## -- Discovery Settings
+pilot:
+  autoscaleEnabled: false
+  autoscaleMin: 1
+  autoscaleMax: 5
+  replicaCount: 1
+  rollingMaxSurge: 100%
+  rollingMaxUnavailable: 25%
+  image:
+    registry: ""
+    repository: higress/pilot
+    tag: ""
+  traceSampling: 1.0
+
+  # -- Resources for a small pilot install
+  resources:
+    requests:
+      cpu: 500m
+      memory: 2048Mi
+
+  env:
+    PILOT_SCOPE_GATEWAY_TO_NAMESPACE: "false"
+    PILOT_ENABLE_METADATA_EXCHANGE: "false"
+    PILOT_ENABLE_CROSS_CLUSTER_WORKLOAD_ENTRY: "false"
+    VALIDATION_ENABLED: "false"
+
+  cpu:
+    targetAverageUtilization: 80
+
+  # -- if protocol sniffing is enabled for outbound
+  enableProtocolSniffingForOutbound: true
+  # -- if protocol sniffing is enabled for inbound
+  enableProtocolSniffingForInbound: true
+
+  nodeSelector: {}
+  podAnnotations: {}
+  serviceAnnotations: {}
+
+  # -- You can use jwksResolverExtraRootCA to provide a root certificate
+  # in PEM format. This will then be trusted by pilot when resolving
+  # JWKS URIs.
+  jwksResolverExtraRootCA: ""
+
+  # -- This is used to set the source of configuration for
+  # the associated address in configSource, if nothing is specified
+  # the default MCP is assumed.
+  configSource:
+    subscribedResources: []
+
+  plugins: []
+
+  # -- The following is used to limit how long a sidecar can be connected
+  # to a pilot. It balances out load across pilot instances at the cost of
+  # increasing system churn.
+  keepaliveMaxServerConnectionAge: 30m
+
+  # -- Additional labels to apply to the deployment.
+  deploymentLabels: {}
+
+  ## Mesh config settings
+
+  # -- Install the mesh config map, generated from values.yaml.
+  # If false, pilot wil use default values (by default) or user-supplied values.
+  configMap: true
+
+  # -- Additional labels to apply on the pod level for monitoring and logging configuration.
+  podLabels: {}
+
+# Tracing config settings
+tracing:
+  enable: false
+  sampling: 100
+  timeout: 500
+  skywalking:
+    # access_token: ""
+    service: ""
+    port: 11800
+  # zipkin:
+  # service: ""
+  # port: 9411
+
+# -- Downstream config settings
+downstream:
+  idleTimeout: 180
+  maxRequestHeadersKb: 60
+  connectionBufferLimits: 32768
+  http2:
+    maxConcurrentStreams: 100
+    initialStreamWindowSize: 65535
+    initialConnectionWindowSize: 1048576
+  routeTimeout: 0
+
+# -- Upstream config settings
+upstream:
+  idleTimeout: 10
+  connectionBufferLimits: 10485760
+
+redis:
+  redis:
+    name: redis-stack-server
+    # -- Specify the image
+    image:
+      registry: ""
+      repository: "higress/redis-stack-server"
+      tag: "7.4.0-v3"
+    # -- Specify the number of replicas
+    replicas: 1
+    # -- Specify the password, if not set, no password is used
+    password: ""
+    # -- Service parameters
     service:
+      # -- Exporter service type
       type: ClusterIP
-      port: 8080
-
-    ingress:
-      enabled: false
-      domain: console.higress.io
-      tlsSecretName: ""
-      annotations: {}
-      paths:
-      - path: /
-        pathType: Prefix
-
-    resources:
-      requests:
-        cpu: 250m
-        memory: 512Mi
-
+      # -- Exporter service port
+      port: 6379
+    # -- Specify the resources
+    resources: {}
+    # -- NodeSelector Node labels for Redis
     nodeSelector: {}
+    # -- Tolerations for Redis
+    tolerations: []
+    # -- Affinity for Redis
     affinity: {}
-    tolerations: {}
-
-    web:
-      login:
-        prompt: "" # If set, a prompt message will be displayed on the login page.
-
-    swagger:
+    persistence:
+      # -- Enable persistence on Redis, default is false
       enabled: false
-
-    admin:
-      username: admin
-      displayName: Admin
-      password: "" # If set, the value will be used as the admin password for login.
-
-    chat:
-      enabled: false
-      endpoint: ""
-
-    controller:
-      serviceName: higress-controller
-
-    certmanager:
-      enabled: false
-      replicas: 1
-      image:
-        registry: ""
-        repository: higress
-        tag: v1.11.0
-
-    o11y:
-      __placeholder__: true
-
-    pvc:
-      __placeholder__: true
+      # -- If defined, storageClassName: <storageClass>
+      # -- If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner
+      storageClass: ""
+      # -- Persistent Volume access modes
+      accessModes:
+        - ReadWriteOnce
+      # -- Persistent Volume size
+      size: 1Gi

@@ -40,3 +40,11 @@ images:
   - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/higress:2.1.4
   - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/pilot:2.1.4
   - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/gateway:2.1.4
+  - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/redis-stack-server:7.4.0-v3
+  - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/cert-manager-cainjector:v1.11.0
+  - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/cert-manager-controller:v1.11.0
+  - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/cert-manager-webhook:v1.11.0
+  - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/cert-manager-ctl:v1.11.0
+  - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/grafana:9.3.6
+  - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/prometheus:v2.40.7
+  - higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/loki:2.9.4
