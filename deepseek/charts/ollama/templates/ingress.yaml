@@ -1,0 +1,22 @@
+{{- if .Values.global.extension.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "backend.fullname" . }}-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: {{ .Values.global.extension.ingress.ingressClassName }}
+  rules:
+    - host: "deepseek.{{ .Values.global.extension.ingress.domainSuffix }}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "backend.fullname" . }}-chat-service
+                port:
+                  number: 80
+{{- end }}
